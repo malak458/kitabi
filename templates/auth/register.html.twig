@@ -1,13 +1,64 @@
-<h1>Register</h1>
 
-{{ form_start(form) }}
 
-{{ form_row(form.nom) }}
-{{ form_row(form.prenom) }}
-{{ form_row(form.email) }}
-{{ form_row(form.password) }}
-{{ form_row(form.bio) }}
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/register.css">
+{% endblock %}
 
-<button type="submit">S'inscrire</button>
+{% block body %}
 
-{{ form_end(form) }}
+    <div class="auth-wrapper">
+
+        <!-- LEFT -->
+        <div class="auth-left">
+
+            <div class="auth-card">
+
+                <h2>Créer un compte 📚</h2>
+                <p class="subtitle">Rejoins la communauté des lecteurs</p>
+
+                {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+
+                <div class="row">
+                    {{ form_row(form.nom) }}
+                    {{ form_row(form.prenom) }}
+                </div>
+
+                {{ form_row(form.email) }}
+                {{ form_row(form.password) }}
+
+                {{ form_row(form.bio) }}
+
+                <div class="image-upload">
+                    <label>Photo de profil</label>
+                    {{ form_widget(form.image, {'attr': {'id': 'profile_image'}}) }}
+
+                    <div class="preview">
+                        <img id="previewImg" src="/images/default-avatar.png">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary">
+                    S'inscrire 🚀
+                </button>
+
+                {{ form_end(form) }}
+
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="auth-right">
+
+            <img src="/images/quote1.jpg" class="active">
+            <img src="/images/quote2.webp">
+            <img src="/images/quote3.jpg">
+
+        </div>
+
+    </div>
+
+{% endblock %}
+
+{% block javascripts %}
+    <script src="/js/register.js"></script>
+{% endblock %}
