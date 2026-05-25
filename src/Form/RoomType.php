@@ -11,42 +11,42 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Positive;
+use Symfony\Component\Validator\Constraints\Range;
 
 class RoomType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            // TITLE
             ->add('titre', TextType::class, [
-                'label' => 'Book title'
+                'label' => 'Book title',
+                'attr' => ['placeholder' => 'e.g. The Brothers Karamazov']
             ])
-
-            // AUTHOR
             ->add('auteur', TextType::class, [
-                'label' => 'Author'
+                'label' => 'Author',
+                'attr' => ['placeholder' => 'e.g. Fyodor Dostoevsky']
             ])
-
-            // TOTAL PAGES
-            ->add('total_pages', IntegerType::class, [
-                'label' => 'Total pages'
+            ->add('totalPages', IntegerType::class, [
+                'label' => 'Total pages',
+                'attr' => ['placeholder' => 'e.g. 520', 'min' => 1]
             ])
-
-            // TYPE (live / scheduled)
             ->add('type', ChoiceType::class, [
                 'choices' => [
                     'Live Session' => 'live',
                     'Scheduled' => 'scheduled',
                 ],
-                'label' => 'Room type'
+                'label' => 'Room type',
+                'expanded' => true,
+                'multiple' => false,
+                'data' => 'live'
             ])
-
-            // MAX PARTICIPANTS
-            ->add('max_participants', IntegerType::class, [
-                'label' => 'Max participants'
+            ->add('maxParticipants', IntegerType::class, [
+                'label' => 'Max participants',
+                'attr' => ['placeholder' => 'e.g. 15', 'min' => 2, 'max' => 50]
             ])
-
-            // GENRE
             ->add('genre', ChoiceType::class, [
                 'choices' => [
                     'Classic' => 'Classic',
@@ -57,35 +57,54 @@ class RoomType extends AbstractType
                     'Philosophy' => 'Philosophy',
                     'Drama' => 'Drama',
                     'Adventure' => 'Adventure',
+                    'Fiction' => 'Fiction',
+                    'Non-Fiction' => 'Non-Fiction',
                 ],
-                'label' => 'Genre'
+                'label' => 'Genre',
+                'placeholder' => 'Select a genre'
             ])
-
-            // DESCRIPTION
             ->add('description', TextareaType::class, [
                 'required' => false,
-                'label' => 'Description'
+                'label' => 'Description (optional)',
+                'attr' => ['rows' => 4, 'placeholder' => 'What will you discuss in this reading room?']
             ])
-
-            // IMAGE UPLOAD (IMPORTANT: NOT mapped because handled manually)
-            ->add('image', FileType::class, [
-                'required' => false,
+            ->add('tags', ChoiceType::class, [
+                'choices' => [
+                    'Classic' => 'Classic',
+                    'Sci-Fi' => 'Sci-Fi',
+                    'Fantasy' => 'Fantasy',
+                    'Romance' => 'Romance',
+                    'Dystopian' => 'Dystopian',
+                    'Philosophy' => 'Philosophy',
+                    'Adventure' => 'Adventure',
+                    'Drama' => 'Drama',
+                    'Fiction' => 'Fiction',
+                ],
                 'mapped' => false,
-                'label' => 'Book cover'
+                'required' => false,
+                'multiple' => true,
+                'expanded' => true,
+                'label' => 'Tags'
             ])
-
-            // TAGS (IMPORTANT: handled manually in controller)
-            ->add('tags', TextType::class, [
-                'required' => false,
+            ->add('imageFile', FileType::class, [
                 'mapped' => false,
-                'label' => 'Tags (handled manually)'
+                'required' => false,
+                'label' => 'Book cover',
+                'constraints' => [
+                    new File([
+                        'maxSize' => '5M',
+                        'mimeTypes' => ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'],
+                        'mimeTypesMessage' => 'Please upload a valid image (JPEG, PNG, WEBP)'
+                    ])
+                ]
             ]);
     }
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Room::class,
+            'csrf_protection' => true,
         ]);
     }
 }

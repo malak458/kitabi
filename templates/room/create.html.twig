@@ -1,11 +1,350 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Create a Room - KITABI{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --ink: #1a1208;
+            --amber: #c8860a;
+            --amber-mid: #e8a82a;
+            --amber-light: #f9efd0;
+            --rust: #8b3a1a;
+            --teal: #0e6b5e;
+            --teal-dark: #0a5046;
+            --teal-light: #d6f0ec;
+            --sand: #f5f0e8;
+            --white: #fffdf8;
+            --border: #e2d9c8;
+            --muted: #7a6e5f;
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        .upload-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 11px 16px;
+            border: 1.5px dashed var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--muted);
+            background: #fffdf9;
+            transition: border-color .2s, color .2s;
+            width: 100%;
+        }
+
+        .upload-btn:hover {
+            border-color: var(--amber);
+            color: var(--amber);
+        }
+
+        .content {
+            margin-left: 300px;
+            min-height: 100vh;
+            background: var(--sand);
+        }
+
+        .page-header {
+            background: linear-gradient(105deg,
+                rgba(26, 18, 8, 0.97) 0%,
+                rgba(14, 107, 94, 0.9) 60%,
+                rgba(200, 134, 10, 0.4) 100%);
+            padding: 34px 40px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e8a82a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.5;
+        }
+
+        .page-header h1 {
+            font-family: "Playfair Display", serif;
+            font-size: 30px;
+            font-weight: 900;
+            color: #fff;
+            margin: 0;
+            position: relative;
+        }
+
+        .page-header p {
+            color: rgba(255, 253, 248, 0.72);
+            font-size: 14px;
+            margin-top: 6px;
+            position: relative;
+        }
+
+        .form-wrapper {
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 620px;
+            padding: 36px 40px;
+            box-shadow: 0 8px 32px rgba(26, 18, 8, 0.08);
+            border-top: 4px solid var(--amber);
+        }
+
+        .card-title {
+            font-family: "Playfair Display", serif;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--ink);
+            margin-bottom: 4px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--muted);
+            margin-bottom: 28px;
+            line-height: 1.6;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        .field label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--ink);
+            margin-bottom: 7px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .field input:not([type="radio"]):not([type="checkbox"]),
+        .field select,
+        .field textarea {
+            width: 100%;
+            background: #fffdf9;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 11px 14px;
+            font-size: 14px;
+            font-family: "DM Sans", sans-serif;
+            color: var(--ink);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .field input:focus:not([type="radio"]):not([type="checkbox"]),
+        .field select:focus,
+        .field textarea:focus {
+            border-color: var(--amber);
+            background: #fffaf0;
+            box-shadow: 0 0 0 3px rgba(232, 168, 42, 0.15);
+        }
+
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+
+        /* Type Toggle */
+        .type-toggle {
+            display: flex;
+            gap: 8px;
+        }
+
+        .type-opt {
+            flex: 1;
+            padding: 11px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-family: "DM Sans", sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1.5px solid var(--border);
+            background: white;
+            color: var(--muted);
+            text-align: center;
+            transition: all 0.18s;
+        }
+
+        .type-opt.selected {
+            border-color: var(--amber);
+            color: var(--amber);
+            background: var(--amber-light);
+        }
+
+        /* Tags Selector */
+        .tags-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .tag-opt {
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            cursor: pointer;
+            border: 1.5px solid var(--border);
+            background: white;
+            color: var(--muted);
+            font-family: "DM Sans", sans-serif;
+            font-weight: 500;
+            transition: all 0.15s;
+        }
+
+        .tag-opt:hover {
+            border-color: #c9bca9;
+            color: var(--ink);
+        }
+
+        .tag-opt.selected {
+            border-color: var(--amber);
+            color: var(--amber);
+            background: var(--amber-light);
+        }
+
+        /* Alert Errors */
+        .alert-errors {
+            background: #fee2e2;
+            border-left: 4px solid #dc2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+
+        .alert-errors p {
+            color: #991b1b;
+            font-size: 13px;
+            margin: 4px 0;
+        }
+
+        .alert-error {
+            background: #fee2e2;
+            border-left: 4px solid #dc2626;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            color: #991b1b;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border-left: 4px solid #10b981;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            color: #065f46;
+        }
+
+        .card-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding-top: 20px;
+            border-top: 1.5px solid #f0ece4;
+            margin-top: 28px;
+        }
+
+        .btn-cancel {
+            padding: 11px 24px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            background: white;
+            color: var(--muted);
+            border: 1.5px solid var(--border);
+            transition: all 0.18s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-cancel:hover {
+            border-color: var(--amber);
+            color: var(--amber);
+            background: var(--amber-light);
+        }
+
+        .btn-create {
+            padding: 11px 28px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--amber), var(--amber-mid));
+            color: white;
+            border: none;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(200, 134, 10, 0.28);
+        }
+
+        .btn-create:hover {
+            background: linear-gradient(135deg, var(--rust), var(--amber));
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(200, 134, 10, 0.35);
+        }
+
+        /* Hide default radio/checkbox styles */
+        #room_type {
+            display: none;
+        }
+
+        #room_tags {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0;
+            }
+            .page-header {
+                padding: 28px 20px 24px;
+            }
+            .form-wrapper {
+                padding: 24px 16px;
+            }
+            .card {
+                padding: 24px 20px;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .field-row {
+                grid-template-columns: 1fr;
+            }
+            .card-footer {
+                flex-direction: column;
+            }
+            .btn-cancel,
+            .btn-create {
+                width: 100%;
+                text-align: center;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
-
-<link rel="stylesheet" href="{{ asset('assets/css/create-room.css') }}">
-
 <div class="content">
-
     <div class="page-header">
         <h1>Create a Reading Room</h1>
         <p>Set up a new space to read and discuss with the community</p>
@@ -13,154 +352,170 @@
 
     <div class="form-wrapper">
         <div class="card">
-
             <h2 class="card-title">Room Details</h2>
+            <p class="card-subtitle">Fill in the information below to create your reading room.</p>
 
-            {% if errors is defined and errors is not empty %}
+            {# Flash messages #}
+            {% for message in app.flashes('error') %}
+                <div class="alert-error">{{ message }}</div>
+            {% endfor %}
+            {% for message in app.flashes('success') %}
+                <div class="alert-success">{{ message }}</div>
+            {% endfor %}
+
+            {# Formulaire errors #}
+            {% if form_errors(form) %}
                 <div class="alert-errors">
-                    {% for e in errors %}
-                        <p>⚠️ {{ e }}</p>
-                    {% endfor %}
+                    {{ form_errors(form) }}
                 </div>
             {% endif %}
 
             {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
-
-            <!-- IMAGE (custom UI + Symfony hidden input) -->
-            <div class="field">
-                <label>Book cover</label>
-
-                <label class="upload-btn" for="imageInput">
-                    <span class="material-icons">upload_file</span>
-                    <span id="upload-label">Choose a cover image</span>
-                </label>
-
-                {{ form_widget(form.image, {
-                    'attr': {
-                        'id': 'imageInput',
-                        'style': 'display:none',
-                        'onchange': "document.getElementById('upload-label').textContent = this.files[0]?.name || 'Choose a cover image'"
-                    }
-                }) }}
-
-                {{ form_errors(form.image) }}
-            </div>
-
-            <!-- TITLE -->
-            <div class="field">
-                <label>Book title</label>
-                {{ form_widget(form.titre, {'attr': {'placeholder': 'e.g. The Brothers Karamazov'}}) }}
-                {{ form_errors(form.titre) }}
-            </div>
-
-            <!-- AUTHOR + PAGES -->
-            <div class="field-row">
-
+                
+                {# Upload d'image personnalisé #}
                 <div class="field">
-                    <label>Author</label>
-                    {{ form_widget(form.auteur, {'attr': {'placeholder': 'e.g. Fyodor Dostoevsky'}}) }}
+                    <label>Book cover</label>
+                    <label class="upload-btn" for="room_imageFile">
+                        <span class="material-icons" style="font-size:18px">upload_file</span>
+                        <span id="upload-label">Choose a cover image</span>
+                    </label>
+                    {{ form_widget(form.imageFile, {'attr': {'style': 'display:none', 'onchange': 'updateLabel(this)'}}) }}
                 </div>
 
+                {# Titre #}
                 <div class="field">
-                    <label>Total pages</label>
-                    {{ form_widget(form.total_pages, {'attr': {'min': 1}}) }}
+                    {{ form_label(form.titre) }}
+                    {{ form_widget(form.titre, {'attr': {'placeholder': 'e.g. The Brothers Karamazov'}}) }}
+                    {{ form_errors(form.titre) }}
                 </div>
 
-            </div>
-
-            <!-- TYPE (custom UI + hidden Symfony field) -->
-            <div class="field">
-                <label>Room type</label>
-
-                <div class="type-toggle">
-                    <button type="button" class="type-opt selected"
-                            onclick="setType('live', this)">
-                        Live Session
-                    </button>
-
-                    <button type="button" class="type-opt"
-                            onclick="setType('scheduled', this)">
-                        Scheduled
-                    </button>
+                <div class="field-row">
+                    <div class="field">
+                        {{ form_label(form.auteur) }}
+                        {{ form_widget(form.auteur, {'attr': {'placeholder': 'e.g. Fyodor Dostoevsky'}}) }}
+                        {{ form_errors(form.auteur) }}
+                    </div>
+                    <div class="field">
+                        {{ form_label(form.totalPages) }}
+                        {{ form_widget(form.totalPages, {'attr': {'placeholder': 'e.g. 520', 'min': 1}}) }}
+                        {{ form_errors(form.totalPages) }}
+                    </div>
                 </div>
 
-                {{ form_widget(form.type, {'attr': {'id': 'typeInput'}}) }}
-            </div>
-
-            <!-- MAX + GENRE -->
-            <div class="field-row">
-
+                {# Type Toggle #}
                 <div class="field">
-                    <label>Max participants</label>
-                    {{ form_widget(form.max_participants, {'attr': {'min': 2, 'max': 50}}) }}
+                    <label>Room type</label>
+                    <div class="type-toggle" id="type-toggle">
+                        <button type="button" class="type-opt {% if form.type.vars.data == 'live' %}selected{% endif %}" data-type="live">Live Session</button>
+                        <button type="button" class="type-opt {% if form.type.vars.data == 'scheduled' %}selected{% endif %}" data-type="scheduled">Scheduled</button>
+                    </div>
+                    {{ form_widget(form.type) }}
                 </div>
 
+                <div class="field-row">
+                    <div class="field">
+                        {{ form_label(form.maxParticipants) }}
+                        {{ form_widget(form.maxParticipants, {'attr': {'placeholder': 'e.g. 15', 'min': 2, 'max': 50}}) }}
+                        {{ form_errors(form.maxParticipants) }}
+                    </div>
+                    <div class="field">
+                        {{ form_label(form.genre) }}
+                        {{ form_widget(form.genre) }}
+                        {{ form_errors(form.genre) }}
+                    </div>
+                </div>
+
+                {# Tags Selector #}
                 <div class="field">
-                    <label>Genre</label>
-                    {{ form_widget(form.genre) }}
+                    <label>Tags</label>
+                    <div class="tags-selector" id="tags-selector">
+                        {% set tagChoices = {
+                            'Classic': 'Classic',
+                            'Sci-Fi': 'Sci-Fi',
+                            'Fantasy': 'Fantasy',
+                            'Romance': 'Romance',
+                            'Dystopian': 'Dystopian',
+                            'Philosophy': 'Philosophy',
+                            'Adventure': 'Adventure',
+                            'Drama': 'Drama',
+                            'Fiction': 'Fiction'
+                        } %}
+                        {% for key, value in tagChoices %}
+                            <button type="button" class="tag-opt" data-tag="{{ value }}">{{ value }}</button>
+                        {% endfor %}
+                    </div>
+                    <div id="tags-storage" style="display:none"></div>
+                    {{ form_widget(form.tags) }}
                 </div>
 
-            </div>
-
-            <!-- TAGS (custom JS + hidden field Symfony) -->
-            <div class="field">
-                <label>Tags</label>
-
-                <div class="tags-selector">
-                    {% set tags = ['Classic','Sci-Fi','Fantasy','Romance','Dystopian','Philosophy','Adventure','Drama','Fiction'] %}
-
-                    {% for tag in tags %}
-                        <button type="button" class="tag-opt" onclick="toggleTag(this)">
-                            {{ tag }}
-                        </button>
-                    {% endfor %}
+                {# Description #}
+                <div class="field">
+                    {{ form_label(form.description) }}
+                    {{ form_widget(form.description, {'attr': {'placeholder': 'What will you discuss in this reading room?', 'rows': 4}}) }}
+                    {{ form_errors(form.description) }}
                 </div>
 
-                {{ form_widget(form.tags, {'attr': {'id': 'tagsInput'}}) }}
-            </div>
-
-            <!-- DESCRIPTION -->
-            <div class="field">
-                <label>Description</label>
-                {{ form_widget(form.description) }}
-            </div>
-
-            <!-- BUTTONS -->
-            <div class="card-footer">
-                <a href="{{ path('app_rooms') }}" class="btn-cancel">Cancel</a>
-                <button type="submit" class="btn-create">Create Room</button>
-            </div>
+                <div class="card-footer">
+                    <a href="{{ path('app_rooms') }}" class="btn-cancel">Cancel</a>
+                    <button type="submit" class="btn-create">Create Room</button>
+                </div>
 
             {{ form_end(form) }}
-
         </div>
     </div>
 </div>
+{% endblock %}
 
-<script>
-function setType(val, btn) {
-    document.getElementById('typeInput').value = val;
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        // Update upload label
+        function updateLabel(input) {
+            const name = input.files[0]?.name;
+            document.getElementById('upload-label').textContent = name || 'Choose a cover image';
+        }
 
-    document.querySelectorAll('.type-opt')
-        .forEach(b => b.classList.remove('selected'));
+        // Type toggle
+        const typeButtons = document.querySelectorAll('#type-toggle .type-opt');
+        const typeInput = document.querySelector('#room_type');
+        
+        typeButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                typeButtons.forEach(b => b.classList.remove('selected'));
+                this.classList.add('selected');
+                typeInput.value = this.dataset.type;
+            });
+        });
 
-    btn.classList.add('selected');
-}
-
-function toggleTag(btn) {
-    btn.classList.toggle('selected');
-
-    const container = document.getElementById('tagsInput');
-    container.value = '';
-
-    let values = [];
-
-    document.querySelectorAll('.tag-opt.selected').forEach(b => {
-        values.push(b.textContent.trim());
-    });
-
-    container.value = values.join(',');
-}
-</script>
-
+        // Tags selector
+        const tagButtons = document.querySelectorAll('#tags-selector .tag-opt');
+        const tagsSelect = document.querySelector('#room_tags');
+        
+        // Créer un conteneur pour les tags sélectionnés
+        if (tagsSelect) {
+            // Vider les options existantes
+            tagsSelect.innerHTML = '';
+            
+            function updateTagsSelect() {
+                const selectedTags = Array.from(document.querySelectorAll('#tags-selector .tag-opt.selected'))
+                    .map(btn => btn.dataset.tag);
+                
+                // Mettre à jour le select multiple
+                tagsSelect.innerHTML = '';
+                selectedTags.forEach(tag => {
+                    const option = document.createElement('option');
+                    option.value = tag;
+                    option.selected = true;
+                    tagsSelect.appendChild(option);
+                });
+            }
+            
+            tagButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    this.classList.toggle('selected');
+                    updateTagsSelect();
+                });
+            });
+        }
+    </script>
 {% endblock %}
