@@ -44,9 +44,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private array $roles = [];
 
+    /**
+     * @var Collection<int, Book>
+     */
+    #[ORM\ManyToMany(targetEntity: Book::class, inversedBy: 'users')]
+    private Collection $favoriteBooks;
+
     public function __construct()
     {
         $this->books = new ArrayCollection();
+        $this->favoriteBooks = new ArrayCollection();
     }
 
     public function getId(): ?int

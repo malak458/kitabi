@@ -3,40 +3,64 @@
 namespace App\Entity;
 
 use App\Repository\BookRepository;
-use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\Mapping as Mapping;
 
-#[ORM\Entity(repositoryClass: BookRepository::class)]
+#[Mapping\Entity(repositoryClass: BookRepository::class)]
 class Book
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
+    #[Mapping\Id]
+    #[Mapping\GeneratedValue]
+    #[Mapping\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[Mapping\Column(length: 255)]
     private ?string $titre = null;
 
-    #[ORM\Column(length: 255)]
+    #[Mapping\Column(length: 255)]
     private ?string $auteur = null;
 
-    #[ORM\Column(length: 255)]
+    #[Mapping\Column(length: 255)]
+    private ?string $genre = null;
+
+    #[Mapping\Column(name: '`condition`', type: 'string', length: 255)]
+    private ?string $condition = null;
+
+    #[Mapping\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $prix = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $conditions = null;
+    #[Mapping\Column]
+    private ?bool $forExchange = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $description = null;
-
-    #[ORM\Column(length: 255)]
+    #[Mapping\Column(length: 255, nullable: true)]
     private ?string $image = null;
+#[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'books')]
+#[ORM\JoinColumn(nullable: true)] // <-- IMPORTANT: 'true' permet de créer le livre sans utilisateur
+private ?User $user = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $for_exchange = null;
+/**
+ * @var Collection<int, User>
+ */
+#[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'favoriteBooks')]
+private Collection $users;
 
-    #[ORM\ManyToOne(inversedBy: 'books')]
-    private ?User $user = null;
+public function __construct()
+{
+    $this->users = new ArrayCollection();
+}
 
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+        return $this;
+    }
     public function getId(): ?int
     {
         return $this->id;
@@ -47,10 +71,9 @@ class Book
         return $this->titre;
     }
 
-    public function setTitre(string $titre): static
+    public function setTitre(string $titre): self
     {
         $this->titre = $titre;
-
         return $this;
     }
 
@@ -59,46 +82,53 @@ class Book
         return $this->auteur;
     }
 
-    public function setAuteur(string $auteur): static
+    public function setAuteur(string $auteur): self
     {
         $this->auteur = $auteur;
-
         return $this;
     }
 
-    public function getPrix(): ?string
+    public function getGenre(): ?string
     {
-        return $this->prix;
+        return $this->genre;
     }
 
-    public function setPrix(string $prix): static
+    public function setGenre(string $genre): self
     {
-        $this->prix = $prix;
-
+        $this->genre = $genre;
         return $this;
     }
 
-    public function getConditions(): ?string
+    public function getCondition(): ?string
     {
-        return $this->conditions;
+        return $this->condition;
     }
 
-    public function setConditions(string $conditions): static
+    public function setCondition(string $condition): self
     {
-        $this->conditions = $conditions;
-
+        $this->condition = $condition;
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getPrix(): ?float
     {
-        return $this->description;
+        return $this->prix !== null ? (float) $this->prix : null;
     }
 
-    public function setDescription(string $description): static
+    public function setPrix(float $prix): self
     {
-        $this->description = $description;
+        $this->prix = (string) $prix;
+        return $this;
+    }
 
+    public function isForExchange(): ?bool
+    {
+        return $this->forExchange;
+    }
+
+    public function setForExchange(bool $forExchange): self
+    {
+        $this->forExchange = $forExchange;
         return $this;
     }
 
@@ -107,33 +137,35 @@ class Book
         return $this->image;
     }
 
-    public function setImage(string $image): static
+    public function setImage(?string $image): self
     {
         $this->image = $image;
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    public function addUser(User $user): static
+    {
+        if (!$this->users->contains($user)) {
+            $this->users->add($user);
+            $user->addFavoriteBook($this);
+        }
 
         return $this;
     }
 
-    public function getForExchange(): ?string
+    public function removeUser(User $user): static
     {
-        return $this->for_exchange;
-    }
-
-    public function setForExchange(string $for_exchange): static
-    {
-        $this->for_exchange = $for_exchange;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
+        if ($this->users->removeElement($user)) {
+            $user->removeFavoriteBook($this);
+        }
 
         return $this;
     }

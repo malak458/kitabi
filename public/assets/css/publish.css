@@ -1,0 +1,367 @@
+/* ============================================================
+   css/publish.css — Styles spécifiques à la page publish.php
+   ============================================================
+   Ce fichier surcharge / complète main.css uniquement pour
+   la page de publication d'un livre.
+   ============================================================ */
+
+
+/* ── EN-TÊTE DE PAGE (bannière) ──────────────────────────── */
+
+/* Fond dégradé avec texture de motif subtle */
+.page-header {
+  background: linear-gradient(
+    105deg,
+    rgba(26, 18, 8, .97)   0%,
+    rgba(14, 107, 94, .9) 60%,
+    rgba(200, 134, 10, .4) 100%
+  );
+  padding: 36px var(--page-px) 30px;
+  position: relative;
+  overflow: hidden;   /* Empêche le pseudo-élément de déborder */
+}
+
+/* Texture de fond en SVG inline (motif + symboles) */
+.page-header::before {
+  content: '';
+  position: absolute;
+  inset: 0;   /* Couvre toute la surface */
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e8a82a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity: .5;
+}
+
+/* Titre dans l'en-tête */
+.page-header-text { position: relative; } /* Au-dessus du ::before */
+
+.page-header-text h1 {
+  font-family: "Playfair Display", serif;
+  font-size: 32px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: -.5px;
+}
+
+.page-header-text h4 {
+  color: rgba(255, 253, 248, .6);
+  font-size: 14px;
+  font-weight: 400;
+  margin: 6px 0 0;
+}
+
+
+/* ── CORPS DE PAGE ────────────────────────────────────────── */
+
+.page-body {
+  padding: 36px var(--page-px) 60px;
+}
+
+
+/* ── ACCÈS REFUSÉ ─────────────────────────────────────────── */
+
+/* Carte centrée affichée quand l'utilisateur n'est pas connecté */
+.access-denied {
+  max-width: 540px;
+  margin: 60px auto;
+  text-align: center;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 48px 36px;
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 32px rgba(26, 18, 8, .08);
+  border-top: 4px solid #dc2626; /* Barre rouge symbolisant l'interdiction */
+}
+
+.access-denied .icon { font-size: 56px; margin-bottom: 16px; }
+
+.access-denied h2 {
+  font-family: "Playfair Display", serif;
+  font-size: 24px;
+  color: #dc2626;
+  margin-bottom: 12px;
+}
+
+.access-denied p {
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+
+/* ── CARTE DU FORMULAIRE ──────────────────────────────────── */
+
+/* Conteneur principal centré avec ombre portée */
+.form-card {
+  max-width: 720px;
+  margin: 0 auto;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;     /* Les coins de l'en-tête sont arrondis */
+  border: 1px solid var(--border);
+  box-shadow: 0 8px 32px rgba(26, 18, 8, .08);
+}
+
+/* En-tête de la carte (bande teal) */
+.form-card-header {
+  background: linear-gradient(90deg, var(--teal), var(--teal-dark));
+  padding: 22px 28px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.form-card-header .material-icons {
+  color: var(--amber-mid);
+  font-size: 28px;
+}
+
+.form-card-header h2 {
+  font-family: "Playfair Display", serif;
+  color: #fff;
+  font-size: 20px;
+  margin: 0;
+}
+
+.form-card-header p {
+  color: rgba(255, 255, 255, .65);
+  font-size: 13px;
+  margin: 4px 0 0;
+}
+
+/* Corps du formulaire */
+.form-body { padding: 32px 28px 28px; }
+
+
+/* ── GRILLE DU FORMULAIRE ─────────────────────────────────── */
+
+/* Disposition en 2 colonnes sur desktop */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+/* Classe "full" pour qu'un champ occupe les 2 colonnes */
+.form-grid .full { grid-column: 1 / -1; }
+
+
+/* ── CHAMPS DE FORMULAIRE ─────────────────────────────────── */
+
+/* Conteneur d'un champ (label + input + message d'erreur) */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+/* Label stylisé */
+.field label {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.field label .material-icons { font-size: 14px; color: var(--amber); }
+.field label .req { color: #dc2626; } /* Astérisque rouge champ obligatoire */
+
+/* Style commun : input, select, textarea */
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 11px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  font-size: 14px;
+  font-family: "DM Sans", sans-serif;
+  background: var(--sand);
+  color: var(--ink);
+  outline: none;
+  /* Transition douce sur focus et erreur */
+  transition: border-color .25s, box-shadow .25s, background .25s;
+}
+
+/* État focus : bordure sarcelle + halo */
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--teal);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(14, 107, 94, .1);
+}
+
+/* État erreur : bordure rouge + halo + animation secousse */
+.field input.is-error,
+.field select.is-error,
+.field textarea.is-error {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, .08);
+  animation: shake .35s ease;   /* Défini dans main.css */
+}
+
+/* Textarea redimensionnable verticalement */
+.field textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+
+/* ── ZONE D'UPLOAD IMAGE ──────────────────────────────────── */
+
+/* Zone de dépôt (drag & drop) */
+.upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: var(--radius);
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .3s;
+  background: var(--sand);
+  position: relative;   /* Pour positionner l'<input> par-dessus */
+}
+
+/* Survol ou glisser-déposer actif */
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--amber);
+  background: var(--amber-light);
+}
+
+/* Input file invisible (transparent) par-dessus la zone visuelle */
+.upload-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  border: none;
+}
+
+/* Icône et textes dans la zone */
+.upload-zone .material-icons {
+  font-size: 38px;
+  color: var(--amber);
+  margin-bottom: 8px;
+}
+
+.upload-zone p {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.upload-zone strong { color: var(--teal); }
+
+/* Prévisualisation de l'image sélectionnée */
+.upload-preview {
+  display: none;             /* Caché jusqu'à sélection d'une image */
+  position: relative;
+  margin-top: 14px;
+}
+
+.upload-preview img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;       /* Garde les proportions de la couverture */
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: white;
+}
+
+/* Bouton ×  pour supprimer l'aperçu */
+.upload-preview .remove-img {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(26, 18, 8, .65);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.upload-preview .remove-img:hover { background: #dc2626; }
+.upload-preview .remove-img .material-icons { font-size: 15px; }
+
+
+/* ── PIED DE FORMULAIRE (boutons) ────────────────────────── */
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);   /* Séparateur visuel */
+}
+
+
+/* ── CARTE DE CONSEILS ────────────────────────────────────── */
+
+.tips-card {
+  max-width: 720px;
+  margin: 22px auto 0;
+  background: linear-gradient(135deg, var(--teal-light), var(--amber-light));
+  border-radius: 16px;
+  padding: 20px 24px;
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  border: 1px solid rgba(14, 107, 94, .2);
+}
+
+.tips-card .material-icons {
+  color: var(--teal);
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.tips-card h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--teal-dark);
+  margin-bottom: 6px;
+}
+
+.tips-card ul {
+  padding-left: 16px;
+  list-style: disc;   /* Puces simples dans la liste de conseils */
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+
+/* ── RESPONSIVE MOBILE ────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  /* 1 colonne sur mobile */
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid .full { grid-column: 1; }
+
+  /* Moins de padding sur petit écran */
+  .form-body { padding: 22px 16px; }
+
+  /* Boutons empilés verticalement */
+  .form-footer {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .btn-submit,
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
