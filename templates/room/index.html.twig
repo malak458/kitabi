@@ -1,0 +1,301 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reading Rooms - KITABI{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset('css/reading-room.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="page-wrapper">
+    <div class="page-header">
+        <div class="page-header-text">
+            <h1 id="page_title">Reading Rooms</h1>
+            <h4 id="page_subtitle">Read together with the community</h4>
+        </div>
+        <a href="{{ path('app_room_create') }}" class="create-room-btn">+ Create Room</a>
+    </div>
+
+    <div class="page-body">
+        <!-- Stats -->
+        <div class="stats-container">
+            <div class="stat-card live">
+                <div class="stat-info">
+                    <div class="stat-title">Live Now</div>
+                    <div class="stat-number">{{ lives|length }}</div>
+                </div>
+                <div class="stat-icon">
+                    <img src="https://i.pinimg.com/736x/cf/ac/d5/cfacd53f5bc159e0c2c01b69f3de1771.jpg" alt="Live"/>
+                </div>
+            </div>
+            <div class="stat-card scheduled">
+                <div class="stat-info">
+                    <div class="stat-title">Scheduled</div>
+                    <div class="stat-number">{{ scheduled|length }}</div>
+                </div>
+                <div class="stat-icon">
+                    <img src="https://i.pinimg.com/1200x/ea/fb/8b/eafb8b1c4c949f9343740e590c5652c8.jpg" alt="Scheduled"/>
+                </div>
+            </div>
+            <div class="stat-card myrooms">
+                <div class="stat-info">
+                    <div class="stat-title">My Rooms</div>
+                    <div class="stat-number">{{ app.user ? app.user.rooms|default([])|length : 0 }}</div>
+                </div>
+                <div class="stat-icon">
+                    <img src="https://i.pinimg.com/1200x/c3/41/6e/c3416efade9f62b399498e657113ddf7.jpg" alt="My Rooms"/>
+                </div>
+            </div>
+            <div class="stat-card totalreaders">
+                <div class="stat-info">
+                    <div class="stat-title">Total Rooms</div>
+                    <div class="stat-number">{{ lives|length + scheduled|length }}</div>
+                </div>
+                <div class="stat-icon">
+                    <img src="https://i.pinimg.com/736x/7a/9c/51/7a9c5126a655aa763c4f7e830c03a2f5.jpg" alt="Total"/>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-area">
+            <input type="text" class="search-bar" id="search_bar"
+                   placeholder="🔍  Search by book title or author…"/>
+        </div>
+
+        <!-- Tabs -->
+        <div class="nav-tabs">
+            <a href="#" class="nav-tab active" id="tab_discover">Discover</a>
+            <a href="#" class="nav-tab" id="tab_live">Live now</a>
+            <a href="#" class="nav-tab" id="tab_scheduled">Scheduled</a>
+            <a href="#" class="nav-tab" id="tab_myrooms">My rooms</a>
+        </div>
+        <hr class="separator"/>
+
+        <!-- Live Section -->
+        <div id="live-section">
+            <div class="section-label" id="section_live">Live Sessions</div>
+            <div class="rooms-container">
+                {% if lives is empty %}
+                    <p style="color:var(--muted)">No live sessions at the moment.</p>
+                {% else %}
+                    {% for room in lives %}
+                    <div class="room-card" data-room-id="{{ room.id }}">
+                        <div class="room-image">
+                            {% set imageSrc = room.image starts with 'http' ? room.image : asset('uploads/rooms/' ~ room.image) %}
+                            <img src="{{ imageSrc }}" alt="{{ room.titre }}"/>
+                            <span class="badge live">LIVE</span>
+                            <span class="participants">0/{{ room.maxParticipants }}</span>
+                        </div>
+                        <div class="room-content">
+                            <div>
+                                <h3>{{ room.titre }}</h3>
+                                <p class="room-author">{{ room.auteur }}</p>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width:0%"></div>
+                                </div>
+                                <p class="progress-text">Page 0 of {{ room.totalPages }}</p>
+                            </div>
+                            <div class="tags">
+                                {% for tag in room.tags|split(',') %}
+                                    <span class="tag">{{ tag|trim }}</span>
+                                {% endfor %}
+                            </div>
+                            <button class="room-action-btn join-btn btn_join" data-room-id="{{ room.id }}">Join Now</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Scheduled Section -->
+        <div id="scheduled-section">
+            <div class="section-label" style="margin-top:36px" id="section_upcoming">Upcoming Sessions</div>
+            <div class="rooms-container">
+                {% if scheduled is empty %}
+                    <p style="color:var(--muted)">No upcoming sessions.</p>
+                {% else %}
+                    {% for room in scheduled %}
+                    <div class="room-card" data-room-id="{{ room.id }}">
+                        <div class="room-image">
+                            {% set imageSrc = room.image starts with 'http' ? room.image : asset('uploads/rooms/' ~ room.image) %}
+                            <img src="{{ imageSrc }}" alt="{{ room.titre }}"/>
+                            <span class="badge scheduled">Scheduled</span>
+                            <span class="participants">0/{{ room.maxParticipants }}</span>
+                        </div>
+                        <div class="room-content">
+                            <div>
+                                <h3>{{ room.titre }}</h3>
+                                <p class="room-author">{{ room.auteur }}</p>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width:0%"></div>
+                                </div>
+                                <p class="progress-text">Page 0 of {{ room.totalPages }}</p>
+                            </div>
+                            <div class="tags">
+                                {% for tag in room.tags|split(',') %}
+                                    <span class="tag">{{ tag|trim }}</span>
+                                {% endfor %}
+                            </div>
+                            <button class="room-action-btn rsvp-btn btn_rsvp" data-room-id="{{ room.id }}">RSVP</button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- My Rooms Section -->
+        <div id="myrooms-section" style="display:none">
+            <div class="myrooms-content">
+                <img src="https://i.pinimg.com/1200x/06/07/32/0607321cf97261adf09084370414347f.jpg"
+                     alt="No rooms" class="myrooms-image"/>
+                <div class="myrooms-text">
+                    <h3 id="no_rooms">No rooms yet</h3>
+                    <p id="no_rooms_sub">Create your own room or join an existing one.</p>
+                    <a href="{{ path('app_room_create') }}" class="create-room-btn">+ Create Room</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- No result -->
+        <div id="no-result" style="display:none">
+            <h3 id="no_rooms_search">No rooms found</h3>
+            <p><span id="no_rooms_sub_search">No reading room matches</span>
+               "<span id="search-query"></span>"</p>
+        </div>
+    </div>
+</div>
+
+<!-- Join Popup -->
+<div id="joinPopup">
+    <div class="popup-box">
+        <div class="popup-header">
+            <h3 id="popupTitle">Join Room</h3>
+            <button class="popup-close" onclick="closePopup()">✕</button>
+        </div>
+        <p id="popupBook"></p>
+        <div class="input-group">
+            <input type="text" id="popupName" placeholder="Your name"/>
+            <small id="errorName">Please enter your name</small>
+        </div>
+        <div class="input-group">
+            <input type="email" id="popupEmail" placeholder="Your email"/>
+            <small id="errorEmail">Please enter a valid email</small>
+        </div>
+        <div class="popup-actions">
+            <button id="confirmJoin" onclick="confirmJoin()">Join</button>
+            <button id="cancelJoin" onclick="closePopup()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<!-- Success Message -->
+<div id="successMessage"><span id="successText"></span></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="{{ asset('js/notifications.js') }}"></script>
+    <script src="{{ asset('js/RSVP.js') }}"></script>
+    <script src="{{ asset('js/join.js') }}"></script>
+    <script src="{{ asset('js/ambiance.js') }}"></script>
+    
+    <script>
+    // Search functionality
+    document.querySelector(".search-bar")?.addEventListener("input", function () {
+        const query = this.value.trim().toLowerCase();
+        const cards = document.querySelectorAll(".room-card");
+        let found = 0;
+        cards.forEach(card => {
+            const title = card.querySelector("h3")?.textContent.toLowerCase() || '';
+            const author = card.querySelector(".room-author")?.textContent.toLowerCase() || '';
+            const show = query === "" || title.includes(query) || author.includes(query);
+            card.style.display = show ? "flex" : "none";
+            if (show) found++;
+        });
+        const noResult = document.getElementById("no-result");
+        if (noResult) {
+            noResult.style.display = found === 0 && query !== "" ? "flex" : "none";
+        }
+        const searchQuery = document.getElementById("search-query");
+        if (searchQuery) searchQuery.textContent = query;
+    });
+
+    // Tabs functionality
+    document.querySelectorAll(".nav-tab").forEach(tab => {
+        tab.addEventListener("click", function (e) {
+            e.preventDefault();
+            document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+            this.classList.add("active");
+            
+            const liveSection = document.getElementById("live-section");
+            const scheduledSection = document.getElementById("scheduled-section");
+            const myroomsSection = document.getElementById("myrooms-section");
+            
+            if (liveSection) liveSection.style.display = "none";
+            if (scheduledSection) scheduledSection.style.display = "none";
+            if (myroomsSection) myroomsSection.style.display = "none";
+            
+            if (this.id === "tab_live" && liveSection) {
+                liveSection.style.display = "block";
+            } else if (this.id === "tab_scheduled" && scheduledSection) {
+                scheduledSection.style.display = "block";
+            } else if (this.id === "tab_myrooms" && myroomsSection) {
+                myroomsSection.style.display = "flex";
+            } else if (this.id === "tab_discover") {
+                if (liveSection) liveSection.style.display = "block";
+                if (scheduledSection) scheduledSection.style.display = "block";
+            }
+        });
+    });
+
+    // Popup functions
+    window.closePopup = function() {
+        const popup = document.getElementById("joinPopup");
+        if (popup) popup.style.display = "none";
+    };
+
+    window.confirmJoin = function() {
+        const name = document.getElementById("popupName")?.value;
+        const email = document.getElementById("popupEmail")?.value;
+        
+        if (!name) {
+            const errorName = document.getElementById("errorName");
+            if (errorName) errorName.style.display = "block";
+            return;
+        }
+        if (!email || !email.includes('@')) {
+            const errorEmail = document.getElementById("errorEmail");
+            if (errorEmail) errorEmail.style.display = "block";
+            return;
+        }
+        
+        // Success
+        const successMsg = document.getElementById("successMessage");
+        const successText = document.getElementById("successText");
+        if (successText) successText.textContent = "Successfully joined the room!";
+        if (successMsg) {
+            successMsg.style.display = "block";
+            setTimeout(() => {
+                successMsg.style.display = "none";
+            }, 3000);
+        }
+        closePopup();
+    };
+
+    // Join buttons
+    document.querySelectorAll(".join-btn").forEach(btn => {
+        btn.addEventListener("click", function() {
+            const popup = document.getElementById("joinPopup");
+            if (popup) popup.style.display = "flex";
+        });
+    });
+    </script>
+{% endblock %}
