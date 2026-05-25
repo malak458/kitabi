@@ -1,0 +1,315 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Reading Rooms - KITABI{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('assets/css/reading-room.css') }}">
+{% endblock %}
+
+{% block body %}
+
+{# NAVBAR #}
+<nav id="mainNav">
+      <a href="#" class="logo">KITAB<span class="text_arb">كتاب</span></a>
+      <ul class="nav-links">
+        <li>
+          <a href="/projet_web/KITAB/pages/marketplace.php" id="nav_marketplace" class="active"
+            ><span class="material-icons">local_mall</span> Marketplace</a
+          >
+        </li>
+        <li>
+          <a href="/projet_web/KITAB//pages/messages.php" id="nav_messages"
+            ><span class="material-icons">chat_bubble</span> Messages</a
+          >
+        </li>
+        <li>
+          <a href="/projet_web/KITAB/pages/codeHTML.php" id="nav_exchanges"
+            ><span class="material-icons">swap_horiz</span> Exchanges</a
+          >
+        </li>
+        <li>
+          <a
+            href="/projet_web/KITAB/pages/fav.php"
+            id="nav_favorites"
+            ><span class="material-icons">favorite</span> Favorites</a
+          >
+        </li>
+        <li>
+          <a href="/projet_web/KITAB/pages/reading-rooms.php" id="nav_reading_rooms"
+            ><span class="material-icons">import_contacts</span> Reading
+            Rooms</a
+          >
+        </li>
+      </ul>
+
+      <div class="nav-right">
+        <a href="/projet_web/KITAB//pages/profile.php" id="nav_profile"
+          ><span class="material-icons">account_circle</span> Profile</a
+        >
+        <a href="logout.html" id="nav_logout"
+          ><span class="material-icons">logout</span>Log out</a
+        >
+
+        <div class="lang-switcher-nav">
+          <button class="lang-btn" id="btn-en">EN</button>
+          <button class="lang-btn" id="btn-fr">FR</button>
+          <button class="lang-btn" id="btn-ar">AR</button>
+        </div>
+      </div>
+    </nav>
+
+<div class="page-wrapper">
+
+    <div class="page-header">
+        <div class="page-header-text">
+            <h1 id="page_title">Reading Rooms</h1>
+            <h4 id="page_subtitle">Read together with the community</h4>
+        </div>
+        {# Lien dynamique vers la route de création de salon #}
+        <a href="{{ path('app_room_create') }}" class="create-room-btn">+ Create Room</a>
+    </div>
+
+    <div class="page-body">
+
+        <div class="stats-container">
+            <div class="stat-card live">
+                <div class="stat-info">
+                    <div class="stat-title" id="stat_live">Live Now</div>
+                    <div class="stat-number">{{ lives|length }}</div>
+                </div>
+                <div class="stat-icon">
+                    <img src="https://i.pinimg.com/736x/cf/ac/d5/cfacd53f5bc159e0c2c01b69f3de1771.jpg" alt="Live">
+                </div>
+            </div>
+
+            <div class="stat-card scheduled">
+                <div class="stat-info">
+                    <div class="stat-title" id="stat_scheduled">Scheduled</div>
+                    <div class="stat-number">{{ scheduled|length }}</div>
+                </div>
+                <div class="stat-icon">
+                    <img src="https://i.pinimg.com/1200x/ea/fb/8b/eafb8b1c4c949f9343740e590c5652c8.jpg" alt="Scheduled">
+                </div>
+            </div>
+
+            <div class="stat-card myrooms">
+                <div class="stat-info">
+                    <div class="stat-title" id="stat_myrooms">My Rooms</div>
+                    <div class="stat-number">0</div>
+                </div>
+                <div class="stat-icon">
+                    <img src="https://i.pinimg.com/1200x/c3/41/6e/c3416efade9f62b399498e657113ddf7.jpg" alt="My Rooms">
+                </div>
+            </div>
+
+            <div class="stat-card totalreaders">
+                <div class="stat-info">
+                    <div class="stat-title" id="stat_readers">Total Rooms</div>
+                    <div class="stat-number">{{ lives|length + scheduled|length }}</div>
+                </div>
+                <div class="stat-icon">
+                    <img src="https://i.pinimg.com/736x/7a/9c/51/7a9c5126a655aa763c4f7e830c03a2f5.jpg" alt="Total">
+                </div>
+            </div>
+        </div>
+
+        <div class="search-area">
+            <input type="text" class="search-bar" id="search_bar" placeholder="🔍 Search by book title or author…">
+        </div>
+
+        <div class="nav-tabs">
+            <a href="#" class="nav-tab active" id="tab_discover">Discover</a>
+            <a href="#" class="nav-tab" id="tab_live">Live now</a>
+            <a href="#" class="nav-tab" id="tab_scheduled">Scheduled</a>
+            <a href="#" class="nav-tab" id="tab_myrooms">My rooms</a>
+        </div>
+
+        <hr class="separator">
+
+        <div id="live-section">
+            <div class="section-label" id="section_live">Live Sessions</div>
+            <div class="rooms-container">
+                {% if lives is empty %}
+                    <p style="color:var(--muted)">No live sessions at the moment.</p>
+                {% else %}
+                    {% for room in lives %}
+                        <div class="room-card">
+                            <div class="room-image">
+                                {% if room.image starts with 'http' %}
+                                    {% set src = room.image %}
+                                {% else %}
+                                    {% set src = asset('uploads/rooms/' ~ (room.image ?? 'default-book.jpg')) %}
+                                {% endif %}
+                                <img src="{{ src }}" alt="{{ room.titre }}">
+                                <span class="badge live">LIVE</span>
+                                <span class="participants">0/{{ room.maxParticipants }}</span>
+                            </div>
+
+                            <div class="room-content">
+                                <div>
+                                    <h3>{{ room.titre }}</h3>
+                                    <p class="room-author">{{ room.auteur }}</p>
+                                </div>
+
+                                <div class="progress-container">
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" style="width:0%"></div>
+                                    </div>
+                                    <p class="progress-text">Page 0 of {{ room.totalPages }}</p>
+                                </div>
+
+                                <div class="tags">
+                                    {% if room.tags is not empty %}
+                                        {% for tag in room.tags|split(',') %}
+                                            <span class="tag">{{ tag|trim }}</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+
+                                <button class="room-action-btn join-btn btn_join">Join Now</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="scheduled-section">
+            <div class="section-label" style="margin-top:36px" id="section_upcoming">Upcoming Sessions</div>
+            <div class="rooms-container">
+                {% if scheduled is empty %}
+                    <p style="color:var(--muted)">No upcoming sessions.</p>
+                {% else %}
+                    {% for room in scheduled %}
+                        <div class="room-card">
+                            <div class="room-image">
+                                {% if room.image and 'http' in room.image %}
+                                    {% set src = room.image %}
+                                {% else %}
+                                    {% set src = asset('uploads/rooms/' ~ (room.image ?? 'default-book.jpg')) %}
+                                {% endif %}
+                                <img src="{{ src }}" alt="{{ room.titre }}">
+                                <span class="badge scheduled">Scheduled</span>
+                                <span class="participants">0/{{ room.maxParticipants }}</span>
+                            </div>
+
+                            <div class="room-content">
+                                <div>
+                                    <h3>{{ room.titre }}</h3>
+                                    <p class="room-author">{{ room.auteur }}</p>
+                                </div>
+
+                                <div class="progress-container">
+                                    <div class="progress-bar-bg">
+                                        <div class="progress-bar-fill" style="width:0%"></div>
+                                    </div>
+                                    <p class="progress-text">Page 0 of {{ room.totalPages }}</p>
+                                </div>
+
+                                <div class="tags">
+                                    {% if room.tags is not empty %}
+                                        {% for tag in room.tags|split(',') %}
+                                            <span class="tag">{{ tag|trim }}</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+
+                                <button class="room-action-btn rsvp-btn btn_rsvp">RSVP</button>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div id="myrooms-section" style="display:none">
+            <div class="myrooms-content">
+                <img src="https://i.pinimg.com/1200x/06/07/32/0607321cf97261adf09084370414347f.jpg" alt="No rooms" class="myrooms-image">
+                <div class="myrooms-text">
+                    <h3 id="no_rooms">No rooms yet</h3>
+                    <p id="no_rooms_sub">Create your own room or join an existing one.</p>
+                    <a href="{{ path('app_room_create') }}" class="create-room-btn">+ Create Room</a>
+                </div>
+            </div>
+        </div>
+
+        <div id="no-result" style="display:none">
+            <h3 id="no_rooms_search">No rooms found</h3>
+            <p><span id="no_rooms_sub_search">No reading room matches</span> "<span id="search-query"></span>"</p>
+        </div>
+
+    </div>
+</div>
+
+<div id="joinPopup">
+    <div class="popup-box">
+        <div class="popup-header">
+            <h3 id="popupTitle">Join Room</h3>
+            <button class="popup-close" onclick="closePopup()">✕</button>
+        </div>
+        <p id="popupBook"></p>
+        <div class="input-group">
+            <input type="text" id="popupName" placeholder="Your name">
+            <small id="errorName">Please enter your name</small>
+        </div>
+        <div class="input-group">
+            <input type="email" id="popupEmail" placeholder="Your email">
+            <small id="errorEmail">Please enter a valid email</small>
+        </div>
+        <div class="popup-actions">
+            <button id="confirmJoin" onclick="confirmJoin()">Join</button>
+            <button id="cancelJoin" onclick="closePopup()">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="successMessage"><span id="successText"></span></div>
+
+{% endblock %}
+
+{% block javascripts %}
+{# Chemins d'assets corrigés pour Symfony #}
+<script src="{{ asset('assets/js/notifications.js') }}"></script>
+<script src="{{ asset('assets/js/RSVP.js') }}"></script>
+<script src="{{ asset('assets/js/join.js') }}"></script>
+<script src="{{ asset('assets/js/fontsize.js') }}"></script>
+<script src="{{ asset('assets/js/fullscreen.js') }}"></script>
+<script src="{{ asset('assets/js/ambiance.js') }}"></script>
+
+<script>
+    // Votre code JavaScript pour la recherche et les onglets reste inchangé ici...
+    document.querySelector(".search-bar").addEventListener("input", function () {
+        const query = this.value.trim().toLowerCase();
+        const cards = document.querySelectorAll(".room-card");
+        let found = 0;
+        cards.forEach(card => {
+            const title = card.querySelector("h3").textContent.toLowerCase();
+            const author = card.querySelector(".room-author").textContent.toLowerCase();
+            const show = query === "" || title.includes(query) || author.includes(query);
+            card.style.display = show ? "flex" : "none";
+            if (show) found++;
+        });
+        document.getElementById("no-result").style.display = found === 0 && query !== "" ? "flex" : "none";
+        document.getElementById("search-query").textContent = query;
+    });
+
+    document.querySelectorAll(".nav-tab").forEach(tab => {
+        tab.addEventListener("click", function (e) {
+            e.preventDefault();
+            document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+            this.classList.add("active");
+            document.getElementById("live-section").style.display = "none";
+            document.getElementById("scheduled-section").style.display = "none";
+            document.getElementById("myrooms-section").style.display = "none";
+
+            if (this.id === "tab_live") document.getElementById("live-section").style.display = "block";
+            if (this.id === "tab_scheduled") document.getElementById("scheduled-section").style.display = "block";
+            if (this.id === "tab_myrooms") document.getElementById("myrooms-section").style.display = "flex";
+            if (this.id === "tab_discover") {
+                document.getElementById("live-section").style.display = "block";
+                document.getElementById("scheduled-section").style.display = "block";
+            }
+        });
+    });
+</script>
+{% endblock %}

@@ -16,28 +16,18 @@ class RoomRepository extends ServiceEntityRepository
         parent::__construct($registry, Room::class);
     }
 
-    //    /**
-    //     * @return Room[] Returns an array of Room objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('r.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Room
-    //    {
-    //        return $this->createQueryBuilder('r')
-    //            ->andWhere('r.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Récupère les rooms par type en chargeant directement le host associé
+     * @return Room[]
+     */
+    public function findByTypeWithHost(string $type): array
+    {
+        return $this->createQueryBuilder('r')
+            ->leftJoin('r.host', 'h') // On fait la jointure avec l'entité User (host)
+            ->addSelect('h')          // On force la sélection des données du host
+            ->where('r.type = :type')
+            ->setParameter('type', $type)
+            ->getQuery()
+            ->getResult();
+    }
 }

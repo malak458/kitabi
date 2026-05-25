@@ -1,0 +1,166 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+<link rel="stylesheet" href="{{ asset('assets/css/create-room.css') }}">
+
+<div class="content">
+
+    <div class="page-header">
+        <h1>Create a Reading Room</h1>
+        <p>Set up a new space to read and discuss with the community</p>
+    </div>
+
+    <div class="form-wrapper">
+        <div class="card">
+
+            <h2 class="card-title">Room Details</h2>
+
+            {% if errors is defined and errors is not empty %}
+                <div class="alert-errors">
+                    {% for e in errors %}
+                        <p>⚠️ {{ e }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+
+            <!-- IMAGE (custom UI + Symfony hidden input) -->
+            <div class="field">
+                <label>Book cover</label>
+
+                <label class="upload-btn" for="imageInput">
+                    <span class="material-icons">upload_file</span>
+                    <span id="upload-label">Choose a cover image</span>
+                </label>
+
+                {{ form_widget(form.image, {
+                    'attr': {
+                        'id': 'imageInput',
+                        'style': 'display:none',
+                        'onchange': "document.getElementById('upload-label').textContent = this.files[0]?.name || 'Choose a cover image'"
+                    }
+                }) }}
+
+                {{ form_errors(form.image) }}
+            </div>
+
+            <!-- TITLE -->
+            <div class="field">
+                <label>Book title</label>
+                {{ form_widget(form.titre, {'attr': {'placeholder': 'e.g. The Brothers Karamazov'}}) }}
+                {{ form_errors(form.titre) }}
+            </div>
+
+            <!-- AUTHOR + PAGES -->
+            <div class="field-row">
+
+                <div class="field">
+                    <label>Author</label>
+                    {{ form_widget(form.auteur, {'attr': {'placeholder': 'e.g. Fyodor Dostoevsky'}}) }}
+                </div>
+
+                <div class="field">
+                    <label>Total pages</label>
+                    {{ form_widget(form.total_pages, {'attr': {'min': 1}}) }}
+                </div>
+
+            </div>
+
+            <!-- TYPE (custom UI + hidden Symfony field) -->
+            <div class="field">
+                <label>Room type</label>
+
+                <div class="type-toggle">
+                    <button type="button" class="type-opt selected"
+                            onclick="setType('live', this)">
+                        Live Session
+                    </button>
+
+                    <button type="button" class="type-opt"
+                            onclick="setType('scheduled', this)">
+                        Scheduled
+                    </button>
+                </div>
+
+                {{ form_widget(form.type, {'attr': {'id': 'typeInput'}}) }}
+            </div>
+
+            <!-- MAX + GENRE -->
+            <div class="field-row">
+
+                <div class="field">
+                    <label>Max participants</label>
+                    {{ form_widget(form.max_participants, {'attr': {'min': 2, 'max': 50}}) }}
+                </div>
+
+                <div class="field">
+                    <label>Genre</label>
+                    {{ form_widget(form.genre) }}
+                </div>
+
+            </div>
+
+            <!-- TAGS (custom JS + hidden field Symfony) -->
+            <div class="field">
+                <label>Tags</label>
+
+                <div class="tags-selector">
+                    {% set tags = ['Classic','Sci-Fi','Fantasy','Romance','Dystopian','Philosophy','Adventure','Drama','Fiction'] %}
+
+                    {% for tag in tags %}
+                        <button type="button" class="tag-opt" onclick="toggleTag(this)">
+                            {{ tag }}
+                        </button>
+                    {% endfor %}
+                </div>
+
+                {{ form_widget(form.tags, {'attr': {'id': 'tagsInput'}}) }}
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="field">
+                <label>Description</label>
+                {{ form_widget(form.description) }}
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="card-footer">
+                <a href="{{ path('app_rooms') }}" class="btn-cancel">Cancel</a>
+                <button type="submit" class="btn-create">Create Room</button>
+            </div>
+
+            {{ form_end(form) }}
+
+        </div>
+    </div>
+</div>
+
+<script>
+function setType(val, btn) {
+    document.getElementById('typeInput').value = val;
+
+    document.querySelectorAll('.type-opt')
+        .forEach(b => b.classList.remove('selected'));
+
+    btn.classList.add('selected');
+}
+
+function toggleTag(btn) {
+    btn.classList.toggle('selected');
+
+    const container = document.getElementById('tagsInput');
+    container.value = '';
+
+    let values = [];
+
+    document.querySelectorAll('.tag-opt.selected').forEach(b => {
+        values.push(b.textContent.trim());
+    });
+
+    container.value = values.join(',');
+}
+</script>
+
+{% endblock %}
