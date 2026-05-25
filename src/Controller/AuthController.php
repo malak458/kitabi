@@ -90,4 +90,14 @@ class AuthController extends AbstractController
             'form' => $form->createView()
         ]);
     }
+
+    #[Route('/logout', name: 'app_logout')]
+    public function logout(SessionInterface $session)
+    {
+        // 🔴 détruit toute la session
+        $session->invalidate();
+
+        // 🔵 redirection vers login
+        return $this->redirectToRoute('app_login');
+    }
 }
