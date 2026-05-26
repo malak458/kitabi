@@ -15,29 +15,17 @@ class ExchangeRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Exchange::class);
     }
-
-    //    /**
-    //     * @return Exchange[] Returns an array of Exchange objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('e.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Exchange
-    //    {
-    //        return $this->createQueryBuilder('e')
-    //            ->andWhere('e.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findActiveExchanges(User $user): array
+{
+    return $this->createQueryBuilder('e')
+        ->where('(e.userRequesting = :user OR e.userOffering = :user)')
+        ->andWhere('e.status IN (:statuses)')
+        ->setParameters([
+            'user' => $user,
+            'statuses' => ['accepted', 'in_progress']
+        ])
+        ->orderBy('e.createdAt', 'DESC')
+        ->getQuery()
+        ->getResult();
+}
 }
