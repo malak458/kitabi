@@ -1,0 +1,348 @@
+/* ============================================================
+   profile.css — Kitabi Profile Page
+   Cohérent avec les variables CSS de base.twig
+   ============================================================ */
+
+/* ── Reset & base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    background-color: var(--sand);
+    color: var(--ink);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+}
+
+/* ── Fond décoratif pleine page ── */
+.profile-wrapper {
+    min-height: calc(100vh - var(--nav-h));
+    padding: 56px 20px 80px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Motif de fond arabesque subtil */
+.profile-wrapper::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        radial-gradient(ellipse 80% 60% at 15% 20%, rgba(200, 134, 10, 0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 85% 75%, rgba(14, 107, 94, 0.06) 0%, transparent 60%),
+        url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8860a' fill-opacity='0.04'%3E%3Cpath d='M30 0 L60 30 L30 60 L0 30 Z M30 10 L50 30 L30 50 L10 30 Z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    background-size: auto, auto, 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* ── Carte centrale ── */
+.profile-card {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 780px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow:
+        0 2px 8px rgba(26, 18, 8, 0.06),
+        0 12px 40px rgba(26, 18, 8, 0.08);
+    overflow: hidden;
+    animation: cardIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes cardIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── En-tête profil ── */
+.profile-header {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 56px 40px 40px;
+    text-align: center;
+    background:
+        linear-gradient(160deg, rgba(200, 134, 10, 0.08) 0%, rgba(245, 240, 232, 0) 60%);
+}
+
+/* Bandeau décoratif doré en haut */
+.profile-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--rust), var(--amber), var(--amber-mid), var(--teal));
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+/* ── Avatar ── */
+.profile-avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--white);
+    box-shadow:
+        0 0 0 3px var(--amber),
+        0 6px 24px rgba(200, 134, 10, 0.25);
+    margin-bottom: 4px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.04);
+    box-shadow:
+        0 0 0 3px var(--amber-mid),
+        0 10px 32px rgba(200, 134, 10, 0.35);
+}
+
+/* ── Nom & email ── */
+.profile-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+}
+
+.profile-header .muted {
+    font-size: 0.88rem;
+    color: var(--muted);
+    letter-spacing: 0.01em;
+}
+
+/* ── Badge rôle (optionnel, utile si ajouté plus tard) ── */
+.profile-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--teal-light);
+    color: var(--teal-dark);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+/* ── Bouton Edit ── */
+.btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 10px 28px;
+    background: linear-gradient(135deg, var(--amber), var(--rust));
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    box-shadow: 0 4px 16px rgba(200, 134, 10, 0.28);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(200, 134, 10, 0.38);
+    filter: brightness(1.08);
+    color: var(--white);
+    text-decoration: none;
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+/* ── Séparateur ── */
+hr {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 0;
+}
+
+/* ── Section Bio ── */
+.bio-section {
+    padding: 32px 40px 40px;
+}
+
+.bio-section h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Ligne décorative à gauche du titre de section */
+.bio-section h4::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 18px;
+    background: linear-gradient(to bottom, var(--amber), var(--rust));
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.bio-section p {
+    font-size: 0.97rem;
+    line-height: 1.75;
+    color: var(--ink);
+    opacity: 0.82;
+}
+
+.bio-section p:empty::after,
+.bio-section p:has(+ .empty)::after {
+    content: 'Aucune bio disponible';
+    color: var(--muted);
+    font-style: italic;
+}
+
+/* ── Sections additionnelles (stats, livres, etc.) ── */
+.profile-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+}
+
+.stat-item {
+    background: var(--white);
+    padding: 24px 16px;
+    text-align: center;
+    transition: background 0.2s;
+}
+
+.stat-item:hover {
+    background: var(--amber-light);
+}
+
+.stat-item strong {
+    display: block;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--amber);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.stat-item span {
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 500;
+}
+
+/* ── Grille livres / rooms ── */
+.profile-section {
+    padding: 28px 40px 36px;
+    border-top: 1px solid var(--border);
+}
+
+.profile-section h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.profile-section h4::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 18px;
+    background: linear-gradient(to bottom, var(--teal), var(--teal-dark));
+    border-radius: 2px;
+    flex-shrink: 0;
+}
+
+.book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 14px;
+}
+
+.book-thumb {
+    aspect-ratio: 2/3;
+    border-radius: var(--radius-sm);
+    background: var(--amber-light);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
+}
+
+.book-thumb:hover {
+    transform: translateY(-4px) rotate(1deg);
+    box-shadow: 0 8px 24px rgba(26, 18, 8, 0.14);
+}
+
+.book-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+    .profile-wrapper {
+        padding: 24px 12px 60px;
+    }
+
+    .profile-header {
+        padding: 44px 24px 32px;
+    }
+
+    .profile-header h2 {
+        font-size: 1.55rem;
+    }
+
+    .bio-section,
+    .profile-section {
+        padding: 24px 24px 32px;
+    }
+
+    .profile-stats {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .stat-item strong {
+        font-size: 1.3rem;
+    }
+
+    .profile-avatar {
+        width: 90px;
+        height: 90px;
+    }
+}
+
+@media (max-width: 400px) {
+    .profile-stats {
+        grid-template-columns: 1fr;
+    }
+}

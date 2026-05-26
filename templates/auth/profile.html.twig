@@ -2,24 +2,41 @@
 
 {% block title %}Mon Profil{% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
+{% endblock %}
+
 {% block body %}
 
-    <div class="container mt-5">
+    <div class="profile-wrapper">
 
-        <div class="card p-4">
+        <div class="profile-card">
 
-            <h2>Mon Profil</h2>
+            <div class="profile-header">
 
-            <p><strong>Nom:</strong> {{ user.nom }}</p>
-            <p><strong>Prénom:</strong> {{ user.prenom }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
+                {% if user.image %}
+                    <img src="{{ asset('uploads/profiles/' ~ user.image) }}"
+                         class="profile-avatar">
+                {% else %}
+                    <img src="https://ui-avatars.com/api/?name={{ user.nom }}+{{ user.prenom }}&background=c8860a&color=fff"
+                         class="profile-avatar">
+                {% endif %}
 
-            <p><strong>Bio:</strong></p>
-            <p>{{ user.bio ?: 'Aucune bio' }}</p>
+                <h2>{{ user.prenom }} {{ user.nom }}</h2>
+                <p class="muted">{{ user.email }}</p>
 
-            <a href="{{ path('app_profile_edit') }}" class="btn btn-primary">
-                Edit Profile
-            </a>
+                <a href="{{ path('app_profile_edit') }}" class="btn-primary">
+                    Edit Profile
+                </a>
+
+            </div>
+
+            <hr>
+
+            <div class="bio-section">
+                <h4>Bio</h4>
+                <p>{{ user.bio ?: 'Aucune bio disponible' }}</p>
+            </div>
 
         </div>
 
