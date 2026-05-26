@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon Profil{% endblock %}
+{% block title %}{{ user.prenom }} {{ user.nom }} — Kitabi{% endblock %}
 
 {% block stylesheets %}
     <link rel="stylesheet" href="{{ asset('css/profile.css') }}">
@@ -8,36 +8,46 @@
 
 {% block body %}
 
-    <div class="profile-wrapper">
+    <div class="profile-page">
 
-        <div class="profile-card">
+        {# ── Bandeau hero ── #}
+        <div class="profile-hero">
+            <div class="hero-bg"></div>
+            <div class="hero-content">
 
-            <div class="profile-header">
+                <div class="hero-avatar-wrap">
+                    {% if user.image %}
+                        <img src="{{ asset('uploads/profiles/' ~ user.image) }}"
+                             class="hero-avatar" alt="{{ user.prenom }}">
+                    {% else %}
+                        <img src="https://ui-avatars.com/api/?name={{ user.prenom }}+{{ user.nom }}&background=c8860a&color=fff&size=240&bold=true"
+                             class="hero-avatar" alt="{{ user.prenom }}">
+                    {% endif %}
+                </div>
 
-                {% if user.image %}
-                    <img src="{{ asset('uploads/profiles/' ~ user.image) }}"
-                         class="profile-avatar">
-                {% else %}
-                    <img src="https://ui-avatars.com/api/?name={{ user.nom }}+{{ user.prenom }}&background=c8860a&color=fff"
-                         class="profile-avatar">
-                {% endif %}
-
-                <h2>{{ user.prenom }} {{ user.nom }}</h2>
-                <p class="muted">{{ user.email }}</p>
-
-                <a href="{{ path('app_profile_edit') }}" class="btn-primary">
-                    Edit Profile
-                </a>
+                <div class="hero-info">
+                    <h1 class="hero-name">
+                        {{ user.prenom }} <span>{{ user.nom }}</span>
+                    </h1>
+                    <a href="{{ path('app_profile_edit') }}" class="btn-edit">
+                        <span class="material-icons">edit</span> Modifier le profil
+                    </a>
+                </div>
 
             </div>
+        </div>
 
-            <hr>
-
-            <div class="bio-section">
-                <h4>Bio</h4>
-                <p>{{ user.bio ?: 'Aucune bio disponible' }}</p>
-            </div>
-
+        {# ── Carte bio ── #}
+        <div class="profile-body">
+            <section class="bio-card">
+                <div class="bio-card__header">
+                    <span class="material-icons">auto_stories</span>
+                    <h2>Bio</h2>
+                </div>
+                <p class="bio-card__text">
+                    {{ user.bio ?: 'Aucune bio disponible pour le moment.' }}
+                </p>
+            </section>
         </div>
 
     </div>
