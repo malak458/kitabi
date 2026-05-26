@@ -15,17 +15,69 @@ class ExchangeRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Exchange::class);
     }
-    public function findActiveExchanges(User $user): array
+    //chercher les echanges acceptés
+    public function findAcceptedExchanges(User $user): array
 {
     return $this->createQueryBuilder('e')
         ->where('(e.userRequesting = :user OR e.userOffering = :user)')
         ->andWhere('e.status IN (:statuses)')
         ->setParameters([
             'user' => $user,
-            'statuses' => ['accepted', 'in_progress']
+            'statuses' => 'accepted'
         ])
         ->orderBy('e.createdAt', 'DESC')
         ->getQuery()
         ->getResult();
 }
+//chercher les echanges en attente
+    public function findPendingRequests(User $user): array{
+        return $this->createQueryBuilder('e')
+                ->where('e.userOffering = :user')
+                ->andWhere('e.status = :status')
+                ->setParameters([
+                    'user' => $user,
+                    'status' => 'pending'
+                    ])
+                ->orderBy('e.createdAt','DESC')
+                ->getQuery()
+                ->getResult();
+    }
+    // rechercher les echanges complets
+    public function findCompletedHistory(User $user){
+        return $this->createQueryBuilder('e')
+                    ->where('e.userRequesting = :user OR e.userOffering= :user')
+                    ->andWhere('e.status = :status')
+                    ->setParameters([
+                        'user' => $user,
+                        'status' => 'completed'
+                    ])
+                    ->orderBy('e.createdAt','DESC')
+                    ->getQuery()
+                    ->getResult();
+    }
+     public function findRefusedHistory(User $user){
+        return $this->createQueryBuilder('e')
+                    ->where('e.userRequesting = :user OR e.userOffering= :user')
+                    ->andWhere('e.status = :status')
+                    ->setParameters([
+                        'user' => $user,
+                        'status' => 'refused'
+                    ])
+                    ->orderBy('e.createdAt','DESC')
+                    ->getQuery()
+                    ->getResult();
+    }
+    public function findInProgressHistory(User $user){
+        return $this->createQueryBuilder('e')
+                    ->where('e.userRequesting = :user OR e.userOffering= :user')
+                    ->andWhere('e.status = :status')
+                    ->setParameters([
+                        'user' => $user,
+                        'status' => 'in_progress'
+                    ])
+                    ->orderBy('e.createdAt','DESC')
+                    ->getQuery()
+                    ->getResult();
+    }
 }
+
