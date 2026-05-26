@@ -1,1 +1,28 @@
-<h1>welcome {{ app.user.prenom }}</h1>
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+
+    <div class="container mt-5">
+
+        <div class="card p-4">
+
+            <h2>Mon Profil</h2>
+
+            <p><strong>Nom:</strong> {{ user.nom }}</p>
+            <p><strong>Prénom:</strong> {{ user.prenom }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+
+            <p><strong>Bio:</strong></p>
+            <p>{{ user.bio ?: 'Aucune bio' }}</p>
+
+            <a href="{{ path('app_profile_edit') }}" class="btn btn-primary">
+                Edit Profile
+            </a>
+
+        </div>
+
+    </div>
+
+{% endblock %}
