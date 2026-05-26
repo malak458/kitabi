@@ -56,18 +56,18 @@
     </a>
 
     <ul class="nav-links">
-        <li><a href="#><span class="material-icons">local_mall</span> Marketplace</a></li>
+        <li><a href="#"><span class="material-icons">local_mall</span> Marketplace</a></li>
         <li><a href="#"><span class="material-icons">chat_bubble</span> Messages</a></li>
         <li><a href="#"><span class="material-icons">swap_horiz</span> Exchanges</a></li>
         <li><a href="#"><span class="material-icons">favorite</span> Favorites</a></li>
-        <li><a href="# class="active"><span class="material-icons">import_contacts</span> Reading Rooms</a></li>
+        <li><a href="#" class="active"><span class="material-icons">import_contacts</span> Reading Rooms</a></li>
     </ul>
 
     <div class="nav-right">
         {% if app.user %}
             <a href="#" id="nav_profile">
-                <span class="material-icons">account_circle</span> 
-                {{ app.user.firstName ?: 'Profile' }}
+                <span class="material-icons">account_circle</span>
+                {{ app.user.prenom ?: 'Profile' }}
             </a>
             <a href="#" id="nav_logout">
                 <span class="material-icons">logout</span> Logout
