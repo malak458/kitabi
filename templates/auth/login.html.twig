@@ -1,37 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
 
-    <div class="container mt-5" style="max-width: 450px;">
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+</head>
 
-        <h2 class="mb-4">Login</h2>
+<body>
 
-        <form method="post" action="{{ path('app_login') }}">
+<div class="container mt-5" style="max-width: 450px;">
 
-            <div class="mb-3">
-                <label>Email</label>
-                <input type="email"
-                       name="email"
-                       value="{{ last_username|default('') }}"
-                       class="form-control"
-                       required>
-            </div>
+    <h2 class="mb-4">Login</h2>
 
-            <div class="mb-3">
-                <label>Password</label>
-                <input type="password"
-                       name="password"
-                       class="form-control"
-                       required>
-            </div>
+    <form method="post" action="{{ path('app_login') }}">
 
-            <input type="hidden"
-                   name="_csrf_token"
-                   value="{{ csrf_token('authenticate') }}">
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="email"
+                   name="email"
+                   value="{{ last_username|default('') }}"
+                   class="form-control"
+                   required>
+        </div>
 
-            <button class="btn btn-primary w-100">
-                Login
-            </button>
+        <div class="mb-3">
+            <label>Password</label>
+            <input type="password"
+                   name="password"
+                   class="form-control"
+                   required>
+        </div>
 
-        </form>
+        <input type="hidden"
+               name="_csrf_token"
+               value="{{ csrf_token('authenticate') }}">
 
-    </div>
+        <button class="btn btn-primary w-100">
+            Login
+        </button>
 
+    </form>
 
+</div>
+
+<script src="{{ asset('js/login.js') }}"></script>
+
+</body>
+</html>
