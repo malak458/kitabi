@@ -35,9 +35,9 @@ class Book
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
-#[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'books')]
-#[ORM\JoinColumn(nullable: true)] // <-- IMPORTANT: 'true' permet de créer le livre sans utilisateur
-private ?User $user = null;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'books')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $user = null;
 
 /**
  * @var Collection<int, User>

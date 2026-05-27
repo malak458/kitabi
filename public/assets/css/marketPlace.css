@@ -1312,3 +1312,191 @@ nav a {
     gap: 10px;
   }
 }
+/* ===== REVIEWS SECTION ===== */
+.kb-reviews-section {
+  padding: 3rem 0;
+  margin-top: 2.5rem;
+  border-top: 1px solid #EDD9A8;
+}
+
+.kb-reviews-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.kb-label {
+  font-size: 12px;
+  color: #C9952A;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin: 0 0 8px;
+}
+
+.kb-reviews-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #2C1A0E;
+  margin: 0;
+  line-height: 1.3;
+}
+.kb-reviews-title span { color: #C9952A; }
+
+.kb-avg-block { text-align: right; }
+.kb-avg-num   { font-size: 36px; font-weight: 700; color: #2C1A0E; line-height: 1; }
+.kb-avg-stars { color: #C9952A; font-size: 20px; letter-spacing: 3px; }
+.kb-avg-count { font-size: 12px; color: #9C7D52; margin-top: 4px; }
+
+/* Grille avis */
+.kb-reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-bottom: 2.5rem;
+}
+
+.kb-review-card {
+  background: #FDF8F0;
+  border: 1px solid #EDD9A8;
+  border-radius: 14px;
+  padding: 20px;
+  position: relative;
+}
+.kb-review-card::before {
+  content: '"';
+  position: absolute;
+  top: 12px; right: 16px;
+  font-size: 52px;
+  color: #EDD9A8;
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+.kb-review-stars  { color: #C9952A; font-size: 15px; margin-bottom: 10px; }
+.kb-review-text   { font-size: 14px; color: #4A3018; line-height: 1.65; margin: 0 0 16px; }
+.kb-review-user   { display: flex; align-items: center; gap: 10px; }
+.kb-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: #F5DFA0;
+  color: #7A4E12;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 600;
+  flex-shrink: 0;
+}
+.kb-review-name { font-size: 13px; font-weight: 600; color: #2C1A0E; margin: 0; }
+.kb-review-date { font-size: 11px; color: #9C7D52; margin: 2px 0 0; }
+
+.kb-no-review {
+  text-align: center;
+  color: #9C7D52;
+  font-size: 14px;
+  margin: 1rem 0 2rem;
+}
+
+/* Flash messages */
+.kb-flash {
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  font-size: 14px;
+}
+.kb-flash--success { background: #D4EDDA; color: #2D6A4F; border: 1px solid #A8D5B5; }
+.kb-flash--error   { background: #FADBD8; color: #922B21; border: 1px solid #F1948A; }
+
+/* Formulaire avis */
+.kb-form-wrapper {
+  background: #FDF8F0;
+  border: 1px solid #EDD9A8;
+  border-radius: 16px;
+  padding: 28px 32px;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.kb-form-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2C1A0E;
+  margin: 0 0 1.2rem;
+}
+
+/* Étoiles picker */
+.kb-star-picker {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 1rem;
+}
+.kb-star {
+  font-size: 28px;
+  color: #C9952A;
+  cursor: pointer;
+  transition: transform 0.1s;
+  user-select: none;
+}
+.kb-star:hover { transform: scale(1.2); }
+
+.kb-textarea {
+  width: 100%;
+  border: 1px solid #EDD9A8;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  color: #2C1A0E;
+  background: #fff;
+  resize: vertical;
+  box-sizing: border-box;
+  margin-bottom: 1rem;
+  font-family: inherit;
+}
+.kb-textarea:focus {
+  outline: none;
+  border-color: #C9952A;
+  box-shadow: 0 0 0 3px rgba(201,149,42,0.15);
+}
+
+.kb-submit-btn {
+  background: #2C1A0E;
+  color: #F5DFA0;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.kb-submit-btn:hover { background: #C9952A; color: #fff; }
+
+/* Bloc non connecté */
+.kb-login-prompt {
+  text-align: center;
+  padding: 1rem 0;
+}
+.kb-lock-icon { font-size: 28px; display: block; margin-bottom: 10px; }
+.kb-login-prompt p { color: #4A3018; font-size: 14px; margin: 0 0 16px; }
+
+.kb-login-link, .kb-register-link {
+  display: inline-block;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  margin: 0 6px;
+  transition: background 0.2s;
+}
+.kb-login-link    { background: #2C1A0E; color: #F5DFA0; }
+.kb-login-link:hover { background: #C9952A; }
+.kb-register-link { border: 1px solid #C9952A; color: #C9952A; background: transparent; }
+.kb-register-link:hover { background: #FDF8F0; }
+.kb-reviews-section {
+  background: #E3CD8B;
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  margin: 2.5rem 0 3rem;
+  border-top: none;  /* retire l'ancienne border-top */
+}

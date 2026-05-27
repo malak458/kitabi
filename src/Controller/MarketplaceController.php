@@ -2,8 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Review;
 use App\Repository\BookRepository;
 use App\Repository\FavoriteRepository;
+use App\Repository\ReviewRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +19,8 @@ class MarketplaceController extends AbstractController
     public function index(
         Request $request,
         BookRepository $bookRepository,
-        FavoriteRepository $favoriteRepository
+        FavoriteRepository $favoriteRepository,
+        ReviewRepository $reviewRepository
     ): Response {
 
         $search    = $request->query->get('search', '');
@@ -25,13 +29,10 @@ class MarketplaceController extends AbstractController
         $sort      = $request->query->get('sort', 'newest');
 
         $books = $bookRepository->findFilteredQuery(
-            $search,
-            $genre,
-            $condition,
-            $sort
+            $search, $genre, $condition, $sort
         )->getQuery()->getResult();
 
-        // IDs des livres en favoris pour l'utilisateur connecté
+        // FAVORIS
         $favoriteBookIds = [];
         if ($this->getUser()) {
             $favorites = $favoriteRepository->findByUserId($this->getUser()->getId());
@@ -44,6 +45,11 @@ class MarketplaceController extends AbstractController
             'noResult'        => count($books) === 0,
             'favoriteBookIds' => $favoriteBookIds,
 
+            // REVIEWS
+            'reviews'       => $reviewRepository->findLatest(6),
+            'reviewCount'   => $reviewRepository->count([]),
+            'averageRating' => $reviewRepository->getAverageRating(),
+
             'filters' => [
                 'search'    => $search,
                 'genre'     => $genre,
@@ -52,22 +58,12 @@ class MarketplaceController extends AbstractController
             ],
 
             'genres' => [
-                'Fiction',
-                'Fantasy',
-                'Romance',
-                'Mystery',
-                'Thriller',
-                'History',
-                'Biography',
-                'Science Fiction',
-                'Classic Literature',
+                'Fiction','Fantasy','Romance','Mystery','Thriller',
+                'History','Biography','Science Fiction','Classic Literature'
             ],
 
             'conditions' => [
-                'Like new',
-                'Good',
-                'Fair',
-                'Acceptable',
+                'Like new','Good','Fair','Acceptable'
             ],
 
             'sortOptions' => [
@@ -79,9 +75,42 @@ class MarketplaceController extends AbstractController
         ]);
     }
 
+    #[Route('/marketplace/review', name: 'app_marketplace_review', methods: ['POST'])]
+    public function submitReview(
+        Request $request,
+        EntityManagerInterface $em
+    ): Response {
+
+        if (!$this->getUser()) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $content = trim($request->request->get('content', ''));
+        $rating  = (int) $request->request->get('rating', 0);
+
+        if ($content !== '' && $rating >= 1 && $rating <= 5) {
+            $review = new Review();
+            $review->setContent($content);
+            $review->setRating($rating);
+            $review->setUser($this->getUser());
+
+            $em->persist($review);
+            $em->flush();
+
+            $this->addFlash('success', 'Merci pour votre avis !');
+        } else {
+            $this->addFlash('error', 'Veuillez remplir tous les champs.');
+        }
+
+        return $this->redirectToRoute('app_marketplace');
+    }
+
     #[Route('/marketplace/live-search', name: 'app_marketplace_live_search')]
-    public function liveSearch(Request $request, BookRepository $bookRepository): JsonResponse
-    {
+    public function liveSearch(
+        Request $request,
+        BookRepository $bookRepository
+    ): JsonResponse {
+
         $q = $request->query->get('q', '');
 
         if (strlen($q) < 2) {
