@@ -1,37 +1,50 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
 
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+</head>
 
-{% block body %}
-    <div class="login-container">
+<body>
 
-        <div class="login-card">
+<div class="container mt-5" style="max-width: 450px;">
 
-            <h2 class="title">Welcome Back 👋</h2>
-            <p class="subtitle">Login to your account</p>
+    <h2 class="mb-4">Login</h2>
 
-            {{ form_start(form, {'attr': {'class': 'login-form'}}) }}
+    <form method="post" action="{{ path('app_login') }}">
 
-            <div class="input-group">
-                {{ form_widget(form.email, {'attr': {'class': 'input', 'placeholder': 'Email'}}) }}
-            </div>
-
-            <div class="input-group password-group">
-                {{ form_widget(form.password, {'attr': {'class': 'input', 'placeholder': 'Password'}}) }}
-                <span class="toggle-password" onclick="togglePassword()">👁️</span>
-            </div>
-
-            <button class="btn-login">Sign In</button>
-
-            {{ form_end(form) }}
-            <p class="register-link">
-                Tu n’as pas de compte ?
-                <a href="{{ path('app_register') }}">S’inscrire</a>
-            </p>
-
+        <div class="mb-3">
+            <label>Email</label>
+            <input type="email"
+                   name="email"
+                   value="{{ last_username|default('') }}"
+                   class="form-control"
+                   required>
         </div>
 
+        <div class="mb-3">
+            <label>Password</label>
+            <input type="password"
+                   name="password"
+                   class="form-control"
+                   required>
+        </div>
 
-    </div>
+        <input type="hidden"
+               name="_csrf_token"
+               value="{{ csrf_token('authenticate') }}">
 
-    <script src="{{ asset('js/login.js') }}"></script>
-    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
-{% endblock %}
+        <button class="btn btn-primary w-100">
+            Login
+        </button>
+
+    </form>
+
+</div>
+
+<script src="{{ asset('js/login.js') }}"></script>
+
+</body>
+</html>

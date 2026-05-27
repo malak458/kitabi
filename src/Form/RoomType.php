@@ -68,24 +68,7 @@ class RoomType extends AbstractType
                 'label' => 'Description (optional)',
                 'attr' => ['rows' => 4, 'placeholder' => 'What will you discuss in this reading room?']
             ])
-            ->add('tags', ChoiceType::class, [
-                'choices' => [
-                    'Classic' => 'Classic',
-                    'Sci-Fi' => 'Sci-Fi',
-                    'Fantasy' => 'Fantasy',
-                    'Romance' => 'Romance',
-                    'Dystopian' => 'Dystopian',
-                    'Philosophy' => 'Philosophy',
-                    'Adventure' => 'Adventure',
-                    'Drama' => 'Drama',
-                    'Fiction' => 'Fiction',
-                ],
-                'mapped' => false,
-                'required' => false,
-                'multiple' => true,
-                'expanded' => true,
-                'label' => 'Tags'
-            ])
+            
             ->add('imageFile', FileType::class, [
                 'mapped' => false,
                 'required' => false,

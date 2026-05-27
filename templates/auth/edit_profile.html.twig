@@ -1,0 +1,557 @@
+{# =============================================================
+   templates/auth/edit_profile.html.twig
+   ============================================================= #}
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap');
+
+        /* ── Palette ── */
+        :root {
+            --ink:    #1a1a2e;
+            --paper:  #f7f4ef;
+            --accent: #c0392b;
+            --muted:  #8a8070;
+            --border: #e2ddd5;
+            --white:  #ffffff;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        body {
+            background: var(--paper);
+            color: var(--ink);
+            font-family: 'DM Sans', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        /* =============================================================
+           LAYOUT PLEINE PAGE  —  2 colonnes
+           gauche : sidebar info utilisateur
+           droite : formulaire
+           ============================================================= */
+        .ep-page {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            grid-template-rows: auto 1fr;
+            min-height: calc(100vh - 60px); /* 60px = hauteur navbar approx */
+        }
+
+        /* ── Barre retour (ligne du haut, pleine largeur) ── */
+        .ep-topbar {
+            grid-column: 1 / -1;
+            display: flex;
+            align-items: center;
+            padding: 18px 40px;
+            border-bottom: 1px solid var(--border);
+            background: var(--white);
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent); }
+
+        /* ── Colonne gauche : sidebar ── */
+        .ep-sidebar {
+            background: var(--ink);
+            padding: 48px 36px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            position: relative;
+        }
+        .ep-sidebar::after {
+            content: '';
+            position: absolute;
+            top: 0; right: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+        }
+
+        /* Avatar grande taille dans la sidebar */
+        .sidebar-avatar {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid rgba(255,255,255,0.15);
+            display: block;
+            margin-bottom: 20px;
+        }
+        .sidebar-initials {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 4px solid rgba(255,255,255,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem;
+            color: var(--paper);
+            margin-bottom: 20px;
+            flex-shrink: 0;
+        }
+        .sidebar-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--paper);
+            text-align: center;
+            margin-bottom: 6px;
+        }
+        .sidebar-email {
+            font-size: 0.8rem;
+            color: rgba(247,244,239,0.5);
+            text-align: center;
+            margin-bottom: 40px;
+            word-break: break-all;
+        }
+
+        /* Séparateur */
+        .sidebar-divider {
+            width: 40px;
+            height: 2px;
+            background: var(--accent);
+            margin-bottom: 32px;
+        }
+
+        /* Upload dans la sidebar */
+        .sidebar-upload-title {
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: rgba(247,244,239,0.45);
+            margin-bottom: 12px;
+            align-self: flex-start;
+        }
+        .file-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border: 1px dashed rgba(247,244,239,0.3);
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-family: 'DM Sans', sans-serif;
+            color: rgba(247,244,239,0.6);
+            cursor: pointer;
+            background: var(--ink);   /* force --ink, jamais de fond parasite */
+            transition: border-color 0.2s, color 0.2s, background 0.2s;
+            align-self: flex-start;
+        }
+        .file-btn:hover {
+            border-color: rgba(247,244,239,0.7);
+            color: var(--paper);
+            background: rgba(255,255,255,0.06);
+        }
+        input[type="file"] { display: none !important; }
+
+        .file-chosen {
+            font-size: 0.76rem;
+            color: var(--accent);     /* rouge palette --accent */
+            margin-top: 8px;
+            font-style: italic;
+            align-self: flex-start;
+            word-break: break-all;
+        }
+        .upload-error {
+            font-size: 0.76rem;
+            color: var(--accent);
+            margin-top: 6px;
+            align-self: flex-start;
+        }
+
+        /* ── Colonne droite : formulaire ── */
+        .ep-form-col {
+            background: var(--paper);
+            padding: 48px 56px 60px;
+            overflow-y: auto;
+        }
+
+        .ep-form-col h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0 0 6px;
+            line-height: 1.15;
+        }
+        .ep-form-col .subtitle {
+            font-size: 0.88rem;
+            color: var(--muted);
+            margin-bottom: 44px;
+        }
+
+        /* Séparateur de section */
+        .section-sep {
+            font-size: 0.68rem;
+            font-weight: 500;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        /* Ligne 2 colonnes */
+        .field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        /* Champ */
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            margin-bottom: 24px;
+        }
+        .field:last-of-type { margin-bottom: 0; }
+
+        /* Label — reprend .panel-label du profil */
+        .field label {
+            font-size: 0.7rem;
+            font-weight: 500;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--muted);
+        }
+
+        /* Input / Textarea */
+        .field input,
+        .field textarea {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 3px;
+            padding: 13px 16px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.97rem;
+            color: var(--ink);
+            outline: none;
+            width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .field input:focus,
+        .field textarea:focus {
+            border-color: var(--ink);
+            box-shadow: 0 0 0 3px rgba(26,26,46,0.07);
+        }
+        .field input.is-invalid,
+        .field textarea.is-invalid {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(192,57,43,0.08);
+        }
+        .field textarea { resize: vertical; min-height: 140px; }
+
+        /* Ligne label + compteur bio */
+        .char-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+        }
+        .char-count {
+            font-size: 0.74rem;
+            color: var(--muted);
+            transition: color 0.2s;
+        }
+        .char-count.warn { color: var(--accent); }
+
+        /* Erreur inline */
+        .field-error {
+            font-size: 0.78rem;
+            color: var(--accent);
+        }
+
+        /* Boutons */
+        .actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+        }
+        .btn-save {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--ink);
+            color: var(--paper);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.82rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .btn-save:hover {
+            background: var(--accent);
+            color: var(--white);
+            transform: translateY(-1px);
+        }
+        .btn-save:active { transform: translateY(0); }
+
+        .btn-cancel {
+            font-size: 0.82rem;
+            color: var(--muted);
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            transition: color 0.2s;
+        }
+        .btn-cancel:hover { color: var(--accent); }
+
+        /* =============================================================
+           RESPONSIVE — sous 900px : une colonne
+           ============================================================= */
+        @media (max-width: 900px) {
+            .ep-page { grid-template-columns: 1fr; }
+
+            .ep-sidebar {
+                flex-direction: row;
+                align-items: center;
+                gap: 24px;
+                padding: 28px 28px;
+                flex-wrap: wrap;
+            }
+            .ep-sidebar::after { display: none; }
+            .sidebar-avatar,
+            .sidebar-initials { width: 72px; height: 72px; font-size: 1.6rem; margin-bottom: 0; }
+            .sidebar-name     { text-align: left; margin-bottom: 2px; }
+            .sidebar-email    { text-align: left; margin-bottom: 0; }
+            .sidebar-divider,
+            .sidebar-upload-title { display: none; }
+            .file-btn,
+            .file-chosen,
+            .upload-error { display: none; } /* upload géré dans le form sur mobile */
+
+            .ep-form-col { padding: 32px 24px 48px; }
+            .field-row   { grid-template-columns: 1fr; gap: 0; }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="ep-page">
+
+        {# ════════════════════════════════════════
+     BARRE RETOUR
+  ════════════════════════════════════════ #}
+        <div class="ep-topbar">
+            <a href="{{ path('app_profile') }}" class="back-link">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M19 12H5M12 5l-7 7 7 7"/>
+                </svg>
+                Retour au profil
+            </a>
+        </div>
+
+        {# ════════════════════════════════════════
+     SIDEBAR GAUCHE
+  ════════════════════════════════════════ #}
+        <aside class="ep-sidebar">
+
+            {# Avatar actuel ou initiales #}
+            {% if user.image %}
+                <img id="avatar-preview"
+                     class="sidebar-avatar"
+                     src="{{ asset('uploads/profiles/' ~ user.image) }}"
+                     alt="Photo de {{ user.prenom }}">
+            {% else %}
+                <div class="sidebar-initials" id="avatar-initials">
+                    {{ user.prenom|first|upper }}{{ user.nom|first|upper }}
+                </div>
+            {% endif %}
+
+            <div class="sidebar-name">{{ user.prenom }} {{ user.nom }}</div>
+            <div class="sidebar-email">{{ user.email }}</div>
+
+            <div class="sidebar-divider"></div>
+
+            {# Zone upload dans la sidebar (desktop) #}
+            <div class="sidebar-upload-title">Photo de profil</div>
+            <label class="file-btn" for="sidebar-file-input">
+                <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="17 8 12 3 7 8"/>
+                    <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                Choisir une photo
+            </label>
+            <span class="file-chosen" id="file-chosen-sidebar"></span>
+
+            {% if form.imageFile.vars.errors|length %}
+                {% for err in form.imageFile.vars.errors %}
+                    <div class="upload-error">{{ err.message }}</div>
+                {% endfor %}
+            {% endif %}
+
+        </aside>
+
+        {# ════════════════════════════════════════
+     COLONNE FORMULAIRE
+  ════════════════════════════════════════ #}
+        <div class="ep-form-col">
+
+            <h1>Modifier le profil</h1>
+            <p class="subtitle">Vos modifications seront sauvegardées.</p>
+
+            {{ form_start(form, {
+                'attr': {
+                    'novalidate': 'novalidate',
+                    'enctype':    'multipart/form-data',
+                    'id':         'ep-form'
+                }
+            }) }}
+
+            {# Champ fichier caché — lié au label sidebar ET au label mobile #}
+            <div style="display:none">
+                {{ form_widget(form.imageFile, { 'attr': { 'id': 'sidebar-file-input' } }) }}
+            </div>
+
+            {# ── Informations personnelles ── #}
+            <div class="section-sep">Informations personnelles</div>
+
+            <div class="field-row">
+                <div class="field">
+                    {{ form_label(form.prenom) }}
+                    {{ form_widget(form.prenom, {
+                        'attr': { 'class': form.prenom.vars.errors|length ? 'is-invalid' : '' }
+                    }) }}
+                    {% if form.prenom.vars.errors|length %}
+                        <span class="field-error">{{ form.prenom.vars.errors[0].message }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="field">
+                    {{ form_label(form.nom) }}
+                    {{ form_widget(form.nom, {
+                        'attr': { 'class': form.nom.vars.errors|length ? 'is-invalid' : '' }
+                    }) }}
+                    {% if form.nom.vars.errors|length %}
+                        <span class="field-error">{{ form.nom.vars.errors[0].message }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="field">
+                {{ form_label(form.email) }}
+                {{ form_widget(form.email, {
+                    'attr': { 'class': form.email.vars.errors|length ? 'is-invalid' : '' }
+                }) }}
+                {% if form.email.vars.errors|length %}
+                    <span class="field-error">{{ form.email.vars.errors[0].message }}</span>
+                {% endif %}
+            </div>
+
+            {# ── Biographie ── #}
+            <div class="section-sep" style="margin-top: 12px;">Biographie</div>
+
+            <div class="field">
+                <div class="char-row">
+                    {{ form_label(form.bio) }}
+                    <span class="char-count" id="bio-count">0 / 1000</span>
+                </div>
+                {{ form_widget(form.bio, {
+                    'attr': {
+                        'id':    'bio-textarea',
+                        'class': form.bio.vars.errors|length ? 'is-invalid' : ''
+                    }
+                }) }}
+                {% if form.bio.vars.errors|length %}
+                    <span class="field-error">{{ form.bio.vars.errors[0].message }}</span>
+                {% endif %}
+            </div>
+
+            {# ── Actions ── #}
+            <div class="actions">
+                <button type="submit" class="btn-save">
+                    <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                        <polyline points="17 21 17 13 7 13 7 21"/>
+                        <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    Enregistrer
+                </button>
+                <a href="{{ path('app_profile') }}" class="btn-cancel">Annuler</a>
+            </div>
+
+            {{ form_end(form) }}
+
+        </div>{# /.ep-form-col #}
+    </div>{# /.ep-page #}
+
+    <script>
+        /* ── Prévisualisation photo ─────────────────────────────── */
+        (function () {
+            var fileInput     = document.getElementById('sidebar-file-input');
+            var chosenSidebar = document.getElementById('file-chosen-sidebar');
+            var preview       = document.getElementById('avatar-preview');
+            var initials      = document.getElementById('avatar-initials');
+
+            if (!fileInput) return;
+
+            fileInput.addEventListener('change', function () {
+                var file = this.files[0];
+                if (!file) return;
+
+                if (chosenSidebar) chosenSidebar.textContent = file.name;
+
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    if (preview) {
+                        preview.src = e.target.result;
+                    } else if (initials) {
+                        var img       = document.createElement('img');
+                        img.id        = 'avatar-preview';
+                        img.className = 'sidebar-avatar';
+                        img.src       = e.target.result;
+                        img.alt       = 'Aperçu';
+                        initials.replaceWith(img);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }());
+
+        /* ── Compteur bio ───────────────────────────────────────── */
+        (function () {
+            var bio   = document.getElementById('bio-textarea');
+            var count = document.getElementById('bio-count');
+            var MAX   = 1000;
+            if (!bio || !count) return;
+
+            function refresh() {
+                var len = bio.value.length;
+                count.textContent = len + ' / ' + MAX;
+                count.classList.toggle('warn', len > MAX * 0.9);
+            }
+            bio.addEventListener('input', refresh);
+            refresh();
+        }());
+    </script>
+{% endblock %}

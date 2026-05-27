@@ -177,5 +177,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // clear temporary sensitive data if needed
     }
+    public function setRoles(array $roles): static
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
 
 }

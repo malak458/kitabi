@@ -1,7 +1,10 @@
 /* ===========================
    VARIABLES & RESET
 =========================== */
-
+/* Slider colle directement sous la navbar */
+main {
+  padding-top: 0 !important;
+}
 *,
 *::before,
 *::after {

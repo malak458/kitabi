@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+
+    <link rel="stylesheet" href="{{ asset('css/login.css') }}">
+</head>
+
+<body>
+
+<div class="container mt-5" style="max-width: 450px;">
+
+    {% if error %}
+        <div class="alert alert-danger">
+            {{ error.messageKey|trans(error.messageData, 'security') }}
+        </div>
+    {% endif %}
+
+    {% if app.user %}
+        <div class="mb-3">
+            You are logged in as {{ app.user.userIdentifier }},
+            <a href="{{ path('app_logout') }}">Logout</a>
+        </div>
+    {% endif %}
+
+    <h2 class="mb-4">Login</h2>
+
+    <form method="post">
+
+        <label>Email</label>
+        <input type="email"
+               name="email"
+               value="{{ last_username }}"
+               class="form-control"
+               required>
+
+        <label>Password</label>
+        <input type="password"
+               name="password"
+               class="form-control"
+               required>
+
+        <input type="hidden"
+               name="_csrf_token"
+               value="{{ csrf_token('authenticate') }}">
+
+        <div class="mb-3">
+            <label>
+                <input type="checkbox" name="_remember_me">
+                Remember me
+            </label>
+        </div>
+
+        <button class="btn btn-primary w-100" type="submit">
+            Sign in
+        </button>
+
+    </form>
+
+</div>
+
+<script src="{{ asset('js/login.js') }}"></script>
+
+</body>
+</html>

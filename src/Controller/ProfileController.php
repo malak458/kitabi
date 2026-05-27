@@ -2,37 +2,85 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
-use App\Service\AuthCheck;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Form\EditProfileType;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use App\Entity\User;
 
 class ProfileController extends AbstractController
 {
-    #[Route('/profile', name: 'app_profile')]
-    public function index(
-        SessionInterface $session,
-        AuthCheck $authCheck,
-        UserRepository $userRepository
-    ) {
+#[Route('/profile', name: 'app_profile')]
+public function index()
+{
+$user = $this->getUser();
+;
 
-        // 🔴 si pas connecté → login
-        if (!$authCheck->isLoggedIn($session)) {
-            return $this->redirectToRoute('app_login');
-        }
 
-        // 🔵 récupérer user
-        $userId = $authCheck->getUserId($session);
-        $user = $userRepository->find($userId);
 
-        if (!$user) {
-            // sécurité si user supprimé de la DB
-            $session->invalidate();
-            return $this->redirectToRoute('app_login');
-        }
-
-        return $this->render('auth/profile.html.twig', [
-            'user' => $user
-        ]);
-    }
+return $this->render('auth/profile.html.twig', [
+'user' => $user,
+]);
 }
+
+    #[Route('/profile/edit', name: 'app_profile_edit', methods: ['GET', 'POST'])]
+    public function edit(
+        Request                $request,
+        EntityManagerInterface $em,
+        SluggerInterface       $slugger
+    ): \Symfony\Component\HttpFoundation\Response
+    {
+
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$user instanceof User) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $form = $this->createForm(EditProfileType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            // ── Upload photo ──────────────────────────────────
+            /** @var \Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile */
+            $imageFile = $form->get('imageFile')->getData();
+
+            if ($imageFile) {
+                $originalName = pathinfo(
+                    $imageFile->getClientOriginalName(),
+                    PATHINFO_FILENAME
+                );
+                $safeName = $slugger->slug($originalName);
+                $newFilename = $safeName . '-' . uniqid() . '.' . $imageFile->guessExtension();
+
+                $uploadDir = $this->getParameter('kernel.project_dir')
+                    . '/public/uploads/profiles';
+
+                // Supprimer l'ancienne photo si elle existe
+                if ($user->getImage()) {
+                    $oldPath = $uploadDir . '/' . $user->getImage();
+                    if (file_exists($oldPath)) {
+                        unlink($oldPath);
+                    }
+                }
+
+                $imageFile->move($uploadDir, $newFilename);
+                $user->setImage($newFilename);  // setImage() existe bien dans User
+            }
+            // ─────────────────────────────────────────────────
+
+            $em->flush();  // Doctrine détecte les changements sur $user et les persiste
+
+            $this->addFlash('success', 'Profil mis à jour avec succès !');
+            return $this->redirectToRoute('app_profile');
+        }
+
+        return $this->render('auth/edit_profile.html.twig', [
+            'form' => $form->createView(),
+            'user' => $user,   // nécessaire pour afficher l'avatar actuel dans le twig
+        ]);
+    }}

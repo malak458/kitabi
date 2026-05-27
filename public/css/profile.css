@@ -1,0 +1,207 @@
+/* ============================================================
+   profile.css v5 — Kitabi  |  pleine page
+   ============================================================ */
+
+body {
+    background-color: var(--sand);
+    min-height: 100vh;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+        radial-gradient(ellipse 70% 50% at 10% 20%, rgba(200,134,10,.09) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 70% at 90% 80%, rgba(14,107,94,.07) 0%, transparent 55%),
+        url("data:image/svg+xml,%3Csvg width='48' height='48' viewBox='0 0 48 48' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M24 2 L46 24 L24 46 L2 24 Z' fill='none' stroke='%23c8860a' stroke-opacity='0.045' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: auto, auto, 48px 48px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* ── Wrapper pleine page ── */
+.profile-page {
+    width: 100%;
+    min-height: calc(100vh - var(--nav-h));
+    display: flex;
+    flex-direction: column;
+    animation: fadeUp .5s cubic-bezier(.22,1,.36,1) both;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════════════════════════════
+   HERO — pleine largeur
+   ════════════════════════════ */
+.profile-hero {
+    position: relative;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+}
+
+/* Bandeau couleur plein fond */
+.hero-bg {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 130px;
+    background: linear-gradient(135deg,
+    var(--rust) 0%,
+    var(--amber) 35%,
+    var(--amber-mid) 65%,
+    var(--teal) 100%);
+}
+
+/* Trait fin en haut */
+.profile-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--rust), var(--amber), var(--amber-mid), var(--teal));
+    z-index: 2;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    gap: 28px;
+    padding: 70px 56px 32px;
+}
+
+/* Avatar */
+.hero-avatar-wrap { flex-shrink: 0; }
+
+.hero-avatar {
+    width: 130px;
+    height: 130px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 5px solid var(--white);
+    box-shadow: 0 0 0 3px var(--amber), 0 10px 32px rgba(26,18,8,.2);
+    display: block;
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.hero-avatar:hover {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 3px var(--amber-mid), 0 14px 40px rgba(26,18,8,.24);
+}
+
+/* Nom + bouton */
+.hero-info {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding-bottom: 6px;
+}
+
+.hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -.025em;
+    line-height: 1.2;
+    margin: 0;
+}
+
+.hero-name span { color: var(--amber); }
+
+.btn-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 10px 26px;
+    background: linear-gradient(135deg, var(--amber), var(--rust));
+    color: var(--white) !important;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none !important;
+    border-radius: 50px;
+    white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(200,134,10,.32);
+    transition: transform .2s, box-shadow .2s, filter .2s;
+}
+
+.btn-edit .material-icons { font-size: 16px; }
+
+.btn-edit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(200,134,10,.44);
+    filter: brightness(1.07);
+}
+
+/* ════════════════════════════
+   CORPS — pleine largeur
+   ════════════════════════════ */
+.profile-body {
+    flex: 1;
+    background: var(--white);
+    padding: 40px 56px 60px;
+}
+
+.bio-card__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+}
+
+.bio-card__header .material-icons {
+    font-size: 20px;
+    color: var(--amber);
+    background: var(--amber-light);
+    padding: 7px;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+}
+
+.bio-card__header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0;
+}
+
+.bio-card__text {
+    font-size: 1rem;
+    line-height: 1.9;
+    color: var(--ink);
+    opacity: .82;
+    margin: 0;
+    max-width: 780px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 700px) {
+    .hero-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 80px 24px 28px;
+        gap: 14px;
+    }
+
+    .hero-info {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .hero-name { font-size: 1.6rem; }
+    .hero-avatar { width: 108px; height: 108px; }
+    .profile-body { padding: 28px 24px 48px; }
+}
