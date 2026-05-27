@@ -1,0 +1,146 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}KITAB —
+	{{ book.titre }}
+{% endblock %}
+
+{% block stylesheets %}
+	{{ parent() }}
+	<link rel="stylesheet" href="{{ asset('assets/css/marketPlace.css') }}">
+	<link rel="stylesheet" href="{{ asset('assets/css/details.css') }}">
+{% endblock %}
+{% block body %}
+	<div class="content" style="padding-top: 90px;">
+		<div class="w-100">
+
+			<a href="{{ path('app_marketplace') }}" class="back">
+				&larr; Back to Marketplace
+			</a>
+
+			<div
+				class="d-flex gap-4 layout-container" style="margin-top: 60px;">
+
+				{# ===== SIDE PANEL ===== #}
+				<div class="detailsside">
+					<div class="imgdetails">
+						<img src="{{ book.image starts with 'http' ? book.image : asset('uploads/books/' ~ book.image) }}" alt="{{ book.titre }}"/>
+					</div>
+
+					<div style="padding: 20px;">
+						<span style="font-size: 24px; color: #1a1208; font-weight: bold;">
+							{{ book.prix|number_format(1) }}dt
+						</span>
+						<h6 class="availability">Available</h6>
+						<hr style="color: #ccc;"/>
+
+						<a href="#" class="sugg">
+							<i class="bi bi-chat-left-text"></i>
+							Chat with owner</a>
+						<a href="#" class="sugg">
+							<i class="bi bi-repeat"></i>
+							Request exchange</a>
+						<a href="#" class="sugg">
+							<i class="bi bi-book"></i>
+							Read together</a>
+					</div>
+				</div>
+
+				{# ===== MAIN CONTENT ===== #}
+				<div
+					class="detailscontent">
+
+					{# BLOC 1 — Infos principales #}
+					<div class="bloc">
+						<div class="initial" style="padding: 20px;">
+							<h1 style="display: inline-block; margin-top: 10px;">
+								{{ book.titre }}
+							</h1>
+							<span style="background-color: #f3f393; padding: 5px 12px; border-radius: 10px; margin-left: 15px; font-weight: bold; color: #1a1208;">
+								⭐ 4.8
+							</span>
+							<p style="color: var(--muted); font-size: 1.1rem; margin-top: 5px;">
+								by
+								<strong>{{ book.auteur }}</strong>
+							</p>
+
+							<h6 class="booktype">{{ book.genre }}</h6>
+
+							{% set condClass = book.condition|lower|replace({' ': '-'}) %}
+							<div class="conditionbook {{ condClass }}">
+								{{ book.condition }}
+							</div>
+
+							{% if book.forExchange %}
+								<div class="forexchange">for exchange</div>
+							{% endif %}
+						</div>
+
+						<hr/>
+
+						<div class="description" style="padding: 20px;">
+							<h1>Description</h1>
+							<p style="line-height: 1.6; color: #333; margin-top: 10px;">
+								No description available for this book.
+							</p>
+						</div>
+					</div>
+
+					{# BLOC 2 — Owner #}
+					<div class="bloc" style="padding: 20px;">
+						<h1>Book Owner</h1>
+						<br/>
+						<div style="display: flex; align-items: center; gap: 20px;">
+							{% if book.user %}
+								<img src="https://ui-avatars.com/api/?name={{ book.user.prenom }}+{{ book.user.nom }}&background=random" alt="{{ book.user.prenom }}" class="ownerpic"/>
+								<div>
+									<span class="person" style="font-weight: bold; font-size: 1.2rem;">
+										{{ book.user.prenom }}
+										{{ book.user.nom }}
+									</span>
+									<p style="margin: 0;">📍 Tunisia</p>
+									<p style="font-size: 0.9rem; color: var(--muted); margin: 0;">⭐ 4.9 • books listed</p>
+								</div>
+								<a href="#" style="margin-left: auto; color: #8b3a1a; font-weight: bold; text-transform: uppercase; border: 1px solid #8b3a1a; padding: 5px 15px; border-radius: 20px; text-decoration: none;">
+									Contact
+								</a>
+							{% else %}
+								<p>Owner not available</p>
+							{% endif %}
+						</div>
+					</div>
+
+					{# BLOC 3 — Book Details #}
+					<div class="bloc" style="padding: 20px;">
+						<h1>Book Details</h1>
+						<br/>
+						<table style="width: 100%; border-collapse: collapse;">
+							<tr>
+								<td style="width: 50%; vertical-align: top; padding: 20px;">
+									<h3 style="font-size: 1.1rem; color: var(--muted); margin-bottom: 5px;">Condition</h3>
+									<p style="font-size: 1.2rem; font-weight: 500; margin: 0;">{{ book.condition }}</p>
+								</td>
+								<td style="width: 50%; vertical-align: top; padding: 20px;">
+									<h3 style="font-size: 1.1rem; color: var(--muted); margin-bottom: 5px;">Genre</h3>
+									<p style="font-size: 1.2rem; font-weight: 500; margin: 0;">{{ book.genre }}</p>
+								</td>
+							</tr>
+							<tr>
+								<td style="padding: 20px;">
+									<h3 style="font-size: 1.1rem; color: var(--muted); margin-bottom: 5px;">Prix</h3>
+									<p style="font-size: 1.2rem; font-weight: 500; margin: 0;">{{ book.prix }}dt</p>
+								</td>
+								<td style="padding: 20px;">
+									<h3 style="font-size: 1.1rem; color: var(--muted); margin-bottom: 5px;">Exchange</h3>
+									<p style="font-size: 1.2rem; font-weight: 500; margin: 0;">
+										{{ book.forExchange ? 'Oui' : 'Non' }}
+									</p>
+								</td>
+							</tr>
+						</table>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}
