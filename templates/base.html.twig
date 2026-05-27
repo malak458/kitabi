@@ -131,11 +131,19 @@
     </a>
 
     <ul class="nav-links">
-        <li><a href="{{ path('app_marketplace') }}"><span class="material-icons">local_mall</span> Marketplace</a></li>
-        <li><a href="#"><span class="material-icons">chat_bubble</span> Messages</a></li>
-        <li><a href="#"><span class="material-icons">swap_horiz</span> Exchanges</a></li>
-        <li><a href="#"><span class="material-icons">favorite</span> Favorites</a></li>
-        <li><a href="{{ path('app_rooms') }}" class="{{ app.request.attributes.get('_route') starts with 'app_room' ? 'active' : '' }}">
+        <li><a href="{{ path('app_marketplace') }}" id="nav_marketplace">
+            <span class="material-icons">local_mall</span> Marketplace
+        </a></li>
+        <li><a href="#" id="nav_messages">
+            <span class="material-icons">chat_bubble</span> Messages
+        </a></li>
+        <li><a href="#" id="nav_exchanges">
+            <span class="material-icons">swap_horiz</span> Exchanges
+        </a></li>
+        <li><a href="{{ path('app_favoris') }}" id="nav_favorites">
+    <span class="material-icons">favorite</span> Favorites
+</a></li>
+        <li><a href="{{ path('app_rooms') }}" class="{{ app.request.attributes.get('_route') starts with 'app_room' ? 'active' : '' }}" id="nav_reading_rooms">
             <span class="material-icons">import_contacts</span> Reading Rooms
         </a></li>
     </ul>
@@ -159,9 +167,9 @@
         {% endif %}
 
         <div class="lang-switcher-nav">
-            <button class="lang-btn lang-active" data-lang="en">EN</button>
-            <button class="lang-btn" data-lang="fr">FR</button>
-            <button class="lang-btn" data-lang="ar">AR</button>
+            <button id="btn-en" class="lang-btn lang-active" data-lang="en">EN</button>
+            <button id="btn-fr" class="lang-btn" data-lang="fr">FR</button>
+            <button id="btn-ar" class="lang-btn" data-lang="ar">AR</button>
         </div>
     </div>
 </nav>

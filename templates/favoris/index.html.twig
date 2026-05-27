@@ -12,8 +12,8 @@
 <div class="page-wrapper">
 
   <div class="page-header">
-    <h1>My Favorites</h1>
-    <h4>Your curated collection of beloved books</h4>
+    <h1 id="fav_title">My Favorites</h1>
+    <h4 id="fav_subtitle">Your curated collection of beloved books</h4>
   </div>
 
   <div class="page-body">
@@ -22,7 +22,7 @@
     <div class="stats">
       <div class="stat-card">
         <div>
-          <p>Total</p>
+          <p id="stat_total">Total</p>
           <h2>{{ totalFavorites }}</h2>
         </div>
         <img src="{{ asset('assets/images/fav.jpg') }}" alt="Total Favorites">
@@ -30,7 +30,7 @@
 
       <div class="stat-card">
         <div>
-          <p>Value</p>
+          <p id="stat_value">Value</p>
           <h2>{{ totalValue|number_format(2, '.', '') }} dt</h2>
         </div>
         <img src="{{ asset('assets/images/2.jpg') }}" alt="Total Value">
@@ -38,7 +38,7 @@
 
       <div class="stat-card">
         <div>
-          <p>Exchange</p>
+          <p id="stat_exchange">Exchange</p>
           <h2>{{ exchangeCount }}</h2>
         </div>
         <img src="{{ asset('assets/images/3.jpg') }}" alt="Exchange Count">
@@ -46,7 +46,7 @@
 
       <div class="stat-card">
         <div>
-          <p>Genres</p>
+          <p id="stat_genres">Genres</p>
           <h2>{{ genresCount }}</h2>
         </div>
         <img src="{{ asset('assets/images/4.jpg') }}" alt="Genres Count">
@@ -61,7 +61,8 @@
         {% for fav in favBooks %}
 
           {% set book = fav.book %}
-          {% set bookCondition = book.condition|default('good') %}
+          {# On force la condition en minuscule pour correspondre parfaitement aux classes CSS du JS #}
+          {% set bookCondition = book.condition|default('good')|lower %}
 
           <div class="favorite-card" id="book-{{ book.id }}">
 
@@ -73,18 +74,18 @@
               />
 
               {# Badge de condition #}
-              <div class="condition {{ bookCondition|lower }}">
+              <div class="condition {{ bookCondition }}">
                 {{ bookCondition|capitalize }}
               </div>
 
-              {# Bouton cœur rond parfait positionné sous le badge rose #}
+              {# Bouton cœur rond #}
               <button
-  class="heart-btn active"
-  data-url="{{ path('app_book_favorite', { id: book.id }) }}"
-  data-page-favoris="true"
-  aria-label="Retirer des favoris">
-  <span class="heart-icon">♥</span>
-</button>
+                class="heart-btn active"
+                data-url="{{ path('app_book_favorite', { id: book.id }) }}"
+                data-page-favoris="true"
+                aria-label="Retirer des favoris">
+                <span class="heart-icon">♥</span>
+              </button>
 
               {% if book.forExchange %}
                 <div class="exchange">Exchange</div>
@@ -107,7 +108,8 @@
               <div class="user-type">
                 <div class="user">
                   <img src="{{ asset('images/user1.jpg') }}" alt="Owner" onerror="this.src='https://t3.ftcdn.net/jpg/02/99/04/20/360_F_299042079_vGBD7wIlSeNl7vOevWHiL93G4koMM967.jpg';">
-                  <span>{{ book.user ? book.user.username : 'Anonyme' }}</span>
+                  {# CORRECTION ICI : Remplacement de 'Anonyme' par 'Anonymous' pour correspondre au système de détection JS #}
+                  <span>{{ book.user ? book.user.username : 'Anonymous' }}</span>
                 </div>
                 <span class="genre">{{ book.genre|default('General') }}</span>
               </div>
@@ -132,9 +134,9 @@
           <div class="empty-icon">
             <i class="bi bi-heartbreak"></i>
           </div>
-          <h3>Your list is empty</h3>
-          <p>You haven't added any books to your favorites yet.</p>
-          <a href="{{ path('app_marketplace') }}" class="explore-btn">
+          <h3 id="empty_fav_title">Your list is empty</h3>
+          <p id="empty_fav_text">You haven't added any books to your favorites yet.</p>
+          <a href="{{ path('app_marketplace') }}" class="explore-btn" id="empty_fav_btn">
             <span class="material-icons">local_mall</span>
             Explore Marketplace
           </a>
@@ -150,4 +152,18 @@
 {% block javascripts %}
     {{ parent() }}
     <script src="{{ asset('assets/js/favorites-toggle.js') }}"></script>
+    <script src="{{ asset('js/ui-controls.js') }}"></script>
+    <script src="{{ asset('assets/js/fullscreen.js') }}"></script>
+    <script src="{{ asset('assets/js/mode.js') }}"></script>
+    <script src="{{ asset('assets/js/traduction.js') }}?v={{ random() }}"></script>
+    
+    {# ===== SCRIPT DE SÉCURITÉ POUR FORCER LA TRADUCTION IMMÉDIATE ===== #}
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (typeof window.setLang === "function") {
+          const currentLang = localStorage.getItem("kitabi_lang") || "fr";
+          window.setLang(currentLang);
+        }
+      });
+    </script>
 {% endblock %}
