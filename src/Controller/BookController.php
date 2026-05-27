@@ -22,53 +22,89 @@ class BookController extends AbstractController
         BookRepository $bookRepository,
         FavoriteRepository $favoriteRepository
     ): Response {
+
         $books = $bookRepository->findAll();
 
         $favorites = $favoriteRepository->findByUserId(self::USER_ID);
+
         $favoriteBookIds = array_map(
             fn($fav) => $fav->getBook()->getId(),
             $favorites
         );
 
-        return $this->render('book/index.html.twig', [
-            'books'           => $books,
+        return $this->render('marketplace/index.html.twig', [
+            'books' => $books,
             'favoriteBookIds' => $favoriteBookIds,
         ]);
     }
 
     #[Route('/book/new', name: 'app_book_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
-    {
+    public function new(
+        Request $request,
+        EntityManagerInterface $entityManager
+    ): Response {
+
         if ($request->isMethod('POST')) {
+
             $book = new Book();
+
             $book->setTitre($request->request->get('titre'));
             $book->setAuteur($request->request->get('auteur'));
             $book->setGenre($request->request->get('genre'));
             $book->setCondition($request->request->get('condition'));
             $book->setPrix((float) $request->request->get('prix'));
-            $book->setForExchange($request->request->has('for_exchange'));
 
+            $book->setForExchange(
+                $request->request->has('for_exchange')
+            );
+
+            // IMAGE
             $imageFile = $request->files->get('image');
+
             if ($imageFile) {
-                $newFilename = uniqid() . '.' . $imageFile->guessExtension();
+
+                $newFilename =
+                    uniqid() . '.' . $imageFile->guessExtension();
+
                 try {
-                    $imageFile->move($this->getParameter('uploads_directory'), $newFilename);
+
+                    $imageFile->move(
+                        $this->getParameter('uploads_directory'),
+                        $newFilename
+                    );
+
                     $book->setImage($newFilename);
+
                 } catch (\Exception $e) {
+
                     $book->setImage('default.jpg');
                 }
+
             } else {
+
                 $book->setImage('default.jpg');
             }
 
             $entityManager->persist($book);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Votre livre a bien été publié !');
+            $this->addFlash(
+                'success',
+                'Votre livre a bien été publié !'
+            );
+
             return $this->redirectToRoute('app_marketplace');
         }
 
         return $this->render('book/new.html.twig');
+    }
+
+    #[Route('/book/{id}', name: 'app_book_show')]
+    public function show(Book $book): Response
+    {
+        return $this->render('book/details.html.twig', [
+            'book' => $book,
+        ]);
     }
 
     #[Route('/book/{id}/favorite', name: 'app_book_favorite', methods: ['POST'])]
@@ -79,45 +115,56 @@ class BookController extends AbstractController
         EntityManagerInterface $em,
         Request $request
     ): JsonResponse {
+
         if (!$request->isXmlHttpRequest()) {
-            return $this->json(['success' => false, 'message' => 'Requête invalide'], 400);
+
+            return $this->json([
+                'success' => false,
+                'message' => 'Requête invalide'
+            ], 400);
         }
 
         $book = $bookRepository->find($id);
+
         if (!$book) {
-            return $this->json(['success' => false, 'message' => 'Livre introuvable'], 404);
+
+            return $this->json([
+                'success' => false,
+                'message' => 'Livre introuvable'
+            ], 404);
         }
 
-        $existing = $favoriteRepository->findOneByUserIdAndBook(self::USER_ID, $id);
+        $existing =
+            $favoriteRepository
+                ->findOneByUserIdAndBook(
+                    self::USER_ID,
+                    $id
+                );
 
         if ($existing) {
+
             $em->remove($existing);
             $em->flush();
+
             return $this->json([
-                'success'    => true,
+                'success' => true,
                 'isFavorite' => false,
-                'message'    => 'Retiré des favoris'
+                'message' => 'Retiré des favoris'
             ]);
         }
 
         $favorite = new Favorite();
+
         $favorite->setUserId(self::USER_ID);
         $favorite->setBook($book);
+
         $em->persist($favorite);
         $em->flush();
 
         return $this->json([
-            'success'    => true,
+            'success' => true,
             'isFavorite' => true,
-            'message'    => 'Ajouté aux favoris'
-        ]);
-    }
-
-    #[Route('/book/{id}', name: 'app_book_details')]
-    public function details(Book $book): Response
-    {
-        return $this->render('book/details.html.twig', [
-            'book' => $book,
+            'message' => 'Ajouté aux favoris'
         ]);
     }
 }

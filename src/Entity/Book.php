@@ -6,35 +6,34 @@ use App\Repository\BookRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
-use Doctrine\ORM\Mapping as Mapping;
-
-#[Mapping\Entity(repositoryClass: BookRepository::class)]
+use Doctrine\ORM\Mapping as ORM;
+#[ORM\Entity(repositoryClass: BookRepository::class)]
 class Book
 {
-    #[Mapping\Id]
-    #[Mapping\GeneratedValue]
-    #[Mapping\Column]
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column]
     private ?int $id = null;
 
-    #[Mapping\Column(length: 255)]
+    #[ORM\Column(length: 255)]
     private ?string $titre = null;
 
-    #[Mapping\Column(length: 255)]
+    #[ORM\Column(length: 255)]
     private ?string $auteur = null;
 
-    #[Mapping\Column(length: 255)]
+    #[ORM\Column(length: 255)]
     private ?string $genre = null;
 
-    #[Mapping\Column(name: '`condition`', type: 'string', length: 255)]
+    #[ORM\Column(name: '`condition`', type: 'string', length: 255)]
     private ?string $condition = null;
 
-    #[Mapping\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
+    #[ORM\Column(type: Types::DECIMAL, precision: 10, scale: 2)]
     private ?string $prix = null;
 
-    #[Mapping\Column]
+    #[ORM\Column]
     private ?bool $forExchange = null;
 
-    #[Mapping\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'books')]
 #[ORM\JoinColumn(nullable: true)] // <-- IMPORTANT: 'true' permet de créer le livre sans utilisateur
