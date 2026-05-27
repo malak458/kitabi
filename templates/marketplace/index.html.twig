@@ -166,9 +166,24 @@
 									{{ book.condition }}
 								</div>
 
-								<button class="heart-btn" data-id="{{ book.id }}">
-									♡
-								</button>
+								{% set isFavorite = false %}
+{% if app.user %}
+    {% for fav in app.user.favorites ?? [] %}
+        {% if fav.book.id == book.id %}
+            {% set isFavorite = true %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<button class="heart-btn"
+    {% if app.user %}
+        data-url="{{ path('app_book_favorite', {id: book.id}) }}"
+    {% else %}
+        data-login="{{ path('app_login') }}"
+    {% endif %}
+    style="color: {{ isFavorite ? 'red' : 'gray' }};">
+    {{ isFavorite ? '♥' : '♡' }}
+</button>
 
 							</div>
 							<br>
@@ -252,4 +267,5 @@
 {% block javascripts %}
 	{{ parent() }}
 	<script src="{{ asset('assets/js/marketPlace.js') }}"></script>
+	<script src="{{ asset('assets/js/favorites-toggle.js') }}"></script>
 {% endblock %}

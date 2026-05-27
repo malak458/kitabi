@@ -72,14 +72,13 @@ public function toggleFavorite(
         $em->remove($existing);
         $em->flush();
         return $this->json(['success' => true, 'action' => 'removed']);
-    } else {
-        $favorite = new Favorite();
-        $favorite->setUserId($user->getId());
-        $favorite->setBook($book);
-        $em->persist($favorite);
-        $em->flush();
-        return $this->json(['success' => true, 'action' => 'added']);
     }
-}
-        }
 
+    $favorite = new Favorite();
+    $favorite->setUserId($user->getId());
+    $favorite->setBook($book);
+    $em->persist($favorite);
+    $em->flush();
+
+    return $this->json(['success' => true, 'action' => 'added']);
+}}
