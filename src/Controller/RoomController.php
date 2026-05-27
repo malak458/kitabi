@@ -18,53 +18,49 @@ class RoomController extends AbstractController
     #[Route('/rooms', name: 'app_rooms')]
     public function index(RoomRepository $roomRepository): Response
     {
-        $lives = $roomRepository->findByTypeWithHost('live');
-        $scheduled = $roomRepository->findByTypeWithHost('scheduled');
+        $lives     = $roomRepository->findByTypeWithHost('live');
+    $scheduled = $roomRepository->findByTypeWithHost('scheduled');
 
-        return $this->render('room/index.html.twig', [
-            'lives' => $lives,
-            'scheduled' => $scheduled,
-        ]);
+    /** @var User|null $user */
+    $user    = $this->getUser();
+    $myRooms = $user ? $roomRepository->findBy(['host' => $user], ['createdAt' => 'DESC']) : [];
+
+    return $this->render('room/index.html.twig', [
+        'lives'     => $lives,
+        'scheduled' => $scheduled,
+        'myRooms'   => $myRooms,  // ← manquait
+    ]);
     }
 
-    #[Route('/rooms/create', name: 'app_room_create')]
-    public function create(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
-    {
+    #[Route('/rooms/create', name: 'app_room_create', methods: ['GET', 'POST'])]
+    public function create(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        SluggerInterface $slugger
+    ): Response {
         $room = new Room();
         $room->setCreatedAt(new \DateTime());
-        
-        // Récupérer l'utilisateur connecté
-       // /** @var User $user */
-        //$user = $this->getUser();
-        
-        //if (!$user) {
-            //$this->addFlash('error', 'Vous devez être connecté pour créer une room.');
-            //return $this->redirectToRoute('app_rooms');
-        
-        
-        // Assigner l'utilisateur
-       // $room->setHost($user);
-       $user = $entityManager->getRepository(User::class)->find(1);
-    
-    if (!$user) {
-        $this->addFlash('error', 'Aucun utilisateur trouvé. Veuillez d\'abord créer un utilisateur.');
-        return $this->redirectToRoute('app_rooms');
-    }
-    
-    $room->setHost($user);
+
+        /** @var User $user */
+        $user = $this->getUser();
+            if (!$user) {
+            $this->addFlash('error', 'Vous devez être connecté pour créer une room.');
+            return $this->redirectToRoute('app_login');
+            }
+            $room->setHost($user);
 
         $form = $this->createForm(RoomType::class, $room);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
-            // Gestion de l'image
-            $imageFile = $form->get('imageFile')->getData();
 
+            // --- Image ---
+            $imageFile = $form->get('imageFile')->getData();
             if ($imageFile) {
-                $originalFilename = pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME);
-                $safeFilename = $slugger->slug($originalFilename);
-                $newFilename = 'room_' . uniqid() . '.' . $imageFile->guessExtension();
+                $safeFilename = $slugger->slug(
+                    pathinfo($imageFile->getClientOriginalName(), PATHINFO_FILENAME)
+                );
+                $newFilename = 'room_' . $safeFilename . '_' . uniqid() . '.' . $imageFile->guessExtension();
 
                 try {
                     $imageFile->move(
@@ -74,15 +70,16 @@ class RoomController extends AbstractController
                     $room->setImage($newFilename);
                 } catch (\Exception $e) {
                     $this->addFlash('error', "Erreur lors de l'upload de la couverture.");
+                    $room->setImage('default-book.jpg');
                 }
             } else {
                 $room->setImage('default-book.jpg');
             }
 
-            // Gestion des tags
-            $tagsArray = $request->request->all('room')['tags'] ?? [];
+            // --- Tags (custom UI — champs cachés nommés room_tags[]) ---
+            $tagsArray = $request->request->all('room_tags') ?? [];
             if (!empty($tagsArray)) {
-                $room->setTags(implode(',', $tagsArray));
+                $room->setTags(implode(',', array_filter($tagsArray)));
             }
 
             $entityManager->persist($room);
