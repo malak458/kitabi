@@ -70,4 +70,32 @@ class ExchangeController extends AbstractController
         
         return $this->redirectToRoute('exchange_page'); 
     }
+    #[Route('/exchange/update-status', name: 'app_exchange_update_status', methods: ['POST'])]
+public function updateStatus(
+    \Symfony\Component\HttpFoundation\Request $request, 
+    \App\Repository\ExchangeRepository $exchangeRepository, // Remplacez par le nom de votre Repository si différent
+    \Doctrine\ORM\EntityManagerInterface $em
+): \Symfony\Component\HttpFoundation\JsonResponse {
+    
+    $data = json_decode($request->getContent(), true);
+    $exchangeId = $data['exchangeId'] ?? null;
+    $status = $data['status'] ?? null;
+
+    if (!$exchangeId || !$status) {
+        return new \Symfony\Component\HttpFoundation\JsonResponse(['success' => false, 'error' => 'Données manquantes.']);
+    }
+
+    $exchange = $exchangeRepository->find($exchangeId);
+
+    if (!$exchange) {
+        return new \Symfony\Component\HttpFoundation\JsonResponse(['success' => false, 'error' => 'Échange introuvable.']);
+    }
+
+    // Change le statut de l'échange (Vérifiez si votre entité utilise setStatus ou une autre méthode)
+    $exchange->setStatus($status);
+    $em->flush();
+
+    return new \Symfony\Component\HttpFoundation\JsonResponse(['success' => true]);
+}
+
 }
