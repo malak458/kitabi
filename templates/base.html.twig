@@ -150,8 +150,7 @@
 				</a>
 			</li>
 			<li>
-				<a href="#" id="nav_exchanges" class="{{ app.request.attributes.get('_route') starts with 'app_exchange' ? 'active' : '' }}">
-					<span class="material-icons">swap_horiz</span>
+                <a href="{{ path('exchange_page') }}" id="nav_exchanges" class="{{ app.request.attributes.get('_route') starts with 'app_exchange' ? 'active' : '' }}">					<span class="material-icons">swap_horiz</span>
 					Exchanges
 				</a>
 			</li>
