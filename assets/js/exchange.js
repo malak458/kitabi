@@ -1,70 +1,6 @@
-document.addEventListener('DOMContentLoaded', function() {
-    const exchangeModal = document.getElementById('exchangeModal');
-    const exchangeForm = document.getElementById('exchangeForm');
-    
-    if (exchangeModal && exchangeForm) {
-        const existingBookBlock = document.getElementById('existingBookBlock');
-        const newBookBlock = document.getElementById('newBookBlock');
-        const offeredBookSelect = document.getElementById('offeredBookSelect');
-        const newBookTitle = document.getElementById('newBookTitle');
-        const newBookAuthor = document.getElementById('newBookAuthor');
-        const bookModeSelect = document.getElementById('bookModeSelect') || document.getElementById('bookMode');
-        exchangeModal.addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget;
-            const requestedBookId = button.getAttribute('data-book-id');
-            exchangeForm.action = `/exchange/create/${requestedBookId}`;
+document.addEventListener('DOMContentLoaded', function () {
 
-            // Réinitialisation par défaut vers l'état "Livre existant"
-            if (existingBookBlock) existingBookBlock.style.display = 'block';
-            if (newBookBlock) newBookBlock.style.style.display = 'none';
-            if (bookModeSelect) bookModeSelect.value = 'existing';
-            
-            if (offeredBookSelect) {
-                offeredBookSelect.value = "";
-                offeredBookSelect.setAttribute('required', 'required');
-            }
-            if (newBookTitle) {
-                newBookTitle.value = "";
-                newBookTitle.removeAttribute('required');
-            }
-            if (newBookAuthor) newBookAuthor.value = "";
-        });
-        if (bookModeSelect) {
-            bookModeSelect.addEventListener('change', function() {
-                if (this.value === 'existing') {
-                    if (existingBookBlock) existingBookBlock.style.display = 'block';
-                    if (newBookBlock) newBookBlock.style.display = 'none';
-                    if (offeredBookSelect) offeredBookSelect.setAttribute('required', 'required');
-                    if (newBookTitle) newBookTitle.removeAttribute('required');
-                } else {
-                    if (existingBookBlock) existingBookBlock.style.display = 'none';
-                    if (newBookBlock) newBookBlock.style.display = 'block';
-                    if (offeredBookSelect) offeredBookSelect.removeAttribute('required');
-                    if (newBookTitle) newBookTitle.setAttribute('required', 'required');
-                }
-            });
-        }
-    }
-});        
-        document.getElementById('btnShowNewBook').addEventListener('click', function() {
-            existingBookBlock.classList.add('d-none');
-            newBookBlock.classList.remove('d-none');
-            bookMode.value = 'new';
-            offeredBookSelect.removeAttribute('required');
-            newBookTitle.setAttribute('required', 'required');
-        });
-
-        document.getElementById('btnShowExistingBook').addEventListener('click', function() {
-            newBookBlock.classList.add('d-none');
-            existingBookBlock.classList.remove('d-none');
-            bookMode.value = 'existing';
-            newBookTitle.removeAttribute('required');
-            offeredBookSelect.setAttribute('required', 'required');
-        });
-    
-    // ==========================================
-    // 2. GESTION DES FILTRES DE VISIBILITÉ (TABLEAU DE BORD)
-    // ==========================================
+    // ========== FILTRES ==========
     const activeBtn    = document.getElementById('activeBtn');
     const completedBtn = document.getElementById('completedBtn');
     const allBtn       = document.getElementById('allBtn');
@@ -96,49 +32,72 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     updateVisibility();
 
-    // ==========================================
-    // 3. ACTIONS EN DIRECT (ACCEPT / DECLINE)
-    // ==========================================
-    document.addEventListener('click', function (e) {
-        const isAccept = e.target.classList.contains('accept-btn');
-        const isDecline = e.target.classList.contains('decline-btn');
+    // ========== ACCEPT / DECLINE (délégation sur tous les boutons) ==========
+    // Utilise la délégation d'événements pour gérer plusieurs pending exchanges
 
-        if (isAccept || isDecline) {
+    document.addEventListener('click', function (e) {
+
+        // --- ACCEPT ---
+        if (e.target.classList.contains('accept-btn')) {
             e.preventDefault();
             const container = e.target.closest('.pending-card');
             if (!container) return;
-            
             const exchangeId = container.dataset.exchangeId;
-            const actionUrl = isAccept ? `/exchange/${exchangeId}/accept` : `/exchange/${exchangeId}/decline`;
-            const confirmMessage = isAccept ? 'Voulez-vous accepter cette demande ?' : 'Voulez-vous refuser cette demande ?';
 
-            if (confirm(confirmMessage)) {
-                e.target.disabled = true;
-                e.target.textContent = 'Chargement...';
+            if (confirm('Are you sure you want to accept this exchange request?')) {
+                updateStatus(exchangeId, 'accepted', e.target);
+            }
+        }
 
-                // Envoi direct vers les routes de ton ExchangeController
-                fetch(actionUrl, { method: 'POST' })
-                .then(response => {
-                    if (response.ok) {
-                        showNotification(isAccept ? 'Échange accepté !' : 'Échange refusé.', 'success');
-                        setTimeout(() => location.reload(), 1000);
-                    } else {
-                        showNotification('Une erreur est survenue.', 'error');
-                        e.target.disabled = false;
-                        e.target.textContent = isAccept ? 'Accepter' : 'Refuser';
-                    }
-                })
-                .catch(() => {
-                    showNotification('Erreur réseau.', 'error');
-                    e.target.disabled = false;
-                });
+        // --- DECLINE ---
+        if (e.target.classList.contains('decline-btn')) {
+            e.preventDefault();
+            const container = e.target.closest('.pending-card');
+            if (!container) return;
+            const exchangeId = container.dataset.exchangeId;
+
+            if (confirm('Are you sure you want to decline this exchange request?')) {
+                updateStatus(exchangeId, 'refused', e.target);
             }
         }
     });
+
+    function updateStatus(exchangeId, status, btn) {
+        // Désactiver le bouton pendant la requête
+        btn.disabled = true;
+        btn.textContent = 'Loading...';
+
+        fetch('update_exchange_status.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ exchangeId: exchangeId, status: status })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(
+                    status === 'accepted' ? 'Exchange accepted!' : 'Exchange declined.',
+                    'success'
+                );
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showNotification(data.error || 'Operation failed.', 'error');
+                btn.disabled = false;
+                btn.textContent = status === 'accepted' ? 'Accept' : 'Decline';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification('Network error. Please try again.', 'error');
+            btn.disabled = false;
+            btn.textContent = status === 'accepted' ? 'Accept' : 'Decline';
+        });
+    }
 });
 
+// ========== NOTIFICATION ==========
 function showNotification(message, type) {
-    const colors = { success: '#0e6b5e', error: '#dc3545', info: '#17a2b8' };
+    const colors = { success: '#28a745', error: '#dc3545', info: '#17a2b8' };
     const notification = document.createElement('div');
     notification.textContent = message;
     notification.style.cssText = `
@@ -158,5 +117,5 @@ function showNotification(message, type) {
     setTimeout(() => {
         notification.style.opacity = '0';
         setTimeout(() => notification.remove(), 300);
-    }, 2500);
+    }, 2700);
 }

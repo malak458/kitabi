@@ -12,6 +12,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use App\Entity\Book;
+use App\Entity\Exchange;
+
 
 class MarketplaceController extends AbstractController
 {
@@ -38,8 +41,11 @@ class MarketplaceController extends AbstractController
             $favorites = $favoriteRepository->findByUserId($this->getUser()->getId());
             $favoriteBookIds = array_map(fn($fav) => $fav->getBook()->getId(), $favorites);
         }
-        $user = $this->getUser();
-        $myBooks = $bookRepository->findBy(['user' => $user]);
+        
+        $myBooks = [];
+    if ($this->getUser()) {
+        $myBooks = $bookRepository->findBy(['user' => $this->getUser()]);
+    }
      
 
         return $this->render('marketplace/index.html.twig', [
@@ -135,15 +141,30 @@ class MarketplaceController extends AbstractController
         return $this->json($data);
     }
 
-    #[Route('/exchange/create/{id}', name: 'app_exchange_create', methods: ['POST'])]
+   #[Route('/exchange/create/{id}', name: 'app_exchange_create', methods: ['POST'])]
 public function create(Book $requestedBook, Request $request, BookRepository $bookRepository, EntityManagerInterface $em): Response
 {
     $user = $this->getUser();
     if (!$user) {
+        $this->addFlash('error', 'Vous devez être connecté pour proposer un échange.');
         return $this->redirectToRoute('app_login');
     }
 
-    if ($requestedBook->getUser() === $user) {
+    // Vérification du livre demandé
+    if (!$requestedBook) {
+        $this->addFlash('error', 'Livre non trouvé.');
+        return $this->redirectToRoute('app_marketplace');
+    }
+
+    // Vérification du propriétaire
+    $bookOwner = $requestedBook->getUser();
+    if (!$bookOwner) {
+        $this->addFlash('error', 'Ce livre n\'a pas de propriétaire associé.');
+        return $this->redirectToRoute('app_marketplace');
+    }
+
+    // Vérification que l'utilisateur ne demande pas son propre livre
+    if ($bookOwner->getId() === $user->getId()) {
         $this->addFlash('error', 'Vous ne pouvez pas demander votre propre livre !');
         return $this->redirectToRoute('app_marketplace');
     }
@@ -152,46 +173,64 @@ public function create(Book $requestedBook, Request $request, BookRepository $bo
     $offeredBook = null;
 
     if ($mode === 'new') {
-        // --- CAS 1 : L'utilisateur ajoute un livre à la volée ---
-        $title = $request->request->get('new_book_title');
-        $author = $request->request->get('new_book_author');
+        $title = trim($request->request->get('new_book_title'));
+        $author = trim($request->request->get('new_book_author'));
 
         if (empty($title)) {
             $this->addFlash('error', 'Le titre du livre est obligatoire.');
             return $this->redirectToRoute('app_marketplace');
         }
 
-        // On crée l'entité Book et on l'enregistre dans son profil
         $offeredBook = new Book();
         $offeredBook->setTitre($title);
-        $offeredBook->setAuteur($author); // Adapte le setter selon ton entité Book (ex: setAuteur)
-        $offeredBook->setUser($user);     // Lié à l'utilisateur connecté
+        $offeredBook->setAuteur(!empty($author) ? $author : 'Auteur inconnu');
+        $offeredBook->setUser($user);
+        $offeredBook->setForExchange(true);
+        $offeredBook->setPrix(0);
+        $offeredBook->setCondition('Bon');
+        $offeredBook->setGenre('Divers');
+        $offeredBook->setCreatedAt(new \DateTimeImmutable());
 
         $em->persist($offeredBook);
-        // Note: Pas besoin de flush() tout de suite, on le fera à la fin avec l'échange !
-
+        
     } else {
-        // --- CAS 2 : L'utilisateur a choisi un livre existant ---
         $offeredBookId = $request->request->get('offered_book_id');
+        
+        if (empty($offeredBookId)) {
+            $this->addFlash('error', 'Veuillez sélectionner un livre à échanger.');
+            return $this->redirectToRoute('app_marketplace');
+        }
+        
         $offeredBook = $bookRepository->find($offeredBookId);
 
-        if (!$offeredBook || $offeredBook->getUser() !== $user) {
-            $this->addFlash('error', 'Livre proposé invalide.');
+        if (!$offeredBook) {
+            $this->addFlash('error', 'Livre proposé non trouvé.');
+            return $this->redirectToRoute('app_marketplace');
+        }
+        
+        if ($offeredBook->getUser()->getId() !== $user->getId()) {
+            $this->addFlash('error', 'Vous ne pouvez proposer qu\'un de vos propres livres.');
             return $this->redirectToRoute('app_marketplace');
         }
     }
 
-    // --- CRÉATION DE LA TRANSACTION ---
+    // Vérification finale
+    if (!$offeredBook) {
+        $this->addFlash('error', 'Erreur technique lors de la création de l\'échange.');
+        return $this->redirectToRoute('app_marketplace');
+    }
+
+    // Création de l'échange
     $exchange = new Exchange();
     $exchange->setUserRequesting($user);
-    $exchange->setUserOffering($requestedBook->getUser());
+    $exchange->setUserOffering($bookOwner);
     $exchange->setRequestedBook($requestedBook);
-    $exchange->setOfferedBook($offeredBook); // Doctrine va lier le nouveau livre ou l'existant automatiquement
+    $exchange->setOfferedBook($offeredBook);
     $exchange->setStatus('pending');
     $exchange->setCreatedAt(new \DateTimeImmutable());
 
     $em->persist($exchange);
-    $em->flush(); // Enregistre le livre (si nouveau) ET l'échange d'un coup en BDD !
+    $em->flush();
 
     $this->addFlash('success', 'Votre demande d\'échange a bien été envoyée !');
     return $this->redirectToRoute('app_exchange');
