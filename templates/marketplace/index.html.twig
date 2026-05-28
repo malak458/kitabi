@@ -90,19 +90,19 @@
 						<div style="position:relative; display:inline-block;">
 							<input class="nav-search" type="text" id="searchInput" name="search" placeholder="Rechercher un livre…" value="{{ filters.search }}" autocomplete="off"/>
 							<ul id="searchSuggestions" style="
-																																																																																																																																																																        display:none;
-																																																																																																																																																																        position:absolute;
-																																																																																																																																																																        top:100%;
-																																																																																																																																																																        left:0;
-																																																																																																																																																																        background:#fff;
-																																																																																																																																																																        border-radius:12px;
-																																																																																																																																																																        box-shadow:0 8px 24px rgba(0,0,0,0.15);
-																																																																																																																																																																        list-style:none;
-																																																																																																																																																																        z-index:999;
-																																																																																																																																																																        margin-top:6px;
-																																																																																																																																																																        padding:6px 0;
-																																																																																																																																																																        min-width:350px;
-																																																																																																																																																																    "></ul>
+																																																																																																																																																																																																																																																								        display:none;
+																																																																																																																																																																																																																																																								        position:absolute;
+																																																																																																																																																																																																																																																								        top:100%;
+																																																																																																																																																																																																																																																								        left:0;
+																																																																																																																																																																																																																																																								        background:#fff;
+																																																																																																																																																																																																																																																								        border-radius:12px;
+																																																																																																																																																																																																																																																								        box-shadow:0 8px 24px rgba(0,0,0,0.15);
+																																																																																																																																																																																																																																																								        list-style:none;
+																																																																																																																																																																																																																																																								        z-index:999;
+																																																																																																																																																																																																																																																								        margin-top:6px;
+																																																																																																																																																																																																																																																								        padding:6px 0;
+																																																																																																																																																																																																																																																								        min-width:350px;
+																																																																																																																																																																																																																																																								    "></ul>
 						</div>
 						<a href="{{ path('app_book_new') }}" class="nav-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
 							Publier un livre
@@ -166,9 +166,24 @@
 									{{ book.condition }}
 								</div>
 
-								<button class="heart-btn" data-id="{{ book.id }}">
-									♡
-								</button>
+								{% set isFavorite = false %}
+{% if app.user %}
+    {% for fav in app.user.favorites ?? [] %}
+        {% if fav.book.id == book.id %}
+            {% set isFavorite = true %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<button class="heart-btn"
+    {% if app.user %}
+        data-url="{{ path('app_book_favorite', {id: book.id}) }}"
+    {% else %}
+        data-login="{{ path('app_login') }}"
+    {% endif %}
+    style="color: {{ isFavorite ? 'red' : 'gray' }};">
+    {{ isFavorite ? '♥' : '♡' }}
+</button>
 
 							</div>
 							<br>
@@ -208,7 +223,135 @@
 
 
 	</div>
+	{% include 'marketplace/banner.html.twig' %}
+	<div class="space-before-footer"></div>
+	<div class="space-before-footer"></div>
+	{# ===== BLOC AVIS LECTEURS ===== #}
+	<section
+		class="kb-reviews-section">
+
+		{# En-tête #}
+		<div class="kb-reviews-header">
+			<div>
+				<p class="kb-label">✦ Ce que disent nos lecteurs</p>
+				<h2 class="kb-reviews-title">
+					Ils ont essayé
+					<span>KITAB</span>
+					— voici leur avis
+				</h2>
+			</div>
+			<div class="kb-avg-block">
+				<div class="kb-avg-num">{{ averageRating ?: '—' }}</div>
+				<div class="kb-avg-stars">
+					{% if averageRating %}
+						{% for i in 1..5 %}
+							{{ i <= averageRating|round ? '★' : '☆' }}
+						{% endfor %}
+					{% endif %}
+				</div>
+				<div class="kb-avg-count">{{ reviewCount }}
+					avis vérifiés</div>
+			</div>
+		</div>
+
+		{# Flash messages #}
+		{% for msg in app.flashes('success') %}
+			<div class="kb-flash kb-flash--success">{{ msg }}</div>
+		{% endfor %}
+		{% for msg in app.flashes('error') %}
+			<div class="kb-flash kb-flash--error">{{ msg }}</div>
+		{% endfor %}
+
+		{# Grille des avis #}
+		{% if reviews is not empty %}
+			<div class="kb-reviews-grid">
+				{% for review in reviews %}
+					<div class="kb-review-card">
+						<div class="kb-review-stars">
+							{% for i in 1..5 %}
+								{{ i <= review.rating ? '★' : '☆' }}
+							{% endfor %}
+						</div>
+						<p class="kb-review-text">{{ review.content }}</p>
+						<div class="kb-review-user">
+							<div class="kb-avatar">
+								{{ review.user.prenom|first|upper }}{{ review.user.nom|first|upper }}
+							</div>
+							<div>
+								<p class="kb-review-name">{{ review.user.prenom }}
+									{{ review.user.nom|first }}.</p>
+								<p class="kb-review-date">{{ review.createdAt|date('d/m/Y') }}</p>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		{% else %}
+			<p class="kb-no-review">Soyez le premier à laisser un avis !</p>
+		{% endif %}
+
+		{# === FORMULAIRE : seulement si connecté === #}
+		<div class="kb-form-wrapper">
+			{% if app.user %}
+				<h3 class="kb-form-title">Laisser un avis</h3>
+				<form
+					action="{{ path('app_marketplace_review') }}" method="POST" class="kb-form">
+
+					{# Étoiles interactives #}
+					<div class="kb-star-picker" id="starPicker">
+						{% for i in 1..5 %}
+							<span class="kb-star" data-value="{{ i }}">☆</span>
+						{% endfor %}
+						<input type="hidden" name="rating" id="ratingInput" value="0" required>
+					</div>
+
+					<textarea name="content" class="kb-textarea" placeholder="Partagez votre expérience avec la communauté..." rows="3" maxlength="500" required></textarea>
+
+					<button type="submit" class="kb-submit-btn">
+						Publier mon avis
+					</button>
+				</form>
+
+			{% else %}
+				{# Utilisateur non connecté #}
+				<div class="kb-login-prompt">
+					<span class="kb-lock-icon">🔒</span>
+					<p>Connecte-toi pour partager ton avis avec la communauté KITAB</p>
+					<a href="{{ path('app_login') }}" class="kb-login-link">Se connecter</a>
+					<a href="{{ path('app_register') }}" class="kb-register-link">Créer un compte</a>
+				</div>
+			{% endif %}
+		</div>
+
+	</section>
+
+	{# Script étoiles interactif #}
+	<script>
+		(function () {
+const stars = document.querySelectorAll('#starPicker .kb-star');
+const input = document.getElementById('ratingInput');
+let selected = 0;
+
+stars.forEach(star => {
+star.addEventListener('mouseenter', () => highlight(+ star.dataset.value));
+star.addEventListener('mouseleave', () => highlight(selected));
+star.addEventListener('click', () => {
+selected = + star.dataset.value;
+input.value = selected;
+highlight(selected);
+});
+});
+
+function highlight(val) {
+stars.forEach(s => s.textContent = + s.dataset.value <= val ? '★' : '☆');
+}
+})();
+	</script>
+	<div class="space-before-footer"></div>
+	<div class="space-before-footer"></div>
+
 {% endblock %}
+
 {% block footer %}
 	<footer class="footer">
 		<div class="descrp">
@@ -252,4 +395,5 @@
 {% block javascripts %}
 	{{ parent() }}
 	<script src="{{ asset('assets/js/marketPlace.js') }}"></script>
+	<script src="{{ asset('assets/js/favorites-toggle.js') }}"></script>
 {% endblock %}

@@ -5,7 +5,14 @@ document.addEventListener('DOMContentLoaded', function () {
             e.stopPropagation();
 
             const url = this.dataset.url;
-            console.log('URL appelée:', url);
+            const loginUrl = this.dataset.login;
+            const isPageFavoris = this.dataset.pageFavoris === 'true';
+
+            if (loginUrl) {
+                window.location.href = loginUrl;
+                return;
+            }
+
             if (!url) return;
 
             fetch(url, {
@@ -15,14 +22,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     'Content-Type': 'application/json'
                 }
             })
-            .then(res => {
-                console.log('Status:', res.status);
-                return res.json();
-            })
+            .then(res => res.json())
             .then(data => {
-                console.log('Réponse:', data);
                 if (data.success) {
-                    window.location.reload();
+                    if (isPageFavoris) {
+                        window.location.reload(); // refresh si page favoris
+                    } else {
+                        if (data.action === 'added') {
+                            this.style.color = 'red';
+                            this.textContent = '♥';
+                        } else {
+                            this.style.color = 'gray';
+                            this.textContent = '♡';
+                        }
+                    }
                 }
             })
             .catch(err => console.error('Erreur fetch:', err));

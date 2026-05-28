@@ -69,7 +69,7 @@
             <div class="image-container">
 
               <img
-                src="{% if book.image starts with 'http' %}{{ book.image }}{% else %}{{ asset('uploads/' ~ book.image) }}{% endif %}"
+                src="{% if book.image starts with 'http' %}{{ book.image }}{% else %}{{ asset('uploads/books/' ~ book.image) }}{% endif %}"
                 alt="{{ book.titre }}"
               />
 
@@ -115,7 +115,7 @@
               </div>
 
               <div class="card-buttons">
-                <a href="{{ path('app_book_details', { id: book.id }) }}" class="details">
+                <a href="{{ path('app_book_show', { id: book.id }) }}" class="details">
                   <i class="bi bi-book"></i> Details
                 </a>
                 <a href="#" class="chat">
