@@ -19,7 +19,7 @@
         
         /* Style simple pour les labels radio d'origine */
         .filter-label { padding: 8px 16px; cursor: pointer; border-radius: 8px; transition: all 0.2s; color: #5c4d4c; }
-        .exchange-filter:checked + .filter-label { background-color: #8c7864; color: #fff; fw-bold; }
+        .exchange-filter:checked + .filter-label { background-color: #8c7864; color: #fff; font-weight: bold; }
         .exchange-filter { display: none; } 
         #exchange-Accepted, 
         #pending-Exchanges, 
@@ -32,7 +32,8 @@
 {% endblock %}
 
 {% block javascripts %}
-    {{ parent() }}<script src="{{ asset('js/exchange.js') }}" defer></script>
+    {{ parent() }}
+    <script src="{{ asset('js/exchange.js') }}" defer></script>
 {% endblock %}
 
 {% block body %}
@@ -78,7 +79,6 @@
         </div>
     </article>
 
-    {# Structure d'origine restaurée pour le JS #}
     <article class="d-flex justify-content-center empl mb-4 p-3 rounded-bottom-4 rounded-top-4 d-inline-block bg-muted gap-2">
         <input type="radio" id="activeBtn" name="exchangeFilter" class="exchange-filter" checked>
         <label for="activeBtn" class="filter-label">Active Exchanges</label>
@@ -88,6 +88,7 @@
         <label for="allBtn" class="filter-label">All Exchanges</label>
     </article>
 
+    {# SECTION : ACCEPTED EXCHANGES #}
     <section class="mt-4 border border-1 bg-teal-light p-3 d-flex flex-column" id="exchange-Accepted">
         {% if acceptedExchanges is empty %}
             <div class="text-center w-100 p-4 text-muted">
@@ -110,16 +111,16 @@
                     <div class="devider"></div>
                     <div class="position-relative empl mb-4 p-4 rounded-4 w-100 bg-muted d-flex flex-column gap-4">
                         <div class="offering-date text-amber-custom border-bottom pb-2">
-                            You offered: <span>{{ accept.createdAt }}</span>
+                            You offered: <span>{{ accept.createdAt|date('Y-m-d') }}</span>
                         </div>
                         <div class="book-exchange d-flex align-items-center justify-content-center flex-wrap">
                             <div class="offered-book me-5 text-center">
                                 <h3>Your Book</h3>
-                                <img src="{{ asset('photo/' ~ myBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
+                                <img src="{{ asset('photo/' ~ accept.offeredBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
                                 <article class="book-details mt-2">
-                                    <div class="title fw-bold">{{ myBook.titre }}</div>
-                                    <div class="author text-muted small">{{ myBook.auteur }}</div>
-                                    <div class="condition small text-secondary">Condition: {{ myBook.condition }}</div>
+                                    <div class="title fw-bold">{{ accept.offeredBook.titre }}</div>
+                                    <div class="author text-muted small">{{ accept.offeredBook.auteur }}</div>
+                                    <div class="condition small text-secondary">Condition: {{ accept.offeredBook.condition }}</div>
                                 </article>
                             </div>
                             <svg class="me-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -127,11 +128,11 @@
                             </svg>
                             <div class="received-book text-center">
                                 <h3>Received Book</h3>
-                                <img src="{{ asset('photo/' ~ partnerBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
+                                <img src="{{ asset('photo/' ~ accept.requestedBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
                                 <article class="book-details1 mt-2">
-                                    <div class="title1 fw-bold">{{ partnerBook.titre }}</div>
-                                    <div class="author1 text-muted small">{{ partnerBook.auteur }}</div>
-                                    <div class="condition1 small text-secondary">Condition: {{ partnerBook.condition }}</div>
+                                    <div class="title1 fw-bold">{{ accept.requestedBook.titre }}</div>
+                                    <div class="author1 text-muted small">{{ accept.requestedBook.auteur }}</div>
+                                    <div class="condition1 small text-secondary">Condition: {{ accept.requestedBook.condition }}</div>
                                 </article>
                             </div>
                         </div>
@@ -141,75 +142,84 @@
         {% endif %}
     </section>
 
+    {# SECTION : PENDING EXCHANGES #}
     <section class="pendingResponse mt-4 border border-1 bg-teal-light rounded p-3" id="pending-Exchanges">
         {% if pendingRequests is empty %}
             <div class="text-center w-100 p-4 text-muted">
                 <p>No pending requests. You're all caught up!</p>
             </div>
         {% else %}
-            {% for pend in pendingRequests %}
-                {{ include('exchange/verifierBookOffer.html.twig', { 'exchange': pend }) }}
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h2 class="d-flex align-items-center mb-0 text-sepia fw-bold fs-6">
-                        <i class="bi bi-hourglass-split text-warning me-2 fs-5"></i>
-                        Pending Response
-                    </h2>
-                    <button type="button" class="btn btn-outline-teal btn-sm">
-                        <i class="bi bi-chat-left-fill me-1"></i> Chat
-                    </button>
-                </div>
-                <div class="devider1"></div>
-                
-                <div class="pending-card position-relative empl mb-4 p-4 rounded-4 w-100 bg-muted d-flex flex-column gap-4" data-exchange-id="{{ pend.id }}">
-                    <div class="offering-date text-amber-custom border-bottom pb-2">
-                        You requested: <span>{{ pend.createdAt }}</span>
-                    </div>
-                    <div class="book-exchange d-flex align-items-center justify-content-center flex-wrap">
-                        <div class="your-book me-5 text-center">
-                            <h3>Your Book</h3>
-                            <img src="{{ asset('photo/' ~ myBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
-                            <article class="book-details2 mt-2">
-                                <div class="title2 fw-bold">{{ myBook.titre }}</div>
-                                <div class="author2 text-muted small">{{ myBook.auteur }}</div>
-                                <div class="condition2 small text-secondary">Condition: {{ myBook.condition }}</div>
-                            </article>
-                        </div>
-                        <svg class="me-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/>
-                        </svg>
-                        <div class="their-book text-center">
-                            <h3>Requested Book</h3>
-                            <img src="{{ asset('photo/' ~ partnerBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
-                            <article class="book-details3 mt-2">
-                                <div class="title3 fw-bold">{{ partnerBook.titre }}</div>
-                                <div class="author3 text-muted small">{{ partnerBook.auteur }}</div>
-                                <div class="condition3 small text-secondary">Condition: {{ partnerBook.condition }}</div>
-                            </article>
-                        </div>
-                    </div>
+            <div class="row g-4 w-100 m-0"> {# Conteneur Bootstrap Grid ajouté #}
+                {% for pend in pendingRequests %}
+                    {% if pend.userOffering == app.user %}
+                        {% set partner = pend.userRequesting %}
+                        
+                        <div class="col-12 px-0"> {# Forçage sur une ligne complète unique #}
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h2 class="d-flex align-items-center mb-0 text-sepia fw-bold fs-6">
+                                    <i class="bi bi-hourglass-split text-warning me-2 fs-5"></i>
+                                    Pending Response
+                                </h2>
+                                <button type="button" class="btn btn-outline-teal btn-sm">
+                                    <i class="bi bi-chat-left-fill me-1"></i> Chat
+                                </button>
+                            </div>
+                            <div class="devider1"></div>
+                            
+                            <div class="pending-card position-relative empl mb-4 p-4 rounded-4 w-100 bg-muted d-flex flex-column gap-4" data-exchange-id="{{ pend.id }}">
+                                <div class="offering-date text-amber-custom border-bottom pb-2">
+                                    You requested: <span>{{ pend.createdAt|date('Y-m-d') }}</span>
+                                </div>
+                                <div class="book-exchange d-flex align-items-center justify-content-center flex-wrap">
+                                    <div class="your-book me-5 text-center">
+                                        <h3>Your Book</h3>
+                                        <img src="{{ asset('photo/' ~ pend.requestedBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
+                                        <article class="book-details2 mt-2">
+                                            <div class="title2 fw-bold">{{ pend.requestedBook.titre }}</div>
+                                            <div class="author2 text-muted small">{{ pend.requestedBook.auteur }}</div>
+                                            <div class="condition2 small text-secondary">Condition: {{ pend.requestedBook.condition }}</div>
+                                        </article>
+                                    </div>
+                                    <svg class="me-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/>
+                                    </svg>
+                                    <div class="their-book text-center">
+                                        <h3>Requested Book</h3>
+                                        <img src="{{ asset('photo/' ~ pend.offeredBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
+                                        <article class="book-details3 mt-2">
+                                            <div class="title3 fw-bold">{{ pend.offeredBook.titre }}</div>
+                                            <div class="author3 text-muted small">{{ pend.offeredBook.auteur }}</div>
+                                            <div class="condition3 small text-secondary">Condition: {{ pend.offeredBook.condition }}</div>
+                                        </article>
+                                    </div>
+                                </div>
 
-                    <div class="requesting-person d-flex align-items-center gap-3 mt-2 border-top pt-2">
-                        <img src="{{ asset('photo/' ~ partner.image) }}" alt="User" width="50" height="50" class="rounded-circle object-fit-cover border">
-                        <div class="userDescription">
-                            <div class="username fw-bold text-sepia">{{ partner.nom }}</div>
-                            <div class="rate-stars">
-                                {% for i in 1..5 %}
-                                    <i class="bi {{ i <= partner.rating ? 'bi-star-fill' : 'bi-star' }} text-amber-custom me-1"></i>
-                                {% endfor %}
-                                <span class="text-muted small">{{ partner.rating }}/5</span>
+                                <div class="requesting-person d-flex align-items-center gap-3 mt-2 border-top pt-2">
+                                    <img src="{{ asset('photo/' ~ partner.image) }}" alt="User" width="50" height="50" class="rounded-circle object-fit-cover border">
+                                    <div class="userDescription">
+                                        <div class="username fw-bold text-sepia">{{ partner.nom }}</div>
+                                        <div class="rate-stars">
+                                            {% for i in 1..5 %}
+                                                <i class="bi {{ i <= partner.rating ? 'bi-star-fill' : 'bi-star' }} text-amber-custom me-1"></i>
+                                            {% endfor %}
+                                            <span class="text-muted small">{{ partner.rating }}/5</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="response-buttons d-flex justify-content-center gap-4">
+                                    <a href="{{ path('app_exchange_accept', {'id': pend.id}) }}" class="btn accept-btn btn-teal mt-4"> Accept </a>
+                                    <a href="{{ path('app_exchange_decline', {'id': pend.id}) }}" class="btn decline-btn btn-outline-secondary mt-4">Decline</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="response-buttons d-flex justify-content-center gap-4">
-                        <a href="{{ path('app_exchange_accept', {'id': pend.id}) }}" class="btn accept-btn btn-teal mt-4"> Accept </a>
-                        <a href="{{ path('app_exchange_decline', {'id': pend.id}) }}" class="btn decline-btn btn-outline-secondary mt-4">Decline</a>
-                    </div>
-                </div>
-            {% endfor %} 
+                    {% endif %}
+                {% endfor %} 
+            </div>
         {% endif %}
     </section>
 
+    {# SECTION : COMPLETED EXCHANGES #}
     <section class="mt-4 border border-1 bg-teal-light p-3 d-flex flex-column" id="completed-Exchanges">
         {% if completedHistory is empty %}
             <div class="text-center w-100 p-4 text-muted">
@@ -220,16 +230,16 @@
                 {{ include('exchange/verifierBookOffer.html.twig', { 'exchange': comp }) }}
                 <div class="position-relative empl mb-4 p-4 rounded-4 w-100 bg-muted d-flex flex-column gap-4">
                     <div class="offering-date text-amber-custom border-bottom pb-2">
-                        You offered: <span>{{ comp.createdAt }}</span>
+                        You offered: <span>{{ comp.createdAt|date('Y-m-d') }}</span>
                     </div>
                     <div class="book-exchange d-flex align-items-center justify-content-center flex-wrap">
                         <div class="offered-book me-5 text-center">
                             <h3>Your Book</h3>
-                            <img src="{{ asset('photo/' ~ myBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
+                            <img src="{{ asset('photo/' ~ comp.offeredBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
                             <article class="book-details mt-2">
-                                <div class="title fw-bold">{{ myBook.titre }}</div>
-                                <div class="author text-muted small">{{ myBook.auteur }}</div>
-                                <div class="condition small text-secondary">Condition: {{ myBook.condition }}</div>
+                                <div class="title fw-bold">{{ comp.offeredBook.titre }}</div>
+                                <div class="author text-muted small">{{ comp.offeredBook.auteur }}</div>
+                                <div class="condition small text-secondary">Condition: {{ comp.offeredBook.condition }}</div>
                             </article>
                         </div>
                         <svg class="me-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -237,27 +247,28 @@
                         </svg>
                         <div class="received-book text-center">
                             <h3>Received Book</h3>
-                            <img src="{{ asset('photo/' ~ partnerBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
+                            <img src="{{ asset('photo/' ~ comp.requestedBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
                             <article class="book-details1 mt-2">
-                                <div class="title1 fw-bold">{{ partnerBook.titre }}</div>
-                                <div class="author1 text-muted small">{{ partnerBook.auteur }}</div>
-                                <div class="condition1 small text-secondary">Condition: {{ partnerBook.condition }}</div>
+                                <div class="title1 fw-bold">{{ comp.requestedBook.titre }}</div>
+                                <div class="author1 text-muted small">{{ comp.requestedBook.auteur }}</div>
+                                <div class="condition1 small text-secondary">Condition: {{ comp.requestedBook.condition }}</div>
                             </article>
                         </div>
-                        <div class="exchange-rate w-100 border-top mt-4 pt-3 text-amber-custom text-center">
-                            Exchange Rate:
-                            <span class="ms-2">
-                                {% for i in 1..5 %}
-                                    <i class="bi bi-star text-warning me-1"></i>
-                                {% endfor %}
-                            </span>
-                        </div>
+                    </div>
+                    <div class="exchange-rate w-100 border-top mt-4 pt-3 text-amber-custom text-center">
+                        Exchange Rate:
+                        <span class="ms-2">
+                            {% for i in 1..5 %}
+                                <i class="bi bi-star text-warning me-1"></i>
+                            {% endfor %}
+                        </span>
                     </div>
                 </div>
             {% endfor %}
         {% endif %}
     </section>
 
+    {# SECTION : REFUSED EXCHANGES #}
     <section class="mt-4 border border-1 bg-teal-light p-3 d-flex flex-column" id="refused-Exchanges">
         <div class="d-flex justify-content-between align-items-center mb-3 w-100">
             <h2 class="d-flex align-items-center mb-0 text-sepia fw-bold fs-6">
@@ -276,19 +287,19 @@
                 {{ include('exchange/verifierBookOffer.html.twig', { 'exchange': exchange }) }}
                 <div class="position-relative empl mb-4 p-4 rounded-4 w-100 bg-muted d-flex flex-column gap-4">
                     <div class="offering-date text-amber-custom border-bottom pb-2">
-                        You offered: <span>{{ exchange.createdAt }}</span>
+                        You offered: <span>{{ exchange.createdAt|date('Y-m-d') }}</span>
                     </div>
                     <div class="book-exchange d-flex align-items-center justify-content-center flex-wrap">
                         <div class="offered-book me-5 text-center">
                             <h3>Your Book</h3>
-                            <div class="title fw-bold">{{ myBook.titre }}</div>
+                            <div class="title fw-bold">{{ exchange.offeredBook.titre }}</div>
                         </div>
                         <svg class="me-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/>
                         </svg>
                         <div class="received-book text-center">
                             <h3>Asked Book</h3>
-                            <div class="title1 fw-bold">{{ partnerBook.titre }}</div>
+                            <div class="title1 fw-bold">{{ exchange.requestedBook.titre }}</div>
                         </div>
                     </div>
                 </div>
@@ -296,6 +307,7 @@
         {% endif %}
     </section>
 
+    {# SECTION : IN PROGRESS EXCHANGES #}
     <section class="mt-4 border border-1 bg-teal-light p-3 d-flex flex-column" id="in-progress-Exchanges">
         <div class="d-flex justify-content-between align-items-center mb-3 w-100">
             <h2 class="d-flex align-items-center mb-0 text-sepia fw-bold fs-6">
@@ -311,25 +323,28 @@
             </div>
         {% else %}
             {% for exchange in inProgressHistory %}
-                {{ include('exchange/verifierBookOffer.html.twig', { 'exchange': exchange }) }}
-                <div class="position-relative empl mb-4 p-4 rounded-4 w-100 bg-muted d-flex flex-column gap-4">
-                    <div class="offering-date text-amber-custom border-bottom pb-2">
-                        You offered: <span>{{ exchange.createdAt }}</span>
-                    </div>
-                    <div class="book-exchange d-flex align-items-center justify-content-center flex-wrap">
-                        <div class="offered-book me-5 text-center">
-                            <h3>Your Book</h3>
-                            <div class="title fw-bold">{{ myBook.titre }}</div>
+                {% if exchange.userOffering != app.user %}
+                    {% set partner = exchange.userRequesting %}
+                    
+                    <div class="position-relative empl mb-4 p-4 rounded-4 w-100 bg-muted d-flex flex-column gap-4">
+                        <div class="offering-date text-amber-custom border-bottom pb-2">
+                            You offered: <span>{{ exchange.createdAt|date('Y-m-d') }}</span>
                         </div>
-                        <svg class="me-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/>
-                        </svg>
-                        <div class="received-book text-center">
-                            <h3>Received Book</h3>
-                            <div class="title1 fw-bold">{{ partnerBook.titre }}</div>
+                        <div class="book-exchange d-flex align-items-center justify-content-center flex-wrap">
+                            <div class="offered-book me-5 text-center">
+                                <h3>Your Book</h3>
+                                <div class="title fw-bold">{{ exchange.offeredBook.titre }}</div>
+                            </div>
+                            <svg class="me-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="m16 3 4 4-4 4"/><path d="M20 7H4"/><path d="m8 21-4-4 4-4"/><path d="M4 17h16"/>
+                            </svg>
+                            <div class="received-book text-center">
+                                <h3>Received Book</h3>
+                                <div class="title1 fw-bold">{{ exchange.requestedBook.titre }}</div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                {% endif %}
             {% endfor %}
         {% endif %}
     </section>

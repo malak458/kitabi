@@ -19,29 +19,61 @@ class ExchangeController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
         
-        $acceptedExchanges = $exchangeRepository->findAcceptedExchanges($user);
-        $pendingRequests = $exchangeRepository->findPendingRequests($user);
-        $completedHistory = $exchangeRepository->findCompletedHistory($user);
-        $refusedHistory = $exchangeRepository->findRefusedHistory($user);
-        $inProgressHistory = $exchangeRepository->findInProgressHistory($user);
+        // 1. On récupère TOUS les échanges bruts liés à cet utilisateur
+        $allUserExchanges = $exchangeRepository->createQueryBuilder('e')
+            ->where('e.userRequesting = :user OR e.userOffering = :user')
+            ->setParameter('user', $user)
+            ->getQuery()
+            ->getResult();
+
+        // 2. On initialise nos tableaux pour le Twig
+        $acceptedExchanges = [];
+        $pendingRequests   = []; // Ce que le RECEIVER voit (Demandes reçues en attente)
+        $inProgressHistory = []; // Ce que le SENDER voit (Mes propositions en cours)
+        $completedHistory  = [];
+        $refusedHistory    = [];
+
+        // 3. On trie dynamiquement selon VOTRE logique métier
+        foreach ($allUserExchanges as $exchange) {
+            $status = $exchange->getStatus();
+
+            if ($status === 'pending') {
+                // Si JE SUIS le demandeur (Sender) -> C'est du "In Progress" pour moi
+                if ($exchange->getUserRequesting() === $user) {
+                    $inProgressHistory[] = $exchange;
+                } 
+                // Si JE SUIS le destinataire (Receiver) -> C'est du "Pending" pour moi
+                elseif ($exchange->getUserOffering() === $user) {
+                    $pendingRequests[] = $exchange;
+                }
+            } elseif ($status === 'accepted') {
+                $acceptedExchanges[] = $exchange;
+            } elseif ($status === 'completed') {
+                $completedHistory[] = $exchange;
+            } elseif ($status === 'refused') {
+                $refusedHistory[] = $exchange;
+            }
+        }
         
-        $totalExchanges = count($acceptedExchanges) + count($completedHistory) + count($inProgressHistory);
+        // 4. Calculs des compteurs et statistiques
+        $totalExchanges        = count($acceptedExchanges) + count($completedHistory) + count($inProgressHistory) + count($pendingRequests);
         $completedHistoryCount = count($completedHistory);
-        $activeExchangesCount = count($acceptedExchanges) + count($inProgressHistory);
+        $activeExchangesCount  = count($acceptedExchanges) + count($inProgressHistory) + count($pendingRequests);
 
         $successRate = $totalExchanges > 0 ? ($completedHistoryCount / $totalExchanges) * 100 : 0;
 
+        // 5. Envoi exact aux variables attendues par votre Twig
         return $this->render('exchange/exchange.html.twig', [
-            'user' => $user, 
-            'acceptedExchanges' => $acceptedExchanges,
-            'pendingRequests' => $pendingRequests,
-            'completedHistory' => $completedHistory,
-            'refusedHistory' => $refusedHistory,
-            'inProgressHistory' => $inProgressHistory,
-            'successRate' => round($successRate, 2),
-            'totalExchanges' => $totalExchanges,
+            'user'                  => $user, 
+            'acceptedExchanges'     => $acceptedExchanges,
+            'pendingRequests'       => $pendingRequests,   // N'affiche que les demandes reçues par d'autres
+            'inProgressHistory'     => $inProgressHistory, // N'affiche que les demandes que j'ai envoyées
+            'completedHistory'      => $completedHistory,
+            'refusedHistory'        => $refusedHistory,
+            'successRate'           => round($successRate, 2),
+            'totalExchanges'        => $totalExchanges,
             'completedHistoryCount' => $completedHistoryCount,
-            'activeExchangesCount' => $activeExchangesCount
+            'activeExchangesCount'  => $activeExchangesCount
         ]);
     }
 
