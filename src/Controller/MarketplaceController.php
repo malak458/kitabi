@@ -129,4 +129,67 @@ class MarketplaceController extends AbstractController
 
         return $this->json($data);
     }
+
+    #[Route('/exchange/create/{id}', name: 'app_exchange_create', methods: ['POST'])]
+public function create(Book $requestedBook, Request $request, BookRepository $bookRepository, EntityManagerInterface $em): Response
+{
+    $user = $this->getUser();
+    if (!$user) {
+        return $this->redirectToRoute('app_login');
+    }
+
+    if ($requestedBook->getUser() === $user) {
+        $this->addFlash('error', 'Vous ne pouvez pas demander votre propre livre !');
+        return $this->redirectToRoute('app_marketplace');
+    }
+
+    $mode = $request->request->get('book_mode');
+    $offeredBook = null;
+
+    if ($mode === 'new') {
+        // --- CAS 1 : L'utilisateur ajoute un livre à la volée ---
+        $title = $request->request->get('new_book_title');
+        $author = $request->request->get('new_book_author');
+
+        if (empty($title)) {
+            $this->addFlash('error', 'Le titre du livre est obligatoire.');
+            return $this->redirectToRoute('app_marketplace');
+        }
+
+        // On crée l'entité Book et on l'enregistre dans son profil
+        $offeredBook = new Book();
+        $offeredBook->setTitre($title);
+        $offeredBook->setAuteur($author); // Adapte le setter selon ton entité Book (ex: setAuteur)
+        $offeredBook->setUser($user);     // Lié à l'utilisateur connecté
+
+        $em->persist($offeredBook);
+        // Note: Pas besoin de flush() tout de suite, on le fera à la fin avec l'échange !
+
+    } else {
+        // --- CAS 2 : L'utilisateur a choisi un livre existant ---
+        $offeredBookId = $request->request->get('offered_book_id');
+        $offeredBook = $bookRepository->find($offeredBookId);
+
+        if (!$offeredBook || $offeredBook->getUser() !== $user) {
+            $this->addFlash('error', 'Livre proposé invalide.');
+            return $this->redirectToRoute('app_marketplace');
+        }
+    }
+
+    // --- CRÉATION DE LA TRANSACTION ---
+    $exchange = new Exchange();
+    $exchange->setUserRequesting($user);
+    $exchange->setUserOffering($requestedBook->getUser());
+    $exchange->setRequestedBook($requestedBook);
+    $exchange->setOfferedBook($offeredBook); // Doctrine va lier le nouveau livre ou l'existant automatiquement
+    $exchange->setStatus('pending');
+    $exchange->setCreatedAt(new \DateTimeImmutable());
+
+    $em->persist($exchange);
+    $em->flush(); // Enregistre le livre (si nouveau) ET l'échange d'un coup en BDD !
+
+    $this->addFlash('success', 'Votre demande d\'échange a bien été envoyée !');
+    return $this->redirectToRoute('app_exchange');
+}
+
 }

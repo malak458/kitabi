@@ -6,6 +6,7 @@
 {% block stylesheets %}
 	{{ parent() }}
 	<link rel="stylesheet" href="{{ asset('assets/css/marketPlace.css') }}">
+    <script src="{{ asset('assets/js/exchange.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -211,9 +212,10 @@
 								<i class="bi bi-book"></i>
 								Details
 							</a>
-							<a href="#" class="chat">
-								<i class="bi bi-chat-left"></i>
-								Chat</a>
+							<a href="#" class="chat open-exchange-modal" data-bs-toggle="modal" data-bs-target="#exchangeModal" data-book-id="{{ book.id }}">
+							<i class="bi bi-chat-left"></i>
+                                Faire un échange
+                            </a>
 						</div>
 					</div>
 				{% endfor %}
@@ -396,4 +398,70 @@ stars.forEach(s => s.textContent = + s.dataset.value <= val ? '★' : '☆');
 	{{ parent() }}
 	<script src="{{ asset('assets/js/marketPlace.js') }}"></script>
 	<script src="{{ asset('assets/js/favorites-toggle.js') }}"></script>
+
+
+	//script pour fenetre s ouvrant en demandant l echange 
+
+<div class="modal fade" id="exchangeModal" tabindex="-1" aria-labelledby="exchangeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background-color: var(--white); border: 1px solid var(--border);">
+            
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="exchangeModalLabel" style="color: var(--ink);">Proposer un échange</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <form id="exchangeForm" action="" method="POST">
+                <div class="modal-body">
+                    
+                    <div id="existingBookBlock">
+                        <p style="color: var(--muted);">Lequel de vos livres souhaitez-vous donner en contrepartie ?</p>
+                        <div class="mb-3">
+                            <select name="offered_book_id" id="offeredBookSelect" class="form-select" required style="border-color: var(--border);">
+                                <option value="">-- Choisir un livre dans votre bibliothèque --</option>
+                                {% for myBook in myBooks %}
+                                    <option value="{{ myBook.id }}">{{ myBook.titre }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" id="btnShowNewBook" class="btn btn-link btn-sm p-0 text-teal fw-bold" style="text-decoration: none;">
+                                + Le livre n'est pas dans ma liste
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="newBookBlock" class="d-none">
+                        <p style="color: var(--muted);">Enregistrez le livre que vous offrez :</p>
+                        
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold" style="color: var(--ink);">Titre du livre *</label>
+                            <input type="text" name="new_book_title" id="newBookTitle" class="form-control" placeholder="Ex: Le Petit Prince" style="border-color: var(--border);">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label small fw-bold" style="color: var(--ink);">Auteur</label>
+                            <input type="text" name="new_book_author" id="newBookAuthor" class="form-control" placeholder="Ex: Antoine de Saint-Exupéry" style="border-color: var(--border);">
+                        </div>
+
+                        <div class="text-end">
+                            <button type="button" id="btnShowExistingBook" class="btn btn-link btn-sm p-0 text-secondary" style="text-decoration: none;">
+                                Retourner à ma liste
+                            </button>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="book_mode" id="bookMode" value="existing">
+
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <button type="submit" class="btn btn-teal">Valider le troc</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
 {% endblock %}
