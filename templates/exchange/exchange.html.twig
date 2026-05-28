@@ -3,21 +3,20 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        /* Thème Beige & Papier */
         .exchanges { background-color: #fcfaf2; } 
         .bg-beige-header { background-color: #e6dfd3; color: #4a3e3d; }
         .text-sepia { color: #5c4d4c; }
         .text-amber-custom { color: #b58d53; }
         
-        /* On surcharge les anciennes classes de fond pour qu'elles matchent le thème */
+      
         .custom-dark-bg, .bg-muted, .bg-teal-light { background-color: #f4efe6 !important; border: 1px solid #e6dfd3 !important; color: #5c4d4c !important; }
         .bg-teal { background-color: #faf8f5 !important; }
         
-        /* Boutons et éléments interactifs */
+       
         .btn-teal, .btn-outline-teal { background-color: #8c7864 !important; color: #fff !important; border: none !important; }
         .btn-teal:hover, .btn-outline-teal:hover { background-color: #736252 !important; }
         
-        /* Style simple pour les labels radio d'origine */
+       
         .filter-label { padding: 8px 16px; cursor: pointer; border-radius: 8px; transition: all 0.2s; color: #5c4d4c; }
         .exchange-filter:checked + .filter-label { background-color: #8c7864; color: #fff; font-weight: bold; }
         .exchange-filter { display: none; } 
@@ -88,7 +87,7 @@
         <label for="allBtn" class="filter-label">All Exchanges</label>
     </article>
 
-    {# SECTION : ACCEPTED EXCHANGES #}
+    
     <section class="mt-4 border border-1 bg-teal-light p-3 d-flex flex-column" id="exchange-Accepted">
         {% if acceptedExchanges is empty %}
             <div class="text-center w-100 p-4 text-muted">
@@ -116,7 +115,7 @@
                         <div class="book-exchange d-flex align-items-center justify-content-center flex-wrap">
                             <div class="offered-book me-5 text-center">
                                 <h3>Your Book</h3>
-                                <img src="{{ asset('photo/' ~ accept.offeredBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
+                                <img src="{{ accept.offeredBook.image ? asset('photo/' ~ accept.offeredBook.image) : asset('images/default-book.png') }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
                                 <article class="book-details mt-2">
                                     <div class="title fw-bold">{{ accept.offeredBook.titre }}</div>
                                     <div class="author text-muted small">{{ accept.offeredBook.auteur }}</div>
@@ -128,7 +127,7 @@
                             </svg>
                             <div class="received-book text-center">
                                 <h3>Received Book</h3>
-                                <img src="{{ asset('photo/' ~ accept.requestedBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
+                                <img src="{{ accept.requestedBook.image ? asset('photo/' ~ accept.requestedBook.image) : asset('images/default-book.png') }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
                                 <article class="book-details1 mt-2">
                                     <div class="title1 fw-bold">{{ accept.requestedBook.titre }}</div>
                                     <div class="author1 text-muted small">{{ accept.requestedBook.auteur }}</div>
@@ -142,19 +141,19 @@
         {% endif %}
     </section>
 
-    {# SECTION : PENDING EXCHANGES #}
+    
     <section class="pendingResponse mt-4 border border-1 bg-teal-light rounded p-3" id="pending-Exchanges">
         {% if pendingRequests is empty %}
             <div class="text-center w-100 p-4 text-muted">
                 <p>No pending requests. You're all caught up!</p>
             </div>
         {% else %}
-            <div class="row g-4 w-100 m-0"> {# Conteneur Bootstrap Grid ajouté #}
+            <div class="row g-4 w-100 m-0">
                 {% for pend in pendingRequests %}
                     {% if pend.userOffering == app.user %}
                         {% set partner = pend.userRequesting %}
                         
-                        <div class="col-12 px-0"> {# Forçage sur une ligne complète unique #}
+                        <div class="col-12 px-0">
                             <div class="d-flex justify-content-between align-items-center mb-3">
                                 <h2 class="d-flex align-items-center mb-0 text-sepia fw-bold fs-6">
                                     <i class="bi bi-hourglass-split text-warning me-2 fs-5"></i>
@@ -173,7 +172,7 @@
                                 <div class="book-exchange d-flex align-items-center justify-content-center flex-wrap">
                                     <div class="your-book me-5 text-center">
                                         <h3>Your Book</h3>
-                                        <img src="{{ asset('photo/' ~ pend.requestedBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
+                                        <img src="{{ pend.requestedBook.image ? asset('photo/' ~ pend.requestedBook.image) : asset('images/default-book.png') }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
                                         <article class="book-details2 mt-2">
                                             <div class="title2 fw-bold">{{ pend.requestedBook.titre }}</div>
                                             <div class="author2 text-muted small">{{ pend.requestedBook.auteur }}</div>
@@ -185,7 +184,7 @@
                                     </svg>
                                     <div class="their-book text-center">
                                         <h3>Requested Book</h3>
-                                        <img src="{{ asset('photo/' ~ pend.offeredBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
+                                        <img src="{{ pend.offeredBook.image ? asset('photo/' ~ pend.offeredBook.image) : asset('images/default-book.png') }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
                                         <article class="book-details3 mt-2">
                                             <div class="title3 fw-bold">{{ pend.offeredBook.titre }}</div>
                                             <div class="author3 text-muted small">{{ pend.offeredBook.auteur }}</div>
@@ -195,7 +194,7 @@
                                 </div>
 
                                 <div class="requesting-person d-flex align-items-center gap-3 mt-2 border-top pt-2">
-                                    <img src="{{ asset('photo/' ~ partner.image) }}" alt="User" width="50" height="50" class="rounded-circle object-fit-cover border">
+                                    <img src="{{ partner.image ? asset('photo/' ~ partner.image) : 'https://ui-avatars.com/api/?name=' ~ partner.nom }}" alt="User" width="50" height="50" class="rounded-circle object-fit-cover border">
                                     <div class="userDescription">
                                         <div class="username fw-bold text-sepia">{{ partner.nom }}</div>
                                         <div class="rate-stars">
@@ -219,7 +218,7 @@
         {% endif %}
     </section>
 
-    {# SECTION : COMPLETED EXCHANGES #}
+    
     <section class="mt-4 border border-1 bg-teal-light p-3 d-flex flex-column" id="completed-Exchanges">
         {% if completedHistory is empty %}
             <div class="text-center w-100 p-4 text-muted">
@@ -235,7 +234,7 @@
                     <div class="book-exchange d-flex align-items-center justify-content-center flex-wrap">
                         <div class="offered-book me-5 text-center">
                             <h3>Your Book</h3>
-                            <img src="{{ asset('photo/' ~ comp.offeredBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
+                            <img src="{{ comp.offeredBook.image ? asset('photo/' ~ comp.offeredBook.image) : asset('images/default-book.png') }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
                             <article class="book-details mt-2">
                                 <div class="title fw-bold">{{ comp.offeredBook.titre }}</div>
                                 <div class="author text-muted small">{{ comp.offeredBook.auteur }}</div>
@@ -247,7 +246,7 @@
                         </svg>
                         <div class="received-book text-center">
                             <h3>Received Book</h3>
-                            <img src="{{ asset('photo/' ~ comp.requestedBook.image) }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
+                            <img src="{{ comp.requestedBook.image ? asset('photo/' ~ comp.requestedBook.image) : asset('images/default-book.png') }}" alt="Book Cover" width="100" height="150" class="rounded shadow-sm">
                             <article class="book-details1 mt-2">
                                 <div class="title1 fw-bold">{{ comp.requestedBook.titre }}</div>
                                 <div class="author1 text-muted small">{{ comp.requestedBook.auteur }}</div>
@@ -268,7 +267,7 @@
         {% endif %}
     </section>
 
-    {# SECTION : REFUSED EXCHANGES #}
+   
     <section class="mt-4 border border-1 bg-teal-light p-3 d-flex flex-column" id="refused-Exchanges">
         <div class="d-flex justify-content-between align-items-center mb-3 w-100">
             <h2 class="d-flex align-items-center mb-0 text-sepia fw-bold fs-6">
@@ -307,7 +306,7 @@
         {% endif %}
     </section>
 
-    {# SECTION : IN PROGRESS EXCHANGES #}
+    
     <section class="mt-4 border border-1 bg-teal-light p-3 d-flex flex-column" id="in-progress-Exchanges">
         <div class="d-flex justify-content-between align-items-center mb-3 w-100">
             <h2 class="d-flex align-items-center mb-0 text-sepia fw-bold fs-6">

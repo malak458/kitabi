@@ -22,8 +22,8 @@ class ExchangeRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->where('(e.userRequesting = :user OR e.userOffering = :user)')
             ->andWhere('e.status = :status')
-            ->setParameter('user', $user)          // Correction : , à la place de =>
-            ->setParameter('status', 'accepted')   // Correction : , à la place de =>
+            ->setParameter('user', $user)          
+            ->setParameter('status', 'accepted')  
             ->orderBy('e.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
@@ -34,8 +34,8 @@ class ExchangeRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->where('e.userOffering = :user')
             ->andWhere('e.status = :status')
-            ->setParameter('user', $user)          // Correction : , à la place de =>
-            ->setParameter('status', 'pending')    // Correction : , à la place de =>
+            ->setParameter('user', $user)          
+            ->setParameter('status', 'pending')    
             ->orderBy('e.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
@@ -46,8 +46,8 @@ class ExchangeRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->where('(e.userRequesting = :user OR e.userOffering = :user)') // Ajout des parenthèses de sécurité pour le OR
             ->andWhere('e.status = :status')
-            ->setParameter('user', $user)          // Correction : , à la place de =>
-            ->setParameter('status', 'completed')  // Correction : , à la place de =>
+            ->setParameter('user', $user)          
+            ->setParameter('status', 'completed')  
             ->orderBy('e.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
@@ -58,8 +58,8 @@ class ExchangeRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->where('(e.userRequesting = :user OR e.userOffering = :user)') // Ajout des parenthèses de sécurité pour le OR
             ->andWhere('e.status = :status')
-            ->setParameter('user', $user)          // Correction : , à la place de =>
-            ->setParameter('status', 'refused')    // Correction : , à la place de =>
+            ->setParameter('user', $user)          
+            ->setParameter('status', 'refused')    
             ->orderBy('e.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
@@ -70,8 +70,8 @@ class ExchangeRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('e')
             ->where('(e.userRequesting = :user OR e.userOffering = :user)') // Ajout des parenthèses de sécurité pour le OR
             ->andWhere('e.status = :status')
-            ->setParameter('user', $user)          // Correction : , à la place de =>
-            ->setParameter('status', 'in_progress')// Correction : , à la place de =>
+            ->setParameter('user', $user)          
+            ->setParameter('status', 'in_progress')
             ->orderBy('e.createdAt', 'DESC')
             ->getQuery()
             ->getResult();

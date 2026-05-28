@@ -14,12 +14,9 @@ document.addEventListener('DOMContentLoaded', function () {
     const allSections = [exchangeAccepted, pendingExchanges, completedExchanges, refusedExchanges, inProgressExchanges];
 
     function updateVisibility() {
-        // On cache toutes les sections d'abord
         allSections.forEach(sec => { 
             if (sec) sec.style.setProperty('display', 'none', 'important'); 
         });
-
-        // On affiche les sections selon le bouton coché
         if (activeBtn && activeBtn.checked) {
             [exchangeAccepted, pendingExchanges, inProgressExchanges].forEach(sec => {
                 if (sec) sec.style.setProperty('display', 'flex', 'important'); 
@@ -32,20 +29,12 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
     }
-
-    // Écouter les clics sur les boutons filtres
     [activeBtn, completedBtn, allBtn].forEach(btn => {
         if (btn) btn.addEventListener('change', updateVisibility);
     });
     
-    // Activer les filtres au chargement de la page
     updateVisibility();
-
-
-    // ===== 2. GESTION DES BOUTONS ACCEPTER / REFUSER =====
     document.addEventListener('click', function (e) {
-        
-        // Si on clique sur "Accept"
         if (e.target.classList.contains('accept-btn')) {
             e.preventDefault();
             const container = e.target.closest('.pending-card');
@@ -56,8 +45,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 sendStatusToSymfony(exchangeId, 'accepted', e.target);
             }
         }
-
-        // Si on clique sur "Decline"
         if (e.target.classList.contains('decline-btn')) {
             e.preventDefault();
             const container = e.target.closest('.pending-card');
@@ -71,7 +58,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     function sendStatusToSymfony(exchangeId, status, buttonClicked) {
-        // On récupère la route Symfony qu'on a cachée dans le HTML à l'étape 2
         const mainContainer = document.querySelector('.exchanges');
         const url = mainContainer ? mainContainer.dataset.updateUrl : null;
 
@@ -79,13 +65,9 @@ document.addEventListener('DOMContentLoaded', function () {
             alert("Erreur : L'adresse de mise à jour est introuvable.");
             return;
         }
-
-        // On bloque le bouton pendant le chargement
         buttonClicked.classList.add('loading-state');
         const originalText = buttonClicked.textContent;
         buttonClicked.textContent = 'Loading...';
-
-        // Envoi de la demande à Symfony
         fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
