@@ -4,231 +4,512 @@
 
 {% block stylesheets %}
 <style>
-    /* ===== PAGE WRAPPER ===== */
-    .page-wrapper { margin-top: var(--nav-h); min-height: calc(100vh - var(--nav-h)); }
+    /* PAGE WRAPPER - SUPPRIME LA MARGE SUPPLEMENTAIRE */
+    .page-wrapper { 
+        min-height: calc(100vh - var(--nav-h)); 
+    }
 
-    /* ===== PAGE HEADER ===== */
+    /* PAGE HEADER */
     .page-header {
         background: linear-gradient(105deg, rgba(26,18,8,.97) 0%, rgba(14,107,94,.9) 60%, rgba(200,134,10,.4) 100%);
         padding: 36px 5vw 30px;
-        display: flex; align-items: flex-end; justify-content: space-between;
-        position: relative; overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
     }
-    .page-header::before {
-        content: '';
-        position: absolute; inset: 0;
-        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e8a82a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        opacity: .5;
+    .page-header-text { 
+        position: relative; 
+        z-index: 2; 
     }
-    .page-header-text { position: relative; }
     .page-header-text h1 {
         font-family: "Playfair Display", serif;
-        font-size: 32px; font-weight: 900; color: #fff; margin: 0; letter-spacing: -.5px;
+        font-size: 32px;
+        font-weight: 900;
+        color: #fff;
+        margin: 0;
     }
-    .page-header-text h4 { color: rgba(255,253,248,.6); font-size: 14px; font-weight: 400; margin: 6px 0 0; }
+    .page-header-text p { 
+        color: rgba(255,253,248,.6); 
+        font-size: 14px; 
+        margin: 6px 0 0; 
+    }
 
+    /* BOUTON CREATE ROOM - CORRIGE LA COULEUR */
     .create-room-btn {
-        position: relative; background: var(--amber); border: none; border-radius: 50px;
-        padding: 12px 28px; font-size: 14px; font-weight: 600; color: #fff;
-        cursor: pointer; transition: all .3s ease; text-decoration: none;
-        font-family: "DM Sans", sans-serif; letter-spacing: .3px;
+        position: relative;
+        z-index: 2;
+        background: var(--amber) !important;
+        border: none !important;
+        border-radius: 50px;
+        padding: 12px 28px;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all .3s ease;
+        color: #fff !important;
+        display: inline-block;
+        cursor: pointer;
     }
     .create-room-btn:hover {
-        background: var(--rust); transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(200,134,10,.4); color: #fff;
+        background: var(--rust) !important;
+        transform: translateY(-2px);
+        color: #fff !important;
+        text-decoration: none;
     }
 
-    /* ===== PAGE BODY ===== */
-    .page-body { padding: 28px 5vw; background: var(--sand); }
+    /* PAGE BODY */
+    .page-body { 
+        padding: 28px 5vw; 
+        background: var(--sand); 
+    }
 
-    /* ===== STATS ===== */
+    /* STATS CONTAINER */
     .stats-container {
-        display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        margin-bottom: 28px;
     }
     .stat-card {
-        background: var(--white); border-radius: 16px; padding: 20px;
-        display: flex; justify-content: space-between; align-items: center;
-        box-shadow: 0 4px 16px rgba(26,18,8,.07); transition: transform .3s, box-shadow .3s;
+        background: var(--white);
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 16px rgba(26,18,8,.07);
         border-bottom: 3px solid transparent;
     }
-    .stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(26,18,8,.12); }
-    .stat-card.live        { border-color: #dc2626; }
-    .stat-card.scheduled   { border-color: var(--teal); }
-    .stat-card.myrooms     { border-color: var(--amber); }
-    .stat-card.totalrooms  { border-color: var(--rust); }
-    .stat-title { font-size: 11px; color: var(--muted); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-    .stat-number { font-family: "Playfair Display", serif; font-size: 32px; font-weight: 900; }
-    .stat-card.live .stat-number      { color: #dc2626; }
+    .stat-card.live { border-bottom-color: #dc2626; }
+    .stat-card.scheduled { border-bottom-color: var(--teal); }
+    .stat-card.myrooms { border-bottom-color: var(--amber); }
+    .stat-card.totalrooms { border-bottom-color: var(--rust); }
+    
+    .stat-info { flex: 1; }
+    .stat-title { 
+        font-size: 11px; 
+        color: var(--muted); 
+        margin-bottom: 6px; 
+        font-weight: 600; 
+        text-transform: uppercase; 
+        letter-spacing: 1px; 
+    }
+    .stat-number { 
+        font-family: "Playfair Display", serif; 
+        font-size: 32px; 
+        font-weight: 900; 
+    }
+    .stat-card.live .stat-number { color: #dc2626; }
     .stat-card.scheduled .stat-number { color: var(--teal); }
-    .stat-card.myrooms .stat-number   { color: var(--amber); }
-    .stat-card.totalrooms .stat-number{ color: var(--rust); }
-    .stat-icon img { width: 48px; height: 48px; object-fit: cover; border-radius: 10px; }
+    .stat-card.myrooms .stat-number { color: var(--amber); }
+    .stat-card.totalrooms .stat-number { color: var(--rust); }
+    
+    .stat-icon img {
+        width: 48px;
+        height: 48px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
 
-    /* ===== SEARCH BAR ===== */
+    /* SEARCH AREA */
     .search-area {
-        background: var(--ink); border-radius: 16px; padding: 18px 22px;
-        display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
-        margin-bottom: 22px; box-shadow: 0 4px 20px rgba(26,18,8,.12);
+        background: var(--ink);
+        border-radius: 16px;
+        padding: 18px 22px;
+        margin-bottom: 22px;
     }
     .search-bar {
-        flex: 1; min-width: 200px;
-        background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.15);
-        border-radius: 50px; padding: 10px 20px;
-        font-size: 14px; font-family: "DM Sans", sans-serif;
-        color: rgba(255,253,248,.85); outline: none; transition: all .3s;
+        width: 100%;
+        background: rgba(255,255,255,.1);
+        border: 1px solid rgba(255,255,255,.15);
+        border-radius: 50px;
+        padding: 12px 20px;
+        font-size: 14px;
+        color: rgba(255,253,248,.85);
+        outline: none;
     }
-    .search-bar::placeholder { color: rgba(255,253,248,.35); }
     .search-bar:focus {
-        background: rgba(255,255,255,.15); border-color: var(--amber-mid);
-        box-shadow: 0 0 0 3px rgba(232,168,42,.15);
+        background: rgba(255,255,255,.15);
+        border-color: var(--amber-mid);
+    }
+    .search-bar::placeholder {
+        color: rgba(255,253,248,.4);
     }
 
-    /* ===== NAV TABS ===== */
-    .nav-tabs { display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; border: none; }
+    /* NAV TABS - CORRECTION IMPORTANTE */
+    .nav-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+        flex-wrap: wrap;
+    }
     .nav-tab {
-        background: var(--white); border: 1.5px solid var(--border) !important; border-radius: 50px !important;
-        padding: 9px 22px; text-decoration: none; color: var(--muted);
-        font-weight: 600; font-size: 13px; font-family: "DM Sans", sans-serif; transition: all .3s;
+        background: var(--white);
+        border: 1.5px solid var(--border);
+        border-radius: 50px;
+        padding: 10px 24px;
+        text-decoration: none;
+        color: var(--muted);
+        font-weight: 600;
+        font-size: 13px;
+        transition: all .3s;
+        cursor: pointer;
+        display: inline-block;
     }
-    .nav-tab:hover { border-color: var(--teal) !important; color: var(--teal); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(14,107,94,.15); }
-    .nav-tab.active { background: var(--teal) !important; border-color: var(--teal) !important; color: #fff !important; box-shadow: 0 4px 14px rgba(14,107,94,.3); }
+    .nav-tab:hover {
+        border-color: var(--teal);
+        color: var(--teal);
+        background: var(--white);
+        text-decoration: none;
+    }
+    .nav-tab.active {
+        background: var(--teal) !important;
+        border-color: var(--teal) !important;
+        color: #fff !important;
+    }
 
-    hr.separator { border: none; border-top: 1px solid var(--border); margin: 8px 0 20px; }
+    hr.separator {
+        border: none;
+        border-top: 1px solid var(--border);
+        margin: 8px 0 20px;
+    }
 
-    /* ===== SECTION LABEL ===== */
+    /* SECTION LABEL */
     .section-label {
-        font-size: 11px; font-weight: 700; color: var(--amber); letter-spacing: 2.5px;
-        text-transform: uppercase; margin: 24px 0 16px;
-        display: flex; align-items: center; gap: 12px;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--amber);
+        letter-spacing: 2.5px;
+        text-transform: uppercase;
+        margin: 0 0 16px 0;
     }
-    .section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
 
-    /* ===== ROOM CARDS ===== */
+    /* ROOMS CONTAINER */
     .rooms-container {
-        display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 22px; margin-top: 8px;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 22px;
     }
+    
+    /* ROOM CARD */
     .room-card {
-        background: var(--white); border-radius: 16px; overflow: hidden;
-        box-shadow: 0 4px 16px rgba(26,18,8,.08); transition: all .3s ease;
-        display: flex; flex-direction: column; border: 1px solid var(--border);
+        background: var(--white);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 4px 16px rgba(26,18,8,.08);
+        border: 1px solid var(--border);
+        transition: all .3s ease;
     }
-    .room-card:hover { transform: translateY(-6px); box-shadow: 0 14px 32px rgba(26,18,8,.14); border-color: var(--amber-mid); }
-    .room-image { position: relative; width: 100%; height: 240px; background: #f0ece4; overflow: hidden; }
-    .room-image img { width: 100%; height: 100%; object-fit: contain; background: white; transition: transform .4s ease; }
-    .room-card:hover .room-image img { transform: scale(1.04); }
+    .room-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 14px 32px rgba(26,18,8,.14);
+        border-color: var(--amber-mid);
+    }
+    .room-image {
+        position: relative;
+        width: 100%;
+        height: 240px;
+        overflow: hidden;
+        background: #f5f0e8;
+    }
+    .room-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: white;
+    }
     .badge {
-        position: absolute; top: 12px; left: 12px;
-        padding: 5px 13px; color: white; border-radius: 50px;
-        font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-        display: flex; align-items: center; gap: 5px;
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        padding: 5px 13px;
+        color: white;
+        border-radius: 50px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
     }
     .badge.live { background: #dc2626; }
-    .badge.live::before {
-        content: ''; width: 6px; height: 6px; background: #fff; border-radius: 50%;
-        animation: blink 1.2s ease-in-out infinite; flex-shrink: 0;
-    }
     .badge.scheduled { background: var(--teal); }
-    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+    
     .participants {
-        position: absolute; top: 12px; right: 12px;
-        background: rgba(26,18,8,.7); color: var(--amber-light);
-        padding: 5px 12px; border-radius: 50px; font-size: 12px; font-weight: 600;
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(26,18,8,.7);
+        color: var(--amber-light);
+        padding: 5px 12px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 600;
     }
-    .room-content { padding: 18px; flex: 1; display: flex; flex-direction: column; gap: 12px; }
-    .room-content h3 { font-family: "Playfair Display", serif; font-size: 17px; font-weight: 700; color: var(--ink); margin: 0; line-height: 1.3; }
-    .room-author { color: var(--muted); font-size: 13px; margin: -4px 0 0; }
-    .progress-container { display: flex; flex-direction: column; gap: 5px; }
-    .progress-bar-bg { width: 100%; background: var(--border); height: 6px; border-radius: 10px; overflow: hidden; }
-    .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--teal), var(--amber)); border-radius: 10px; transition: width .5s ease; }
-    .progress-text { font-size: 11px; color: var(--muted); }
-    .tags { display: flex; gap: 6px; flex-wrap: wrap; }
+    .room-content {
+        padding: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .room-content h3 {
+        font-family: "Playfair Display", serif;
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0;
+        color: var(--ink);
+    }
+    .room-author {
+        color: var(--muted);
+        font-size: 13px;
+        margin: 4px 0 0;
+    }
+    .progress-container {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+    .progress-bar-bg {
+        width: 100%;
+        background: var(--border);
+        height: 6px;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    .progress-bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, var(--teal), var(--amber));
+        border-radius: 10px;
+        width: 0%;
+    }
+    .progress-text {
+        font-size: 11px;
+        color: var(--muted);
+    }
+    .tags {
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
     .tag {
-        background: var(--amber-light); border: 1px solid var(--border);
-        padding: 4px 11px; border-radius: 50px; font-size: 11px; color: var(--rust); font-weight: 600;
+        background: var(--amber-light);
+        border: 1px solid var(--border);
+        padding: 4px 11px;
+        border-radius: 50px;
+        font-size: 11px;
+        color: var(--rust);
+        font-weight: 600;
     }
+    
+    /* BOUTONS D'ACTION - CORRECTION IMPORTANTE */
     .room-action-btn {
-        width: 100%; padding: 13px 20px; border: none; border-radius: 50px;
-        font-size: 14px; font-weight: 600; cursor: pointer; transition: all .3s;
-        margin-top: auto; font-family: "DM Sans", sans-serif;
+        width: 100%;
+        padding: 13px 20px;
+        border: none;
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .3s;
+        font-family: "DM Sans", sans-serif;
     }
-    .join-btn { background: var(--teal); color: white; box-shadow: 0 4px 14px rgba(14,107,94,.3); }
-    .join-btn:hover { background: var(--teal-dark); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14,107,94,.4); }
-    .rsvp-btn { background: white; border: 2px solid var(--amber); color: var(--amber); }
-    .rsvp-btn:hover { background: var(--amber); color: white; transform: translateY(-2px); box-shadow: 0 4px 14px rgba(200,134,10,.3); }
+    .join-btn {
+        background: var(--teal);
+        color: white;
+    }
+    .join-btn:hover {
+        background: var(--teal-dark);
+        transform: translateY(-2px);
+    }
+    .rsvp-btn {
+        background: white;
+        border: 2px solid var(--amber);
+        color: var(--amber);
+    }
+    .rsvp-btn:hover {
+        background: var(--amber);
+        color: white;
+        transform: translateY(-2px);
+    }
 
-    /* ===== MY ROOMS SECTION ===== */
+    /* MY ROEMS SECTION */
     #myrooms-section {
-        display: none; flex-direction: column; align-items: center;
-        margin-top: 32px; padding: 40px 20px;
-        background: var(--white); border-radius: 20px;
-        border: 1px solid var(--border); box-shadow: 0 4px 20px rgba(26,18,8,.07);
+        margin-top: 0;
     }
-    .myrooms-content { display: flex; flex-direction: row; align-items: center; gap: 32px; flex-wrap: wrap; justify-content: center; }
-    .myrooms-text h3 { font-family: "Playfair Display", serif; font-size: 24px; margin-bottom: 12px; color: var(--ink); }
-    .myrooms-text p { font-size: 15px; line-height: 1.6; color: var(--muted); margin-bottom: 20px; max-width: 360px; }
+    .myrooms-empty {
+        text-align: center;
+        padding: 60px 20px;
+        background: var(--white);
+        border-radius: 20px;
+        border: 1px solid var(--border);
+    }
+    .myrooms-empty h3 {
+        font-family: "Playfair Display", serif;
+        font-size: 24px;
+        margin-bottom: 12px;
+        color: var(--ink);
+    }
+    .myrooms-empty p {
+        color: var(--muted);
+        margin-bottom: 20px;
+    }
 
-    /* ===== NO RESULT ===== */
-    #no-result { display: none; flex-direction: column; align-items: center; justify-content: center; padding: 60px 20px; text-align: center; }
-    #no-result h3 { font-family: "Playfair Display", serif; color: var(--teal); margin-top: 16px; font-size: 22px; }
-    #no-result p { color: var(--muted); font-size: 14px; margin-top: 8px; }
+    /* NO RESULT */
+    #no-result {
+        display: none;
+        text-align: center;
+        padding: 60px 20px;
+    }
+    #no-result h3 {
+        font-family: "Playfair Display", serif;
+        color: var(--teal);
+        font-size: 22px;
+    }
 
-    /* ===== POPUP ===== */
+    /* POPUP */
     #joinPopup {
-        display: none; position: fixed; inset: 0;
-        background: rgba(26,18,8,.6); z-index: 999;
-        backdrop-filter: blur(4px); align-items: center; justify-content: center;
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(26,18,8,.7);
+        z-index: 1000;
+        backdrop-filter: blur(4px);
+        align-items: center;
+        justify-content: center;
     }
-    #joinPopup.open { display: flex; animation: fadeIn .2s ease; }
+    #joinPopup.open {
+        display: flex;
+    }
     .popup-box {
-        background: var(--white); width: 100%; max-width: 420px;
-        padding: 32px; border-radius: 20px;
+        background: var(--white);
+        width: 100%;
+        max-width: 420px;
+        margin: 20px;
+        padding: 32px;
+        border-radius: 20px;
+        border-top: 4px solid var(--amber);
         box-shadow: 0 24px 60px rgba(0,0,0,.3);
-        animation: slideUp .3s ease; border-top: 4px solid var(--amber);
     }
-    .popup-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-    .popup-header h3 { color: var(--teal); font-size: 20px; font-family: "Playfair Display", serif; }
-    .popup-close { background: none; border: none; font-size: 18px; color: var(--muted); cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: all .2s; }
-    .popup-close:hover { background: var(--amber-light); color: var(--ink); }
-    #popupBook { color: var(--muted); font-size: 14px; margin: 0 0 20px; }
-    .input-group { margin-bottom: 14px; }
+    .popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .popup-header h3 {
+        color: var(--teal);
+        font-size: 20px;
+        font-family: "Playfair Display", serif;
+        margin: 0;
+    }
+    .popup-close {
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: var(--muted);
+        padding: 0;
+        line-height: 1;
+    }
+    .popup-close:hover {
+        color: var(--ink);
+    }
+    #popupBook {
+        color: var(--muted);
+        margin-bottom: 20px;
+    }
+    .input-group {
+        margin-bottom: 14px;
+    }
     .input-group input {
-        width: 100%; padding: 11px 16px; border: 1.5px solid var(--border); border-radius: 50px;
-        font-size: 14px; box-sizing: border-box; outline: none; transition: border-color .3s, box-shadow .3s;
-        background: var(--sand); color: var(--ink);
+        width: 100%;
+        padding: 12px 16px;
+        border: 1.5px solid var(--border);
+        border-radius: 50px;
+        font-size: 14px;
+        outline: none;
+        background: var(--sand);
+        font-family: "DM Sans", sans-serif;
     }
-    .input-group input:focus { border-color: var(--teal); box-shadow: 0 0 0 3px rgba(14,107,94,.12); background: white; }
-    .input-group input.error { border-color: #e53e3e; animation: shake .3s ease; }
-    .input-group small { display: none; color: #e53e3e; font-size: 12px; margin-top: 5px; padding-left: 8px; }
-    .popup-actions { display: flex; gap: 10px; margin-top: 20px; }
-    .popup-actions button { flex: 1; padding: 12px; border: none; border-radius: 50px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s; font-family: "DM Sans", sans-serif; }
-    #confirmJoin { background: var(--teal); color: white; }
-    #confirmJoin:hover { background: var(--teal-dark); }
-    #cancelJoin { background: var(--amber-light); color: var(--muted); }
-    #cancelJoin:hover { background: var(--border); }
-
-    /* ===== EMPTY STATE ===== */
-    .empty-state { color: var(--muted); font-size: 14px; padding: 20px 0; }
-
-    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes shake {
-        0% { transform: translateX(0); } 25% { transform: translateX(-6px); }
-        50% { transform: translateX(6px); } 75% { transform: translateX(-4px); }
-        100% { transform: translateX(0); }
+    .input-group input:focus {
+        border-color: var(--teal);
+        background: white;
+    }
+    .input-group input.error {
+        border-color: #e53e3e;
+    }
+    .input-group small {
+        display: none;
+        color: #e53e3e;
+        font-size: 12px;
+        margin-top: 5px;
+        padding-left: 12px;
+    }
+    .popup-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+    .popup-actions button {
+        flex: 1;
+        padding: 12px;
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+    }
+    #confirmJoin {
+        background: var(--teal);
+        color: white;
+        border: none;
+    }
+    #confirmJoin:hover {
+        background: var(--teal-dark);
+    }
+    #cancelJoin {
+        background: var(--amber-light);
+        color: var(--muted);
+        border: none;
+    }
+    #cancelJoin:hover {
+        background: var(--border);
     }
 
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
-    ::-webkit-scrollbar-thumb:hover { background: var(--amber); }
+    .empty-state {
+        color: var(--muted);
+        padding: 40px 20px;
+        text-align: center;
+        background: var(--white);
+        border-radius: 16px;
+    }
 
-    @media (max-width: 1200px) { .stats-container { grid-template-columns: repeat(2,1fr); } }
+    /* RESPONSIVE */
+    @media (max-width: 1200px) { 
+        .stats-container { grid-template-columns: repeat(2,1fr); } 
+    }
+    @media (max-width: 768px) {
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 16px;
+        }
+        .stats-container {
+            grid-template-columns: repeat(2,1fr);
+        }
+        .rooms-container {
+            grid-template-columns: 1fr;
+        }
+    }
     @media (max-width: 600px) {
-        .stats-container { grid-template-columns: 1fr 1fr; }
-        .page-header { flex-direction: column; align-items: flex-start; gap: 16px; }
         .page-body { padding: 20px 4vw; }
+        .stats-container { gap: 12px; }
+        .stat-card { padding: 15px; }
+        .stat-number { font-size: 24px; }
+        .nav-tab { padding: 8px 18px; font-size: 12px; }
     }
-    @media (max-width: 400px) { .stats-container { grid-template-columns: 1fr; } }
+    @media (max-width: 400px) { 
+        .stats-container { grid-template-columns: 1fr; } 
+    }
 </style>
 {% endblock %}
 
@@ -238,18 +519,18 @@
     <div class="page-header">
         <div class="page-header-text">
             <h1>Reading Rooms</h1>
-            <h4>Read together with the community</h4>
+            <p>Read together with the community</p>
         </div>
         <a href="{{ path('app_room_create') }}" class="create-room-btn">+ Create Room</a>
     </div>
 
     <div class="page-body">
 
-        {# ===== STATS ===== #}
+        {# STATS #}
         <div class="stats-container">
             <div class="stat-card live">
                 <div class="stat-info">
-                    <div class="stat-title">Live Now</div>
+                    <div class="stat-title">LIVE NOW</div>
                     <div class="stat-number">{{ lives|length }}</div>
                 </div>
                 <div class="stat-icon">
@@ -258,7 +539,7 @@
             </div>
             <div class="stat-card scheduled">
                 <div class="stat-info">
-                    <div class="stat-title">Scheduled</div>
+                    <div class="stat-title">SCHEDULED</div>
                     <div class="stat-number">{{ scheduled|length }}</div>
                 </div>
                 <div class="stat-icon">
@@ -267,7 +548,7 @@
             </div>
             <div class="stat-card myrooms">
                 <div class="stat-info">
-                    <div class="stat-title">My Rooms</div>
+                    <div class="stat-title">MY ROOMS</div>
                     <div class="stat-number">{{ myRooms is defined ? myRooms|length : 0 }}</div>
                 </div>
                 <div class="stat-icon">
@@ -276,7 +557,7 @@
             </div>
             <div class="stat-card totalrooms">
                 <div class="stat-info">
-                    <div class="stat-title">Total Rooms</div>
+                    <div class="stat-title">TOTAL ROOMS</div>
                     <div class="stat-number">{{ lives|length + scheduled|length }}</div>
                 </div>
                 <div class="stat-icon">
@@ -285,31 +566,29 @@
             </div>
         </div>
 
-        {# ===== SEARCH ===== #}
+        {# SEARCH #}
         <div class="search-area">
-            <input type="text" class="search-bar" id="search_bar" placeholder="🔍  Search by book title or author…"/>
+            <input type="text" class="search-bar" id="search_bar" placeholder="🔍 Search by book title or author..."/>
         </div>
 
-        {# ===== TABS ===== #}
+        {# TABS #}
         <div class="nav-tabs">
-            <a href="#" class="nav-tab active" id="tab_discover">Discover</a>
-            <a href="#" class="nav-tab" id="tab_live">Live now</a>
-            <a href="#" class="nav-tab" id="tab_scheduled">Scheduled</a>
-            <a href="#" class="nav-tab" id="tab_myrooms">My rooms</a>
+            <a href="#" class="nav-tab active" data-tab="discover">Discover</a>
+            <a href="#" class="nav-tab" data-tab="live">Live now</a>
+            <a href="#" class="nav-tab" data-tab="scheduled">Scheduled</a>
+            <a href="#" class="nav-tab" data-tab="myrooms">My rooms</a>
         </div>
         <hr class="separator"/>
 
-        {# ===== LIVE SESSIONS ===== #}
-        <div id="live-section">
-            <div class="section-label">Live Sessions</div>
+        {# LIVE SESSIONS #}
+        <div id="live-section" class="tab-section">
+            <div class="section-label">LIVE SESSIONS</div>
             <div class="rooms-container">
                 {% if lives is empty %}
                     <p class="empty-state">No live sessions at the moment.</p>
                 {% else %}
                     {% for room in lives %}
-                    <div class="room-card"
-                         data-title="{{ room.titre|lower }}"
-                         data-author="{{ room.auteur|lower }}">
+                    <div class="room-card" data-title="{{ room.titre|lower }}" data-author="{{ room.auteur|lower }}">
                         <div class="room-image">
                             <img src="{{ room.image starts with 'http' ? room.image : asset('uploads/rooms/' ~ room.image) }}"
                                  alt="{{ room.titre }}"
@@ -318,27 +597,22 @@
                             <span class="participants">0/{{ room.maxParticipants }}</span>
                         </div>
                         <div class="room-content">
-                            <div>
-                                <h3>{{ room.titre }}</h3>
-                                <p class="room-author">{{ room.auteur }}</p>
-                            </div>
+                            <h3>{{ room.titre }}</h3>
+                            <p class="room-author">{{ room.auteur }}</p>
                             <div class="progress-container">
                                 <div class="progress-bar-bg">
                                     <div class="progress-bar-fill" style="width:0%"></div>
                                 </div>
                                 <p class="progress-text">Page 0 of {{ room.totalPages }}</p>
                             </div>
-                            {% if room.tags %}
+                            {% if room.tagsArray is defined and room.tagsArray %}
                             <div class="tags">
                                 {% for tag in room.tagsArray %}
                                     <span class="tag">{{ tag|trim }}</span>
                                 {% endfor %}
                             </div>
                             {% endif %}
-                            <button class="room-action-btn join-btn"
-                                    onclick="openJoinPopup('{{ room.titre|escape('js') }}')">
-                                Join Now
-                            </button>
+                            <button class="room-action-btn join-btn" onclick="openJoinPopup('{{ room.titre|escape('js') }}')">Join Now</button>
                         </div>
                     </div>
                     {% endfor %}
@@ -346,17 +620,15 @@
             </div>
         </div>
 
-        {# ===== SCHEDULED SESSIONS ===== #}
-        <div id="scheduled-section">
-            <div class="section-label" style="margin-top:36px">Upcoming Sessions</div>
+        {# SCHEDULED SESSIONS #}
+        <div id="scheduled-section" class="tab-section" style="display: none;">
+            <div class="section-label">UPCOMING SESSIONS</div>
             <div class="rooms-container">
                 {% if scheduled is empty %}
                     <p class="empty-state">No upcoming sessions.</p>
                 {% else %}
                     {% for room in scheduled %}
-                    <div class="room-card"
-                         data-title="{{ room.titre|lower }}"
-                         data-author="{{ room.auteur|lower }}">
+                    <div class="room-card" data-title="{{ room.titre|lower }}" data-author="{{ room.auteur|lower }}">
                         <div class="room-image">
                             <img src="{{ room.image starts with 'http' ? room.image : asset('uploads/rooms/' ~ room.image) }}"
                                  alt="{{ room.titre }}"
@@ -365,27 +637,22 @@
                             <span class="participants">0/{{ room.maxParticipants }}</span>
                         </div>
                         <div class="room-content">
-                            <div>
-                                <h3>{{ room.titre }}</h3>
-                                <p class="room-author">{{ room.auteur }}</p>
-                            </div>
+                            <h3>{{ room.titre }}</h3>
+                            <p class="room-author">{{ room.auteur }}</p>
                             <div class="progress-container">
                                 <div class="progress-bar-bg">
                                     <div class="progress-bar-fill" style="width:0%"></div>
                                 </div>
                                 <p class="progress-text">Page 0 of {{ room.totalPages }}</p>
                             </div>
-                            {% if room.tags %}
+                            {% if room.tagsArray is defined and room.tagsArray %}
                             <div class="tags">
                                 {% for tag in room.tagsArray %}
                                     <span class="tag">{{ tag|trim }}</span>
                                 {% endfor %}
                             </div>
                             {% endif %}
-                            <button class="room-action-btn rsvp-btn"
-                                    onclick="openRsvpPopup('{{ room.titre|escape('js') }}')">
-                                RSVP
-                            </button>
+                            <button class="room-action-btn rsvp-btn" onclick="openRsvpPopup('{{ room.titre|escape('js') }}')">RSVP</button>
                         </div>
                     </div>
                     {% endfor %}
@@ -393,69 +660,59 @@
             </div>
         </div>
 
-        
-        {# ===== MY ROOMS ===== #}
-<div id="myrooms-section">
-    {% if myRooms is defined and myRooms|length > 0 %}
-        <div class="rooms-container" style="margin-top:16px">
-            {% for room in myRooms %}
-            <div class="room-card"
-                 data-title="{{ room.titre|lower }}"
-                 data-author="{{ room.auteur|lower }}">
-                <div class="room-image">
-                    <img src="{{ room.image starts with 'http' ? room.image : asset('uploads/rooms/' ~ room.image) }}"
-                         alt="{{ room.titre }}"
-                         onerror="this.src='{{ asset('uploads/rooms/default-book.jpg') }}'"/>
-                    <span class="badge {{ room.type }}">{{ room.type == 'live' ? 'LIVE' : 'Scheduled' }}</span>
-                    <span class="participants">0/{{ room.maxParticipants }}</span>
-                </div>
-                <div class="room-content">
-                    <div>
-                        <h3>{{ room.titre }}</h3>
-                        <p class="room-author">{{ room.auteur }}</p>
-                    </div>
-                    <div class="progress-container">
-                        <div class="progress-bar-bg">
-                            <div class="progress-bar-fill" style="width:0%"></div>
+        {# MY ROOMS #}
+        <div id="myrooms-section" class="tab-section" style="display: none;">
+            {% if myRooms is defined and myRooms|length > 0 %}
+                <div class="rooms-container">
+                    {% for room in myRooms %}
+                    <div class="room-card" data-title="{{ room.titre|lower }}" data-author="{{ room.auteur|lower }}">
+                        <div class="room-image">
+                            <img src="{{ room.image starts with 'http' ? room.image : asset('uploads/rooms/' ~ room.image) }}"
+                                 alt="{{ room.titre }}"
+                                 onerror="this.src='{{ asset('uploads/rooms/default-book.jpg') }}'"/>
+                            <span class="badge {{ room.type }}">{{ room.type == 'live' ? 'LIVE' : 'Scheduled' }}</span>
+                            <span class="participants">0/{{ room.maxParticipants }}</span>
                         </div>
-                        <p class="progress-text">Page 0 of {{ room.totalPages }}</p>
+                        <div class="room-content">
+                            <h3>{{ room.titre }}</h3>
+                            <p class="room-author">{{ room.auteur }}</p>
+                            <div class="progress-container">
+                                <div class="progress-bar-bg">
+                                    <div class="progress-bar-fill" style="width:0%"></div>
+                                </div>
+                                <p class="progress-text">Page 0 of {{ room.totalPages }}</p>
+                            </div>
+                            {% if room.tagsArray is defined and room.tagsArray %}
+                            <div class="tags">
+                                {% for tag in room.tagsArray %}
+                                    <span class="tag">{{ tag|trim }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <button class="room-action-btn join-btn" onclick="openJoinPopup('{{ room.titre|escape('js') }}')">Manage</button>
+                        </div>
                     </div>
-                    {% if room.tags %}
-                    <div class="tags">
-                        {% for tag in room.tagsArray %}
-                            <span class="tag">{{ tag|trim }}</span>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                    <button class="room-action-btn join-btn"
-                            onclick="openJoinPopup('{{ room.titre|escape('js') }}')">
-                        Manage
-                    </button>
+                    {% endfor %}
                 </div>
-            </div>
-            {% endfor %}
+            {% else %}
+                <div class="myrooms-empty">
+                    <h3>No rooms yet</h3>
+                    <p>Create your own room or join an existing one to start reading with the community.</p>
+                    <a href="{{ path('app_room_create') }}" class="create-room-btn">+ Create Room</a>
+                </div>
+            {% endif %}
         </div>
-    {% else %}
-        <div class="myrooms-content">
-            <div class="myrooms-text">
-                <h3>No rooms yet</h3>
-                <p>Create your own room or join an existing one to start reading with the community.</p>
-                <a href="{{ path('app_room_create') }}" class="create-room-btn">+ Create Room</a>
-            </div>
-        </div>
-    {% endif %}
-</div>
 
-        {# ===== NO SEARCH RESULT ===== #}
+        {# NO SEARCH RESULT #}
         <div id="no-result">
             <h3>No rooms found</h3>
             <p>No reading room matches "<span id="search-query"></span>"</p>
         </div>
 
-    </div>{# /page-body #}
-</div>{# /page-wrapper #}
+    </div>
+</div>
 
-{# ===== JOIN POPUP ===== #}
+{# JOIN POPUP #}
 <div id="joinPopup">
     <div class="popup-box">
         <div class="popup-header">
@@ -480,94 +737,151 @@
 {% endblock %}
 
 {% block javascripts %}
-
-<script src="{{ asset('js/ui-controls.js') }}"></script>
-    
 <script>
-// ===== SEARCH =====
-document.getElementById('search_bar').addEventListener('input', function () {
-    const query = this.value.trim().toLowerCase();
-    const cards = document.querySelectorAll('.room-card');
-    let found = 0;
-    cards.forEach(card => {
-        const title  = card.dataset.title  || '';
-        const author = card.dataset.author || '';
-        const show   = query === '' || title.includes(query) || author.includes(query);
-        card.style.display = show ? 'flex' : 'none';
-        if (show) found++;
+// TAB MANAGEMENT
+const tabs = document.querySelectorAll('.nav-tab');
+const sections = {
+    discover: ['live-section', 'scheduled-section'],
+    live: ['live-section'],
+    scheduled: ['scheduled-section'],
+    myrooms: ['myrooms-section']
+};
+
+function showTab(tabId) {
+    // Hide all sections
+    document.querySelectorAll('.tab-section').forEach(section => {
+        section.style.display = 'none';
     });
-    document.getElementById('no-result').style.display =
-        found === 0 && query !== '' ? 'flex' : 'none';
-    document.getElementById('search-query').textContent = query;
-});
-
-// ===== TABS =====
-document.querySelectorAll('.nav-tab').forEach(tab => {
-    tab.addEventListener('click', function (e) {
-        e.preventDefault();
-        document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-        this.classList.add('active');
-
-        const liveSection      = document.getElementById('live-section');
-        const scheduledSection = document.getElementById('scheduled-section');
-        const myroomsSection   = document.getElementById('myrooms-section');
-
-        liveSection.style.display      = 'none';
-        scheduledSection.style.display = 'none';
-        myroomsSection.style.display   = 'none';
-
-        if (this.id === 'tab_live')      liveSection.style.display      = 'block';
-        if (this.id === 'tab_scheduled') scheduledSection.style.display = 'block';
-        if (this.id === 'tab_myrooms')   myroomsSection.style.display   = 'flex';
-        if (this.id === 'tab_discover') {
-            liveSection.style.display      = 'block';
-            scheduledSection.style.display = 'block';
+    
+    // Show selected sections
+    const sectionsToShow = sections[tabId] || sections.discover;
+    sectionsToShow.forEach(sectionId => {
+        const section = document.getElementById(sectionId);
+        if (section) section.style.display = 'block';
+    });
+    
+    // Update active tab
+    tabs.forEach(tab => {
+        if (tab.dataset.tab === tabId) {
+            tab.classList.add('active');
+        } else {
+            tab.classList.remove('active');
         }
     });
+}
+
+tabs.forEach(tab => {
+    tab.addEventListener('click', function(e) {
+        e.preventDefault();
+        const tabId = this.dataset.tab;
+        showTab(tabId);
+    });
 });
 
-// ===== POPUP =====
+// SEARCH FUNCTIONALITY
+const searchBar = document.getElementById('search_bar');
+const searchQuerySpan = document.getElementById('search-query');
+const noResultDiv = document.getElementById('no-result');
+
+function filterRooms() {
+    const query = searchBar.value.trim().toLowerCase();
+    const cards = document.querySelectorAll('.room-card');
+    let visibleCount = 0;
+    
+    cards.forEach(card => {
+        const title = card.dataset.title || '';
+        const author = card.dataset.author || '';
+        const isVisible = query === '' || title.includes(query) || author.includes(query);
+        card.style.display = isVisible ? 'flex' : 'none';
+        if (isVisible) visibleCount++;
+    });
+    
+    if (noResultDiv && searchQuerySpan) {
+        const shouldShowNoResult = visibleCount === 0 && query !== '';
+        noResultDiv.style.display = shouldShowNoResult ? 'block' : 'none';
+        if (shouldShowNoResult) {
+            searchQuerySpan.textContent = query;
+        }
+    }
+}
+
+if (searchBar) {
+    searchBar.addEventListener('input', filterRooms);
+}
+
+// POPUP MANAGEMENT
+let currentAction = 'join';
+
 function openJoinPopup(bookTitle) {
+    currentAction = 'join';
     document.getElementById('popupBook').textContent = 'Book: ' + bookTitle;
+    const confirmBtn = document.getElementById('confirmJoin');
+    if (confirmBtn) confirmBtn.textContent = 'Join';
     document.getElementById('joinPopup').classList.add('open');
 }
+
 function openRsvpPopup(bookTitle) {
+    currentAction = 'rsvp';
     document.getElementById('popupBook').textContent = 'Book: ' + bookTitle;
+    const confirmBtn = document.getElementById('confirmJoin');
+    if (confirmBtn) confirmBtn.textContent = 'RSVP';
     document.getElementById('joinPopup').classList.add('open');
-    document.getElementById('confirmJoin').textContent = 'RSVP';
 }
+
 function closePopup() {
     document.getElementById('joinPopup').classList.remove('open');
-    document.getElementById('confirmJoin').textContent = 'Join';
+    const nameInput = document.getElementById('popupName');
+    const emailInput = document.getElementById('popupEmail');
+    if (nameInput) nameInput.value = '';
+    if (emailInput) emailInput.value = '';
+    if (nameInput) nameInput.classList.remove('error');
+    if (emailInput) emailInput.classList.remove('error');
+    const errorName = document.getElementById('errorName');
+    const errorEmail = document.getElementById('errorEmail');
+    if (errorName) errorName.style.display = 'none';
+    if (errorEmail) errorEmail.style.display = 'none';
 }
-function confirmJoin() {
-    const name  = document.getElementById('popupName');
-    const email = document.getElementById('popupEmail');
-    let valid   = true;
 
-    if (!name.value.trim()) {
-        name.classList.add('error');
-        document.getElementById('errorName').style.display = 'block';
-        valid = false;
+function confirmJoin() {
+    const nameInput = document.getElementById('popupName');
+    const emailInput = document.getElementById('popupEmail');
+    const errorName = document.getElementById('errorName');
+    const errorEmail = document.getElementById('errorEmail');
+    let isValid = true;
+
+    if (!nameInput.value.trim()) {
+        nameInput.classList.add('error');
+        if (errorName) errorName.style.display = 'block';
+        isValid = false;
     } else {
-        name.classList.remove('error');
-        document.getElementById('errorName').style.display = 'none';
+        nameInput.classList.remove('error');
+        if (errorName) errorName.style.display = 'none';
     }
-    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRe.test(email.value.trim())) {
-        email.classList.add('error');
-        document.getElementById('errorEmail').style.display = 'block';
-        valid = false;
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(emailInput.value.trim())) {
+        emailInput.classList.add('error');
+        if (errorEmail) errorEmail.style.display = 'block';
+        isValid = false;
     } else {
-        email.classList.remove('error');
-        document.getElementById('errorEmail').style.display = 'none';
+        emailInput.classList.remove('error');
+        if (errorEmail) errorEmail.style.display = 'none';
     }
-    if (valid) closePopup();
+    
+    if (isValid) {
+        console.log(currentAction + ' confirmed for:', nameInput.value, emailInput.value);
+        // TODO: Send AJAX request to backend
+        closePopup();
+        alert('Successfully ' + (currentAction === 'join' ? 'joined' : 'RSVPed to') + ' the room!');
+    }
 }
 
 // Close popup on backdrop click
 document.getElementById('joinPopup').addEventListener('click', function(e) {
     if (e.target === this) closePopup();
 });
+
+// Initialize - show discover tab
+showTab('discover');
 </script>
 {% endblock %}
