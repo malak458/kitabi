@@ -38,6 +38,9 @@ class MarketplaceController extends AbstractController
             $favorites = $favoriteRepository->findByUserId($this->getUser()->getId());
             $favoriteBookIds = array_map(fn($fav) => $fav->getBook()->getId(), $favorites);
         }
+        $user = $this->getUser();
+        $myBooks = $bookRepository->findBy(['user' => $user]);
+     
 
         return $this->render('marketplace/index.html.twig', [
             'books'           => $books,
@@ -72,7 +75,9 @@ class MarketplaceController extends AbstractController
                 'price_desc' => '≡ Price: high to low',
                 'title_az'   => '≡ Title: A-Z',
             ],
-        ]);
+            'myBooks' => $myBooks,
+            ]);
+
     }
 
     #[Route('/marketplace/review', name: 'app_marketplace_review', methods: ['POST'])]

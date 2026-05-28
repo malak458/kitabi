@@ -19,7 +19,7 @@
                     {'label': 'Total Exchanges', 'value': totalExchanges, 'id': 'total-exchanges'},
                     {'label': 'Active Exchanges', 'value': activeExchangesCount, 'id': 'active'},
                     {'label': 'Completed History Count', 'value': completedHistoryCount, 'id': 'completed'},
-                    {'label': 'Success Rate', 'value': success_rate ~ '%', 'id': 'success-rate'},
+                    {'label': 'Success Rate', 'value': successRate ~ '%', 'id': 'success-rate'},
                 ] %}
             {% for s in stats %}
                 <div class="col-md-3 col-sm-6 mb-4 d-flex" style="width:150px;">
@@ -183,12 +183,12 @@
     </section>
 
     <section class="mt-4 border border-1 bg-teal-light p-3 d-flex flex-column" id="completed-Exchanges">
-        {% if completed_history is empty %}
+        {% if completedHistory is empty %}
             <div class="text-center w-100 p-4 text-white-50">
                 <p>No completed exchanges yet.</p>
             </div>
         {% else %}
-            {% for comp in completed_history %}
+            {% for comp in completedHistory %}
                 {{ include('exchange/verifierBookOffer.html.twig', { 'exchange': comp }) }}
                 <div class="position-relative empl mb-4 p-4 rounded-4 w-100 bg-muted d-flex flex-column gap-4">
                     <div class="offering-date text-amber-light border-bottom border-white border-opacity-10 pb-2">

@@ -1,8 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    
-    // ==========================================
-    // 1. GESTION DE LA MODALE (MARKETPLACE)
-    // ==========================================
     const exchangeModal = document.getElementById('exchangeModal');
     const exchangeForm = document.getElementById('exchangeForm');
     
@@ -12,30 +8,44 @@ document.addEventListener('DOMContentLoaded', function() {
         const offeredBookSelect = document.getElementById('offeredBookSelect');
         const newBookTitle = document.getElementById('newBookTitle');
         const newBookAuthor = document.getElementById('newBookAuthor');
-        const bookMode = document.getElementById('bookMode');
-
-        // Capturer l'ouverture de la modale
+        const bookModeSelect = document.getElementById('bookModeSelect') || document.getElementById('bookMode');
         exchangeModal.addEventListener('show.bs.modal', function(event) {
             const button = event.relatedTarget;
             const requestedBookId = button.getAttribute('data-book-id');
-            
-            // Met à jour l'action du formulaire vers ton contrôleur Symfony
             exchangeForm.action = `/exchange/create/${requestedBookId}`;
 
             // Réinitialisation par défaut vers l'état "Livre existant"
-            existingBookBlock.classList.remove('d-none');
-            newBookBlock.classList.add('d-none');
-            bookMode.value = 'existing';
+            if (existingBookBlock) existingBookBlock.style.display = 'block';
+            if (newBookBlock) newBookBlock.style.style.display = 'none';
+            if (bookModeSelect) bookModeSelect.value = 'existing';
             
-            offeredBookSelect.value = "";
-            newBookTitle.value = "";
-            newBookAuthor.value = "";
-            
-            newBookTitle.removeAttribute('required');
-            offeredBookSelect.setAttribute('required', 'required');
+            if (offeredBookSelect) {
+                offeredBookSelect.value = "";
+                offeredBookSelect.setAttribute('required', 'required');
+            }
+            if (newBookTitle) {
+                newBookTitle.value = "";
+                newBookTitle.removeAttribute('required');
+            }
+            if (newBookAuthor) newBookAuthor.value = "";
         });
-
-        // Gestion de la bascule vers le mode "Nouveau livre"
+        if (bookModeSelect) {
+            bookModeSelect.addEventListener('change', function() {
+                if (this.value === 'existing') {
+                    if (existingBookBlock) existingBookBlock.style.display = 'block';
+                    if (newBookBlock) newBookBlock.style.display = 'none';
+                    if (offeredBookSelect) offeredBookSelect.setAttribute('required', 'required');
+                    if (newBookTitle) newBookTitle.removeAttribute('required');
+                } else {
+                    if (existingBookBlock) existingBookBlock.style.display = 'none';
+                    if (newBookBlock) newBookBlock.style.display = 'block';
+                    if (offeredBookSelect) offeredBookSelect.removeAttribute('required');
+                    if (newBookTitle) newBookTitle.setAttribute('required', 'required');
+                }
+            });
+        }
+    }
+});        
         document.getElementById('btnShowNewBook').addEventListener('click', function() {
             existingBookBlock.classList.add('d-none');
             newBookBlock.classList.remove('d-none');
@@ -44,7 +54,6 @@ document.addEventListener('DOMContentLoaded', function() {
             newBookTitle.setAttribute('required', 'required');
         });
 
-        // Retour vers le mode "Livre existant"
         document.getElementById('btnShowExistingBook').addEventListener('click', function() {
             newBookBlock.classList.add('d-none');
             existingBookBlock.classList.remove('d-none');
@@ -52,8 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
             newBookTitle.removeAttribute('required');
             offeredBookSelect.setAttribute('required', 'required');
         });
-    }
-
+    
     // ==========================================
     // 2. GESTION DES FILTRES DE VISIBILITÉ (TABLEAU DE BORD)
     // ==========================================

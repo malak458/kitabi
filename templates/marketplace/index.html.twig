@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}KITAB — Marketplace
-{% endblock %}
+{% block title %}KITAB — Marketplace{% endblock %}
 
 {% block stylesheets %}
 	{{ parent() }}
@@ -212,10 +211,12 @@
 								<i class="bi bi-book"></i>
 								Details
 							</a>
-							<a href="#" class="chat open-exchange-modal" data-bs-toggle="modal" data-bs-target="#exchangeModal" data-book-id="{{ book.id }}">
-							<i class="bi bi-chat-left"></i>
-                                Faire un échange
-                            </a>
+							{% if book.forExchange %}
+							    <a href="#" class="chat open-exchange-modal" data-bs-toggle="modal" data-bs-target="#exchangeModal" data-book-id="{{ book.id }}">
+                                    Faire un échange
+                                   </a>
+							{% endif %}
+							
 						</div>
 					</div>
 				{% endfor %}

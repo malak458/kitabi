@@ -37,7 +37,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $bio = null;
 
     
-    #[ORM\Column(type: Types::floatval, nullable: true)]
+    #[ORM\Column(type: Types::FLOAT, nullable: true)]
     private ?float $rating = 0.0;
 
     /**

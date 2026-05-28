@@ -31,7 +31,7 @@ class ExchangeController extends AbstractController
 
         $successRate = $totalExchanges > 0 ? ($completedHistoryCount / $totalExchanges) * 100 : 0;
 
-        return $this->render('exchange/history.html.twig', [
+        return $this->render('exchange/exchange.html.twig', [
             'user' => $user, 
             'acceptedExchanges' => $acceptedExchanges,
             'pendingRequests' => $pendingRequests,

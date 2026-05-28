@@ -4,6 +4,9 @@ namespace App\Entity;
 
 use App\Repository\ExchangeRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 
 #[ORM\Entity(repositoryClass: ExchangeRepository::class)]
 class Exchange
@@ -19,7 +22,7 @@ class Exchange
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-     #[ORM\Column(type: Types::floatval, nullable: true)]
+     #[ORM\Column(type: Types::FLOAT, nullable: true)]
     private ?float $rate = 0.0;
 
     #[ORM\ManyToOne]
