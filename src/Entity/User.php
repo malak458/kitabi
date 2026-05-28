@@ -36,6 +36,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $bio = null;
 
+    
+    #[ORM\Column(type: Types::floatval, nullable: true)]
+    private ?float $rating = 0.0;
+
     /**
      * @var Collection<int, Book>
      */
@@ -173,6 +177,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return array_unique($roles);
     }
+    public function getRating(): ?float
+    {
+        return $this->rating;
+    }
+
+    public function setRating(?float $rating): static
+    {
+        $this->rating = $rating;
+
+        return $this;
+    }
     public function eraseCredentials(): void
     {
         // clear temporary sensitive data if needed
@@ -183,5 +198,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
 
 }

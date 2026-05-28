@@ -1,0 +1,12 @@
+
+{%if (exchange.userOffering == user) %}
+       {% set partner = exchange.userRequesting; %}
+        {% set myBook = exchange.offeredBook; %}
+        {% set partnerBook = exchange.requestedBook;%}
+{% else %}
+    
+        {% set partner = exchange.userOffering; %}
+        {% set myBook = exchange.requestedBook; %}
+        {% set partnerBook = exchange.offeredBook; %}   
+    
+{% endif %}

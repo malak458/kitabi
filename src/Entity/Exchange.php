@@ -19,6 +19,9 @@ class Exchange
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+     #[ORM\Column(type: Types::floatval, nullable: true)]
+    private ?float $rate = 0.0;
+
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $userRequesting = null;
@@ -29,7 +32,11 @@ class Exchange
 
     #[ORM\ManyToOne]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Book $book = null;
+    private ?Book $offeredBook = null;
+
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Book $requestedBook = null;
 
     public function getId(): ?int
     {
@@ -84,14 +91,38 @@ class Exchange
         return $this;
     }
 
-    public function getBook(): ?Book
+    public function getOfferedBook(): ?Book
     {
-        return $this->book;
+        return $this->offeredBook;
     }
 
-    public function setBook(?Book $book): static
+    public function setOfferedBook(?Book $offeredBook): static
     {
-        $this->book = $book;
+        $this->offeredBook = $offeredBook;
+
+        return $this;
+    }
+
+    public function getRequestedBook(): ?Book
+    {
+        return $this->requestedBook;
+    }
+
+    public function setRequestedBook(?Book $requestedBook): static
+    {
+        $this->requestedBook = $requestedBook;
+
+        return $this;
+    }
+
+    public function getRate(): ?float
+    {
+        return $this->rate;
+    }
+
+    public function setRate(?float $rate): static
+    {
+        $this->rate = $rate;
 
         return $this;
     }
