@@ -10,37 +10,86 @@ class BookFixtures extends Fixture
 {
     public function load(ObjectManager $manager): void
     {
-        // Livre 1
-        $book1 = new Book();
-        $book1->setTitre('Le Seigneur des Anneaux');
-        $book1->setAuteur('J.R.R. Tolkien');
-        $book1->setGenre('Fantasy');
-        $book1->setCondition('Très bon état');
-        $book1->setPrix(19.99);
-        $book1->setForExchange(true);
-        $manager->persist($book1);
+        $books = [
 
-        // Livre 2
-        $book2 = new Book();
-        $book2->setTitre('1984');
-        $book2->setAuteur('George Orwell');
-        $book2->setGenre('Dystopie');
-        $book2->setCondition('Comme neuf');
-        $book2->setPrix(8.50);
-        $book2->setForExchange(false);
-        $manager->persist($book2);
+            [
+                'titre' => 'Dix Petits Nègres',
+                'auteur' => 'Agatha Christie',
+                'genre' => 'Classic',
+                'condition' => 'Très bon état',
+                'prix' => 35,
+                'exchange' => true,
+                'image' => 'dix-petits-negres.webp'
+            ],
 
-        // Livre 3
-        $book3 = new Book();
-        $book3->setTitre('Le Petit Prince');
-        $book3->setAuteur('Antoine de Saint-Exupéry');
-        $book3->setGenre('Conte');
-        $book3->setCondition('Usé');
-        $book3->setPrix(4.00);
-        $book3->setForExchange(true);
-        $manager->persist($book3);
+            [
+                'titre' => 'Tu comprendras quand tu seras plus grande',
+                'auteur' => 'Virginie Grimaldi',
+                'genre' => 'Romance',
+                'condition' => 'Comme neuf',
+                'prix' => 42,
+                'exchange' => true,
+                'image' => 'tu-comprendras.jpg'
+            ],
 
-        // Cette commande valide et envoie tout en base de données d'un coup
+            [
+                'titre' => 'Le Petit Prince',
+                'auteur' => 'Saint-Exupéry',
+                'genre' => 'Fiction',
+                'condition' => 'Bon état',
+                'prix' => 25,
+                'exchange' => true,
+                'image' => 'le-petit-prince.jpg'
+            ],
+
+            [
+                'titre' => 'Mort sur le Nil',
+                'auteur' => 'Agatha Christie',
+                'genre' => 'Classic',
+                'condition' => 'Très bon état',
+                'prix' => 37,
+                'exchange' => false,
+                'image' => 'mort-sur-le-nil.jpg'
+            ],
+
+            [
+                'titre' => 'أن تبقى',
+                'auteur' => 'خولة حمدي',
+                'genre' => 'Romance',
+                'condition' => 'Neuf',
+                'prix' => 55,
+                'exchange' => true,
+                'image' => 'anthabaki.png'
+            ],
+
+            [
+                'titre' => 'Pride and Prejudice',
+                'auteur' => 'Jane Austen',
+                'genre' => 'Classic Literature',
+                'condition' => 'Acceptable',
+                'prix' => 29.7,
+                'exchange' => true,
+                'image' => 'pride-prejudice.jpg'
+            ],
+        ];
+
+        foreach ($books as $data) {
+
+            $book = new Book();
+
+            $book->setTitre($data['titre']);
+            $book->setAuteur($data['auteur']);
+            $book->setGenre($data['genre']);
+            $book->setCondition($data['condition']);
+            $book->setPrix($data['prix']);
+            $book->setForExchange($data['exchange']);
+
+            // IMAGE
+            $book->setImage($data['image']);
+
+            $manager->persist($book);
+        }
+
         $manager->flush();
     }
 }
