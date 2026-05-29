@@ -16,9 +16,7 @@ class RoomFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // ==========================================
-        // 1. UTILISATEURS
-        // ==========================================
+      
 
         $user1 = new User();
         $user1->setNom('Test');
@@ -44,11 +42,7 @@ class RoomFixtures extends Fixture
         $user3->setPassword($this->hasher->hashPassword($user3, 'password123'));
         $manager->persist($user3);
 
-        // ==========================================
-        // 2. LES 5 SALLES DE LECTURE (5 LIVRES UNIQUES)
-        // ==========================================
-
-        // Livre 1 : Dix Petits Nègres (Agatha Christie)
+        
         $room1 = new Room();
         $room1->setTitre('Dix Petits Nègres');
         $room1->setAuteur('Agatha Christie');
@@ -58,13 +52,13 @@ class RoomFixtures extends Fixture
         $room1->setGenre('Classic');
         $room1->setTags(null);
         $room1->setDescription('Dix petits nègres est le titre initial francophone de l\'un des romans policiers les plus célèbres d\'Agatha Christie, publié en 1939.');
-        // Correction : Utilisation du nom du fichier généré par Symfony
+        
         $room1->setImage('room_6a148a0ce24f1.jpg'); 
         $room1->setCreatedAt(new \DateTime('2026-05-25 19:42:36'));
         $room1->setHost($user1);
         $manager->persist($room1);
 
-        // Livre 2 : Tu comprendras quand tu seras plus grande (Virginie Grimaldi)
+       
         $room2 = new Room();
         $room2->setTitre('Tu comprendras quand tu seras plus grande');
         $room2->setAuteur('Virginie Grimaldi');
@@ -74,13 +68,13 @@ class RoomFixtures extends Fixture
         $room2->setGenre('Romance');
         $room2->setTags(null);
         $room2->setDescription('Roman contemporain de type feel-good qui traite de la résilience, du deuil et des liens intergénérationnels.');
-        // Correction : Nom exact de l'image présente sur ta capture
+        
         $room2->setImage('room_6a148d5f63ac4.jpg'); 
         $room2->setCreatedAt(new \DateTime('2026-05-25 19:56:46'));
         $room2->setHost($user1);
         $manager->persist($room2);
 
-        // Livre 3 : Le Petit Prince (Saint-Exupéry)
+        
         $room3 = new Room();
         $room3->setTitre('Le Petit Prince');
         $room3->setAuteur('Saint-Exupéry');
@@ -90,13 +84,13 @@ class RoomFixtures extends Fixture
         $room3->setGenre('Fiction');
         $room3->setTags('Fiction');
         $room3->setDescription('Le Petit Prince d\'Antoine de Saint-Exupéry est le deuxième livre le plus traduit au monde après la Bible.');
-        // Correction : Extension finale ajoutée proprement
+       
         $room3->setImage('room_le-petit-prince_6a16ab7835ad6.jpg'); 
         $room3->setCreatedAt(new \DateTime('2026-05-27 10:29:43'));
         $room3->setHost($user1);
         $manager->persist($room3);
 
-        // Livre 4 : Mort sur le Nil (Agatha Christie)
+       
         $room4 = new Room();
         $room4->setTitre('Mort sur le Nil');
         $room4->setAuteur('Agatha Christie');
@@ -106,13 +100,13 @@ class RoomFixtures extends Fixture
         $room4->setGenre('Classic');
         $room4->setTags('Classic,Philosophy');
         $room4->setDescription('Linnet Ridgeway, une riche et belle héritière américaine, épouse Simon Doyle. Hercule Poirot doit élucider ce crime complexe.');
-        // Correction : Nom de fichier calqué sur ta capture locale
+        
         $room4->setImage('room_MORT_6a16ad06a7d50.jpg'); 
         $room4->setCreatedAt(new \DateTime('2026-05-27 10:36:22'));
         $room4->setHost($user1);
         $manager->persist($room4);
 
-        // Livre 5 : أن تبقى (خولة حمدي)
+        
         $room5 = new Room();
         $room5->setTitre('أن تبقى');
         $room5->setAuteur('خولة حمدي');
@@ -122,7 +116,7 @@ class RoomFixtures extends Fixture
         $room5->setGenre('Classic');
         $room5->setTags('Classic,Romance');
         $room5->setDescription('رواية شهيرة للكاتبة التونسية الدكتورة خولة حمدي، تناقش قضايا الهجرة غير الشرعية وصراع الهوية.');
-        // Correction : Association avec la couverture arabe correspondante
+        
         $room5->setImage('room_30738859_6a16c037e7967.jpg'); 
         $room5->setCreatedAt(new \DateTime('2026-05-27 11:58:15'));
         $room5->setHost($user2);
