@@ -86,7 +86,7 @@ const stylesDark = `
 
   .book-card .details,
   .book-card .chat {
-    color: #fffdf8 !important;
+    color: #000000 !important;
   }
 
   .tag {
@@ -123,41 +123,41 @@ let modeEstSombre = localStorage.getItem("kitabi_theme") === "dark";
 // ================= UPDATE BUTTON TEXT =================
 
 window.updateModeButton = function () {
-  const t = window.currentTranslations || {
-    mode_dark: "Dark",
-    mode_light: "Light",
-  };
+    const t = window.currentTranslations || {
+        mode_dark: "Dark",
+        mode_light: "Light",
+    };
 
-  const texteDark = t.mode_dark;
-  const texteLight = t.mode_light;
+    const texteDark = t.mode_dark;
+    const texteLight = t.mode_light;
 
-  if (modeEstSombre) {
-    bouton.textContent = `☀️ ${texteLight}`;
-  } else {
-    bouton.textContent = `🌙 ${texteDark}`;
-  }
+    if (modeEstSombre) {
+        bouton.textContent = `☀️ ${texteLight}`;
+    } else {
+        bouton.textContent = `🌙 ${texteDark}`;
+    }
 };
 
 // ================= APPLY THEME =================
 
 function applyTheme() {
-  if (modeEstSombre) {
-    baliseStyle.textContent = stylesDark;
+    if (modeEstSombre) {
+        baliseStyle.textContent = stylesDark;
 
-    bouton.style.background = "var(--ink)";
-    bouton.style.color = "var(--amber-mid)";
+        bouton.style.background = "var(--ink)";
+        bouton.style.color = "var(--amber-mid)";
 
-    localStorage.setItem("kitabi_theme", "dark");
-  } else {
-    baliseStyle.textContent = "";
+        localStorage.setItem("kitabi_theme", "dark");
+    } else {
+        baliseStyle.textContent = "";
 
-    bouton.style.background = "var(--white)";
-    bouton.style.color = "var(--amber)";
+        bouton.style.background = "var(--white)";
+        bouton.style.color = "var(--amber)";
 
-    localStorage.setItem("kitabi_theme", "light");
-  }
+        localStorage.setItem("kitabi_theme", "light");
+    }
 
-  window.updateModeButton();
+    window.updateModeButton();
 }
 
 // ================= INITIAL LOAD =================
@@ -167,22 +167,22 @@ applyTheme();
 // ================= CLICK EVENT =================
 
 bouton.addEventListener("click", function () {
-  modeEstSombre = !modeEstSombre;
+    modeEstSombre = !modeEstSombre;
 
-  applyTheme();
+    applyTheme();
 });
 
 // ================= HOVER EFFECT =================
 
 bouton.addEventListener("mouseenter", () => {
-  bouton.style.background = "var(--amber)";
-  bouton.style.color = "white";
+    bouton.style.background = "var(--amber)";
+    bouton.style.color = "white";
 
-  bouton.style.transform = "translateY(-2px)";
+    bouton.style.transform = "translateY(-2px)";
 });
 
 bouton.addEventListener("mouseleave", () => {
-  applyTheme();
+    applyTheme();
 
-  bouton.style.transform = "translateY(0)";
+    bouton.style.transform = "translateY(0)";
 });

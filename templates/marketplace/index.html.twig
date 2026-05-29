@@ -7,11 +7,16 @@
 {% block stylesheets %}
 	{{ parent() }}
 	<link rel="stylesheet" href="{{ asset('assets/css/marketPlace.css') }}">
+	<link rel="stylesheet" href="{{ asset('assets/css/chatbot.css') }}">
+
 {% endblock %}
+
 {% block javascripts %}
 	{{ parent() }}
 	<script src="{{ asset('assets/js/marketPlace.js') }}"></script>
 	<script src="{{ asset('assets/js/favorites-toggle.js') }}"></script>
+	<script src="{{ asset('assets/js/chatbot.js') }}"></script>
+	<script src="{{ asset('assets/js/mode.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -96,13 +101,13 @@
 						<div style="position:relative; display:inline-block;">
 							<input class="nav-search" type="text" id="searchInput" name="search" placeholder="Rechercher un livre…" value="{{ filters.search }}" autocomplete="off"/>
 							<ul id="searchSuggestions" style="
-																																																																																																																																																																																																																																																																        display:none;
-																																																																																																																																																																																																																																																																        position:absolute;
-																																																																																																																																																																																																																																																																        top:100%;
-																																																																																																																																																																																																																																																																        left:0;
-																																																																																																																																																																																																																																																	                                                                    padding:6px 0;
-																																																																																																																																																																																																																																																																        min-width:350px;
-																																																																																																																																																																																																																																																																    "></ul>
+																																																																																																																																																																																																																																																																																																																								        display:none;
+																																																																																																																																																																																																																																																																																																																								        position:absolute;
+																																																																																																																																																																																																																																																																																																																								        top:100%;
+																																																																																																																																																																																																																																																																																																																								        left:0;
+																																																																																																																																																																																																																																																																																																									                                                                    padding:6px 0;
+																																																																																																																																																																																																																																																																																																																								        min-width:350px;
+																																																																																																																																																																																																																																																																																																																								    "></ul>
 						</div>
 						<a href="{{ path('app_book_new') }}" class="nav-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
 							Publier un livre
@@ -493,11 +498,17 @@ function resetForm() {
 if (existingBookBlock) 
 existingBookBlock.style.display = 'block';
 
+
+
 if (newBookBlock) 
 newBookBlock.style.display = 'none';
 
+
+
 if (bookModeSelect) 
 bookModeSelect.value = 'existing';
+
+
 
 if (offeredBookSelect) {
 offeredBookSelect.value = '';
@@ -510,6 +521,8 @@ newBookTitle.required = false;
 if (newBookAuthor) 
 newBookAuthor.value = '';
 
+
+
 }
 
 // Bouton "Le livre n'est pas dans ma liste"
@@ -519,17 +532,27 @@ e.preventDefault();
 if (existingBookBlock) 
 existingBookBlock.style.display = 'none';
 
+
+
 if (newBookBlock) 
 newBookBlock.style.display = 'block';
+
+
 
 if (bookModeSelect) 
 bookModeSelect.value = 'new';
 
+
+
 if (offeredBookSelect) 
 offeredBookSelect.required = false;
 
+
+
 if (newBookTitle) 
 newBookTitle.required = true;
+
+
 
 });
 }
@@ -541,17 +564,27 @@ e.preventDefault();
 if (existingBookBlock) 
 existingBookBlock.style.display = 'block';
 
+
+
 if (newBookBlock) 
 newBookBlock.style.display = 'none';
+
+
 
 if (bookModeSelect) 
 bookModeSelect.value = 'existing';
 
+
+
 if (offeredBookSelect) 
 offeredBookSelect.required = true;
 
+
+
 if (newBookTitle) 
 newBookTitle.required = false;
+
+
 
 });
 }

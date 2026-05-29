@@ -1,7 +1,4 @@
-/* ===========================
-   VARIABLES & RESET
-=========================== */
-/* Slider colle directement sous la navbar */
+
 main {
   padding-top: 0 !important;
 }
@@ -231,9 +228,7 @@ nav a {
   padding: 30px 20px;
 }
 
-/* ===========================
-   HERO SLIDER
-=========================== */
+
 
 .hero-slider {
   height: calc(100vh - var(--nav-h));
@@ -423,9 +418,7 @@ nav a {
   opacity: 1;
 }
 
-/* ===========================
-   SLIDER CONTROLS
-=========================== */
+
 
 .slider-dots {
   position: absolute;
@@ -511,9 +504,7 @@ nav a {
   z-index: 20;
 }
 
-/* ===========================
-   PROMO BAND
-=========================== */
+
 
 .promo-band {
   background: var(--amber);
@@ -571,9 +562,7 @@ nav a {
   }
 }
 
-/* ===========================
-   SEARCH & FILTERS
-=========================== */
+
 
 .bloc1 {
   display: flex;
@@ -723,9 +712,7 @@ nav a {
   font-size: 14px;
 }
 
-/* ===========================
-   CARDS CONTAINER
-=========================== */
+
 
 .cards-container {
   display: grid;
@@ -737,9 +724,7 @@ nav a {
   margin: 30px 40px;
 }
 
-/* ===========================
-   BOOK CARD
-=========================== */
+
 
 .book-card {
   width: 100%;
@@ -784,9 +769,7 @@ nav a {
   font-size: 13px;
 }
 
-/* ===========================
-   IMAGE CONTAINER
-=========================== */
+
 
 .image-container {
   position: relative;
@@ -812,9 +795,6 @@ nav a {
   transform: scale(1.08);
 }
 
-/* ===========================
-   LEFT BADGES
-=========================== */
 
 .left-badges {
   position: absolute;
@@ -832,9 +812,7 @@ nav a {
   z-index: 10;
 }
 
-/* ===========================
-   CONDITION BADGES
-=========================== */
+
 
 .conditionbook {
   display: inline-block;
@@ -867,9 +845,7 @@ nav a {
   background: rgb(255, 149, 0);
 }
 
-/* ===========================
-   EXCHANGE BADGE
-=========================== */
+
 
 .forexchange {
   position: absolute;
@@ -890,9 +866,6 @@ nav a {
   z-index: 10;
 }
 
-/* ===========================
-   HEART BUTTON
-=========================== */
 
 .heart-btn {
   width: 42px;
@@ -956,9 +929,7 @@ nav a {
   }
 }
 
-/* ===========================
-   CARD ACTIONS
-=========================== */
+
 
 .card-actions {
   display: flex;
@@ -1008,9 +979,7 @@ nav a {
   box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
 }
 
-/* ===========================
-   EMPTY STATE
-=========================== */
+
 
 .empty-marketplace-state {
   grid-column: 1 / -1;
