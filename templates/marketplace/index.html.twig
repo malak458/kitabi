@@ -101,13 +101,13 @@
 						<div style="position:relative; display:inline-block;">
 							<input class="nav-search" type="text" id="searchInput" name="search" placeholder="Rechercher un livre…" value="{{ filters.search }}" autocomplete="off"/>
 							<ul id="searchSuggestions" style="
-																																																																																																																																																																																																																																																																																																																								        display:none;
-																																																																																																																																																																																																																																																																																																																								        position:absolute;
-																																																																																																																																																																																																																																																																																																																								        top:100%;
-																																																																																																																																																																																																																																																																																																																								        left:0;
-																																																																																																																																																																																																																																																																																																									                                                                    padding:6px 0;
-																																																																																																																																																																																																																																																																																																																								        min-width:350px;
-																																																																																																																																																																																																																																																																																																																								    "></ul>
+																																																																																																																																																																																																																																																																																																																																								        display:none;
+																																																																																																																																																																																																																																																																																																																																								        position:absolute;
+																																																																																																																																																																																																																																																																																																																																								        top:100%;
+																																																																																																																																																																																																																																																																																																																																								        left:0;
+																																																																																																																																																																																																																																																																																																																									                                                                    padding:6px 0;
+																																																																																																																																																																																																																																																																																																																																								        min-width:350px;
+																																																																																																																																																																																																																																																																																																																																								    "></ul>
 						</div>
 						<a href="{{ path('app_book_new') }}" class="nav-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
 							Publier un livre
@@ -201,9 +201,11 @@
 							</span>
 							<br/>
 							{% if book.user %}
-								<img src="{{ book.user.image ? asset('uploads/avatars/' ~ book.user.image) : 'https://ui-avatars.com/api/?name=' ~ book.user.prenom ~ '&background=0D8ABC&color=fff' }}" alt="{{ book.user.prenom }}" class="ownerpic"/>
-								<span class="person">{{ book.user.prenom }}
-									{{ book.user.nom }}</span>
+								<div style="display:flex; align-items:center; gap:8px; margin: 6px 0;">
+									<img src="{{ book.user.image ? asset('uploads/avatars/' ~ book.user.image) : 'https://ui-avatars.com/api/?name=' ~ book.user.prenom ~ '&background=0D8ABC&color=fff' }}" alt="{{ book.user.prenom }}" class="ownerpic"/>
+									<span class="person">{{ book.user.prenom }}
+										{{ book.user.nom }}</span>
+								</div>
 							{% endif %}
 							<br/>
 							<a href="{{ path('app_book_show', {id: book.id}) }}" class="details">
