@@ -22,7 +22,7 @@ class Room
     #[Assert\NotBlank(message: "L'auteur est requis.")]
     private ?string $auteur = null;
 
-    #[ORM\Column(type: 'integer')]  // ← Changé de string à integer
+    #[ORM\Column(type: 'integer')] 
     #[Assert\NotBlank(message: "Le nombre de pages est requis.")]
     #[Assert\Positive(message: "Le nombre de pages doit être positif.")]
     private ?int $totalPages = null;
@@ -30,7 +30,7 @@ class Room
     #[ORM\Column(length: 50)]
     private ?string $type = 'live';
 
-    #[ORM\Column(type: 'integer')]  // ← Changé de string à integer
+    #[ORM\Column(type: 'integer')]  
     #[Assert\NotBlank(message: "Le nombre de participants est requis.")]
     #[Assert\Range(min: 2, max: 50)]
     private ?int $maxParticipants = 15;
@@ -39,10 +39,10 @@ class Room
     #[Assert\NotBlank(message: "Le genre est requis.")]
     private ?string $genre = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]  // ← Changé de string à text
+    #[ORM\Column(type: 'text', nullable: true)] 
     private ?string $tags = null;
 
-    #[ORM\Column(type: 'text', nullable: true)]  // ← Changé de string à text
+    #[ORM\Column(type: 'text', nullable: true)] 
     private ?string $description = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -63,7 +63,7 @@ class Room
         $this->createdAt = new \DateTime();
     }
 
-    // ========== GETTERS & SETTERS ==========
+    
 
     public function getId(): ?int
     {

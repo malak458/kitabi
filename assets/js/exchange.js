@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ========== FILTRES ==========
+    // ===== 1. GESTION DES ONGLETS / FILTRES =====
     const activeBtn    = document.getElementById('activeBtn');
     const completedBtn = document.getElementById('completedBtn');
     const allBtn       = document.getElementById('allBtn');
@@ -14,30 +14,27 @@ document.addEventListener('DOMContentLoaded', function () {
     const allSections = [exchangeAccepted, pendingExchanges, completedExchanges, refusedExchanges, inProgressExchanges];
 
     function updateVisibility() {
-        allSections.forEach(sec => { if (sec) sec.style.display = 'none'; });
-
+        allSections.forEach(sec => { 
+            if (sec) sec.style.setProperty('display', 'none', 'important'); 
+        });
         if (activeBtn && activeBtn.checked) {
             [exchangeAccepted, pendingExchanges, inProgressExchanges].forEach(sec => {
-                if (sec) sec.style.display = 'block';
+                if (sec) sec.style.setProperty('display', 'flex', 'important'); 
             });
         } else if (completedBtn && completedBtn.checked) {
-            if (completedExchanges) completedExchanges.style.display = 'block';
+            if (completedExchanges) completedExchanges.style.setProperty('display', 'flex', 'important');
         } else if (allBtn && allBtn.checked) {
-            allSections.forEach(sec => { if (sec) sec.style.display = 'block'; });
+            allSections.forEach(sec => { 
+                if (sec) sec.style.setProperty('display', 'flex', 'important'); 
+            });
         }
     }
-
     [activeBtn, completedBtn, allBtn].forEach(btn => {
         if (btn) btn.addEventListener('change', updateVisibility);
     });
+    
     updateVisibility();
-
-    // ========== ACCEPT / DECLINE (délégation sur tous les boutons) ==========
-    // Utilise la délégation d'événements pour gérer plusieurs pending exchanges
-
     document.addEventListener('click', function (e) {
-
-        // --- ACCEPT ---
         if (e.target.classList.contains('accept-btn')) {
             e.preventDefault();
             const container = e.target.closest('.pending-card');
@@ -45,11 +42,9 @@ document.addEventListener('DOMContentLoaded', function () {
             const exchangeId = container.dataset.exchangeId;
 
             if (confirm('Are you sure you want to accept this exchange request?')) {
-                updateStatus(exchangeId, 'accepted', e.target);
+                sendStatusToSymfony(exchangeId, 'accepted', e.target);
             }
         }
-
-        // --- DECLINE ---
         if (e.target.classList.contains('decline-btn')) {
             e.preventDefault();
             const container = e.target.closest('.pending-card');
@@ -57,17 +52,23 @@ document.addEventListener('DOMContentLoaded', function () {
             const exchangeId = container.dataset.exchangeId;
 
             if (confirm('Are you sure you want to decline this exchange request?')) {
-                updateStatus(exchangeId, 'refused', e.target);
+                sendStatusToSymfony(exchangeId, 'refused', e.target);
             }
         }
     });
 
-    function updateStatus(exchangeId, status, btn) {
-        // Désactiver le bouton pendant la requête
-        btn.disabled = true;
-        btn.textContent = 'Loading...';
+    function sendStatusToSymfony(exchangeId, status, buttonClicked) {
+        const mainContainer = document.querySelector('.exchanges');
+        const url = mainContainer ? mainContainer.dataset.updateUrl : null;
 
-        fetch('update_exchange_status.php', {
+        if (!url) {
+            alert("Erreur : L'adresse de mise à jour est introuvable.");
+            return;
+        }
+        buttonClicked.classList.add('loading-state');
+        const originalText = buttonClicked.textContent;
+        buttonClicked.textContent = 'Loading...';
+        fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ exchangeId: exchangeId, status: status })
@@ -75,47 +76,19 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(response => response.json())
         .then(data => {
             if (data.success) {
-                showNotification(
-                    status === 'accepted' ? 'Exchange accepted!' : 'Exchange declined.',
-                    'success'
-                );
-                setTimeout(() => location.reload(), 1500);
+                alert(status === 'accepted' ? 'Exchange accepted!' : 'Exchange declined.');
+                location.reload(); // Recharge la page pour voir les changements
             } else {
-                showNotification(data.error || 'Operation failed.', 'error');
-                btn.disabled = false;
-                btn.textContent = status === 'accepted' ? 'Accept' : 'Decline';
+                alert(data.error || 'Operation failed.');
+                buttonClicked.classList.remove('loading-state');
+                buttonClicked.textContent = originalText;
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            showNotification('Network error. Please try again.', 'error');
-            btn.disabled = false;
-            btn.textContent = status === 'accepted' ? 'Accept' : 'Decline';
+            alert('Network error. Please try again.');
+            buttonClicked.classList.remove('loading-state');
+            buttonClicked.textContent = originalText;
         });
     }
 });
-
-// ========== NOTIFICATION ==========
-function showNotification(message, type) {
-    const colors = { success: '#28a745', error: '#dc3545', info: '#17a2b8' };
-    const notification = document.createElement('div');
-    notification.textContent = message;
-    notification.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        padding: 12px 24px;
-        background-color: ${colors[type] || colors.info};
-        color: white;
-        border-radius: 8px;
-        font-weight: 500;
-        z-index: 10000;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        transition: opacity 0.3s ease;
-    `;
-    document.body.appendChild(notification);
-    setTimeout(() => {
-        notification.style.opacity = '0';
-        setTimeout(() => notification.remove(), 300);
-    }, 2700);
-}

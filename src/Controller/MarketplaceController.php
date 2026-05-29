@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Entity\Book;
+use App\Entity\Exchange;
 use App\Entity\Review;
 use App\Repository\BookRepository;
 use App\Repository\FavoriteRepository;
@@ -12,8 +14,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use App\Entity\Book;
-use App\Entity\Exchange;
 
 class MarketplaceController extends AbstractController
 {
@@ -25,59 +25,78 @@ class MarketplaceController extends AbstractController
         ReviewRepository $reviewRepository
     ): Response {
 
-        $search    = $request->query->get('search', '');
-        $genre     = $request->query->get('genre', '');
+        $search = $request->query->get('search', '');
+        $genre = $request->query->get('genre', '');
         $condition = $request->query->get('condition', '');
-        $sort      = $request->query->get('sort', 'newest');
+        $sort = $request->query->get('sort', 'newest');
 
         $books = $bookRepository->findFilteredQuery(
-            $search, $genre, $condition, $sort
+            $search,
+            $genre,
+            $condition,
+            $sort
         )->getQuery()->getResult();
 
         $favoriteBookIds = [];
 
         if ($this->getUser()) {
             $favorites = $favoriteRepository->findByUserId($this->getUser()->getId());
-            $favoriteBookIds = array_map(fn($fav) => $fav->getBook()->getId(), $favorites);
+
+            $favoriteBookIds = array_map(
+                fn($fav) => $fav->getBook()->getId(),
+                $favorites
+            );
         }
 
         $myBooks = [];
 
         if ($this->getUser()) {
-            $myBooks = $bookRepository->findBy(['user' => $this->getUser()]);
+            $myBooks = $bookRepository->findBy([
+                'user' => $this->getUser()
+            ]);
         }
 
         return $this->render('marketplace/index.html.twig', [
-            'books'           => $books,
-            'bookCount'       => count($books),
-            'noResult'        => count($books) === 0,
+            'books' => $books,
+            'bookCount' => count($books),
+            'noResult' => count($books) === 0,
             'favoriteBookIds' => $favoriteBookIds,
 
-            'reviews'       => $reviewRepository->findLatest(6),
-            'reviewCount'   => $reviewRepository->count([]),
+            'reviews' => $reviewRepository->findLatest(6),
+            'reviewCount' => $reviewRepository->count([]),
             'averageRating' => $reviewRepository->getAverageRating(),
 
             'filters' => [
-                'search'    => $search,
-                'genre'     => $genre,
+                'search' => $search,
+                'genre' => $genre,
                 'condition' => $condition,
-                'sort'      => $sort,
+                'sort' => $sort,
             ],
 
             'genres' => [
-                'Fiction','Fantasy','Romance','Mystery','Thriller',
-                'History','Biography','Science Fiction','Classic Literature'
+                'Fiction',
+                'Fantasy',
+                'Romance',
+                'Mystery',
+                'Thriller',
+                'History',
+                'Biography',
+                'Science Fiction',
+                'Classic Literature'
             ],
 
             'conditions' => [
-                'Like new','Good','Fair','Acceptable'
+                'Like new',
+                'Good',
+                'Fair',
+                'Acceptable'
             ],
 
             'sortOptions' => [
-                'newest'     => '≡ Plus récents',
-                'price_asc'  => '≡ Price: low to high',
+                'newest' => '≡ Plus récents',
+                'price_asc' => '≡ Price: low to high',
                 'price_desc' => '≡ Price: high to low',
-                'title_az'   => '≡ Title: A-Z',
+                'title_az' => '≡ Title: A-Z',
             ],
 
             'myBooks' => $myBooks,
@@ -95,9 +114,10 @@ class MarketplaceController extends AbstractController
         }
 
         $content = trim($request->request->get('content', ''));
-        $rating  = (int) $request->request->get('rating', 0);
+        $rating = (int) $request->request->get('rating', 0);
 
         if ($content !== '' && $rating >= 1 && $rating <= 5) {
+
             $review = new Review();
             $review->setContent($content);
             $review->setRating($rating);
@@ -107,7 +127,9 @@ class MarketplaceController extends AbstractController
             $em->flush();
 
             $this->addFlash('success', 'Merci pour votre avis !');
+
         } else {
+
             $this->addFlash('error', 'Veuillez remplir tous les champs.');
         }
 
@@ -129,11 +151,11 @@ class MarketplaceController extends AbstractController
         $books = $bookRepository->findBySearch($q);
 
         $data = array_map(fn($book) => [
-            'id'     => $book->getId(),
-            'titre'  => $book->getTitre(),
+            'id' => $book->getId(),
+            'titre' => $book->getTitre(),
             'auteur' => $book->getAuteur(),
-            'prix'   => $book->getPrix(),
-            'genre'  => $book->getGenre(),
+            'prix' => $book->getPrix(),
+            'genre' => $book->getGenre(),
         ], $books);
 
         return $this->json($data);
@@ -150,24 +172,37 @@ class MarketplaceController extends AbstractController
         $user = $this->getUser();
 
         if (!$user) {
-            $this->addFlash('error', 'Vous devez être connecté pour proposer un échange.');
+            $this->addFlash(
+                'error',
+                'Vous devez être connecté pour proposer un échange.'
+            );
+
             return $this->redirectToRoute('app_login');
         }
 
         if (!$requestedBook) {
             $this->addFlash('error', 'Livre non trouvé.');
+
             return $this->redirectToRoute('app_marketplace');
         }
 
         $bookOwner = $requestedBook->getUser();
 
         if (!$bookOwner) {
-            $this->addFlash('error', 'Ce livre n\'a pas de propriétaire associé.');
+            $this->addFlash(
+                'error',
+                'Ce livre n\'a pas de propriétaire associé.'
+            );
+
             return $this->redirectToRoute('app_marketplace');
         }
 
         if ($bookOwner->getId() === $user->getId()) {
-            $this->addFlash('error', 'Vous ne pouvez pas demander votre propre livre !');
+            $this->addFlash(
+                'error',
+                'Vous ne pouvez pas échanger un livre avec vous-même !'
+            );
+
             return $this->redirectToRoute('app_marketplace');
         }
 
@@ -176,65 +211,117 @@ class MarketplaceController extends AbstractController
 
         if ($mode === 'new') {
 
-            $title = trim($request->request->get('new_book_title'));
-            $author = trim($request->request->get('new_book_author'));
+            $title = trim(
+                $request->request->get('new_book_title')
+            );
+
+            $author = trim(
+                $request->request->get('new_book_author')
+            );
 
             if (empty($title)) {
-                $this->addFlash('error', 'Le titre du livre est obligatoire.');
+
+                $this->addFlash(
+                    'error',
+                    'Le titre du livre est obligatoire.'
+                );
+
                 return $this->redirectToRoute('app_marketplace');
             }
 
             $offeredBook = new Book();
+
             $offeredBook->setTitre($title);
-            $offeredBook->setAuteur(!empty($author) ? $author : 'Auteur inconnu');
+
+            $offeredBook->setAuteur(
+                !empty($author)
+                    ? $author
+                    : 'Auteur inconnu'
+            );
+
             $offeredBook->setUser($user);
             $offeredBook->setForExchange(true);
             $offeredBook->setPrix(0);
             $offeredBook->setCondition('Bon');
             $offeredBook->setGenre('Divers');
-            $offeredBook->setCreatedAt(new \DateTimeImmutable());
+            $offeredBook->setCreatedAt(
+                new \DateTimeImmutable()
+            );
 
             $em->persist($offeredBook);
 
         } else {
 
-            $offeredBookId = $request->request->get('offered_book_id');
+            $offeredBookId = $request->request->get(
+                'offered_book_id'
+            );
 
             if (empty($offeredBookId)) {
-                $this->addFlash('error', 'Veuillez sélectionner un livre à échanger.');
+
+                $this->addFlash(
+                    'error',
+                    'Veuillez sélectionner un livre à échanger.'
+                );
+
                 return $this->redirectToRoute('app_marketplace');
             }
 
-            $offeredBook = $bookRepository->find($offeredBookId);
+            $offeredBook = $bookRepository->find(
+                $offeredBookId
+            );
 
             if (!$offeredBook) {
-                $this->addFlash('error', 'Livre proposé non trouvé.');
+
+                $this->addFlash(
+                    'error',
+                    'Livre proposé non trouvé.'
+                );
+
                 return $this->redirectToRoute('app_marketplace');
             }
 
-            if ($offeredBook->getUser()->getId() !== $user->getId()) {
-                $this->addFlash('error', 'Vous ne pouvez proposer qu\'un de vos propres livres.');
+            if (
+                $offeredBook->getUser()->getId()
+                !== $user->getId()
+            ) {
+
+                $this->addFlash(
+                    'error',
+                    'Vous ne pouvez proposer qu\'un de vos propres livres.'
+                );
+
                 return $this->redirectToRoute('app_marketplace');
             }
         }
 
         if (!$offeredBook) {
-            $this->addFlash('error', 'Erreur technique lors de la création de l\'échange.');
+
+            $this->addFlash(
+                'error',
+                'Erreur technique lors de la création de l\'échange.'
+            );
+
             return $this->redirectToRoute('app_marketplace');
         }
 
         $exchange = new Exchange();
+
         $exchange->setUserRequesting($user);
         $exchange->setUserOffering($bookOwner);
         $exchange->setRequestedBook($requestedBook);
         $exchange->setOfferedBook($offeredBook);
         $exchange->setStatus('pending');
-        $exchange->setCreatedAt(new \DateTimeImmutable());
+        $exchange->setCreatedAt(
+            new \DateTimeImmutable()
+        );
 
         $em->persist($exchange);
         $em->flush();
 
-        $this->addFlash('success', 'Votre demande d\'échange a bien été envoyée !');
+        $this->addFlash(
+            'success',
+            'Votre demande d\'échange a bien été envoyée !'
+        );
 
         return $this->redirectToRoute('app_exchange');
     }

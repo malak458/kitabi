@@ -291,7 +291,7 @@
 
 {% block javascripts %}
 <script>
-// Type toggle
+
 document.querySelectorAll('.type-opt').forEach(function(btn) {
     btn.addEventListener('click', function() {
         var typeValue = this.dataset.type;
@@ -305,7 +305,6 @@ document.querySelectorAll('.type-opt').forEach(function(btn) {
     });
 });
 
-// Tags management
 function rebuildTags() {
     var container = document.getElementById('tagsInputs');
     if (!container) return;
@@ -326,7 +325,7 @@ document.querySelectorAll('.tag-opt').forEach(function(tag) {
     });
 });
 
-// Restore type on load
+
 document.addEventListener('DOMContentLoaded', function() {
     var typeInput = document.querySelector('[name="room[type]"]');
     if (typeInput && typeInput.value) {

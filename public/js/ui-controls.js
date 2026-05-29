@@ -1,7 +1,7 @@
-// public/js/ui-controls.js
+
 document.addEventListener("DOMContentLoaded", function () {
 
-    // ================= AMBIANCE (SONS) =================
+    
     function initAmbiance() {
         if (document.getElementById("ambiance-wrapper")) return;
 
@@ -16,13 +16,13 @@ document.addEventListener("DOMContentLoaded", function () {
         const wrapper = document.createElement("div");
         wrapper.id = "ambiance-wrapper";
 
-        // Insérer après les statistiques
+        
         const stats = document.querySelector(".stats-container");
         if (stats) {
             stats.insertAdjacentElement("afterend", wrapper);
         }
 
-        // Style du wrapper
+        
         wrapper.style.cssText = `
             display: flex;
             flex-direction: column;
@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
             margin-bottom: 10px;
         `;
 
-        // Bouton toggle principal
+        
         const toggle = document.createElement("button");
         toggle.id = "ambiance-toggle";
         toggle.innerHTML = `🎵 Ambiance`;
@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
         wrapper.appendChild(toggle);
 
-        // Menu des sons
+        
         const menu = document.createElement("div");
         menu.id = "ambiance-menu";
         menu.style.cssText = `
@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
         wrapper.appendChild(menu);
 
-        // Barre de volume
+       
         const volumeBar = document.createElement("div");
         volumeBar.id = "volume-bar";
         volumeBar.style.cssText = `
@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let audioActif = null;
         let boutonActif = null;
 
-        // Créer les boutons pour chaque son
+       
         sons.forEach(function (son) {
             const audio = new Audio(son.url);
             audio.loop = true;
@@ -143,7 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     return;
                 }
 
-                // Arrêter le son précédent
+                
                 if (audioActif) {
                     audioActif.pause();
                     audioActif.currentTime = 0;
@@ -153,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     boutonActif.style.color = "#1a1208";
                 }
 
-                // Jouer le nouveau son
+                
                 audio.play().catch(error => {
                     console.warn("Erreur audio:", error);
                 });
@@ -169,7 +169,7 @@ document.addEventListener("DOMContentLoaded", function () {
             menu.appendChild(btn);
         });
 
-        // Gestion du volume
+        
         const slider = document.getElementById("volume-slider");
         const label = document.getElementById("volume-label");
 
@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
 
-        // Toggle du menu
+       
         let menuOuvert = false;
         toggle.addEventListener("click", function () {
             if (menuOuvert) {
@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ================= DARK MODE =================
+    
     function initDarkMode() {
         if (document.getElementById("mode-toggle-btn")) return;
         
@@ -322,7 +322,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ================= FULLSCREEN =================
+   
     function initFullscreen() {
         if (document.getElementById("fullscreen-btn")) return;
         
@@ -380,8 +380,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
-
-    // ================= FONT SIZE =================
     function initFontSize() {
         if (document.getElementById("fontsize-wrapper")) return;
         
@@ -482,8 +480,7 @@ document.addEventListener("DOMContentLoaded", function () {
         appliquerTaille();
     }
 
-    // ================= INITIALISATION =================
-    // Attendre un peu pour que le DOM soit bien prêt
+    
     setTimeout(() => {
         initAmbiance();
         initDarkMode();

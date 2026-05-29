@@ -53,6 +53,7 @@ class BookController extends AbstractController
             $book->setGenre($request->request->get('genre'));
             $book->setCondition($request->request->get('condition'));
             $book->setPrix((float) $request->request->get('prix'));
+            $book->setUser($this->getUser());
 
             $book->setForExchange(
                 $request->request->has('for_exchange')

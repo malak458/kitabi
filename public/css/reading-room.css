@@ -1,11 +1,11 @@
-/* Reset & Base */
+
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-/* Variables CSS */
+
 :root {
     --ink: #1a1208;
     --amber: #c8860a;
@@ -22,7 +22,7 @@
     --nav-h: 68px;
 }
 
-/* Changement ici : On applique le style de police au wrapper pour ne pas toucher à la navbar global */
+
 .page-wrapper {
     font-family: "DM Sans", sans-serif;
     background: var(--sand);
@@ -31,7 +31,7 @@
     min-height: calc(100vh - var(--nav-h));
 }
 
-/* Page Header */
+
 .page-header {
     background: linear-gradient(105deg, rgba(26, 18, 8, 0.97) 0%, rgba(14, 107, 94, 0.9) 60%, rgba(200, 134, 10, 0.4) 100%);
     padding: 36px 5vw 30px;
@@ -56,7 +56,7 @@
     margin: 6px 0 0;
 }
 
-/* Changement ici : On s'assure que le bouton reste blanc dans le header */
+
 .page-header .create-room-btn {
     background: var(--amber);
     border: none;
@@ -76,13 +76,13 @@
     color: #fff !important;
 }
 
-/* Page Body */
+
 .page-body {
     padding: 28px 5vw;
     background: var(--sand);
 }
 
-/* Stats Container */
+
 .stats-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -155,7 +155,7 @@
     border-color: var(--amber-mid);
 }
 
-/* Nav Tabs */
+
 .nav-tabs {
     display: flex;
     gap: 8px;
@@ -175,7 +175,7 @@
     transition: all 0.3s;
 }
 
-/* CORRECTION DU BOUTON FLOU (Active) : On lui remet un fond sombre vert/teal pour que le texte blanc ressorte bien comme prévu ! */
+
 .nav-tabs .nav-tab.active {
     background: var(--teal) !important;
     border-color: var(--teal) !important;
@@ -188,7 +188,7 @@ hr.separator {
     margin: 8px 0 20px;
 }
 
-/* Section Label */
+
 .section-label {
     font-size: 11px;
     font-weight: 700;
@@ -198,14 +198,14 @@ hr.separator {
     margin: 24px 0 16px;
 }
 
-/* Rooms Container */
+
 .rooms-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 22px;
 }
 
-/* Room Card */
+
 .room-card {
     background: var(--white);
     border-radius: 16px;
@@ -324,7 +324,7 @@ hr.separator {
     color: white;
 }
 
-/* Popup */
+
 #joinPopup {
     display: none;
     position: fixed;
@@ -372,7 +372,6 @@ hr.separator {
     background: var(--amber-light);
 }
 
-/* Success Message */
 #successMessage {
     display: none;
     position: fixed;
@@ -386,7 +385,7 @@ hr.separator {
     z-index: 9999;
 }
 
-/* Responsive */
+
 @media (max-width: 1200px) {
     .stats-container { grid-template-columns: repeat(2, 1fr); }
 }

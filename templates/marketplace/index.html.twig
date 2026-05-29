@@ -1,5 +1,6 @@
 {% extends 'base.html.twig' %}
 
+
 {% block title %}KITAB — Marketplace{% endblock %}
 
 {% block stylesheets %}
@@ -8,7 +9,6 @@
 {% endblock %}
 {% block javascripts %}
 	{{ parent() }}
-	<script src="{{ asset('assets/js/faireEchange.js') }}"></script>
 	<script src="{{ asset('assets/js/marketPlace.js') }}"></script>
 	<script src="{{ asset('assets/js/favorites-toggle.js') }}"></script>
 {% endblock %}
@@ -207,10 +207,9 @@
 							</span>
 							<br/>
 							{% if book.user %}
-								<img src="{{ book.user.photo ? asset('uploads/avatars/' ~ book.user.photo) : 'https://ui-avatars.com/api/?name=' ~ book.user.prenom }}" alt="{{ book.user.prenom }}" class="ownerpic"/>
-								<span class="person">{{ book.user.prenom }}
-									{{ book.user.nom }}</span>
-							{% endif %}
+    <img src="{{ book.user.image ? asset('uploads/avatars/' ~ book.user.image) : 'https://ui-avatars.com/api/?name=' ~ book.user.prenom ~ '&background=0D8ABC&color=fff' }}" alt="{{ book.user.prenom }}" class="ownerpic"/>
+    <span class="person">{{ book.user.prenom }} {{ book.user.nom }}</span>
+{% endif %}
 							<br/>
 							<a href="{{ path('app_book_show', {id: book.id}) }}" class="details">
 								<i class="bi bi-book"></i>
@@ -220,13 +219,13 @@
 							    {% if app.user %}
                                     <button type="button" 
                     onclick="var modal = new bootstrap.Modal(document.getElementById('exchangeModal')); document.getElementById('exchangeForm').action = '/exchange/create/{{ book.id }}'; modal.show();"
-                    style="border: none; background: linear-gradient(135deg, #ffc107, #ff9800); color: white; padding: 8px 60px; border-radius: 20px; cursor: pointer; margin-left: 10px; font-size: 14px;">
+                    style="border: none; background: linear-gradient(135deg, #ffc107, #ff9800); color: white; padding: 8px 68px; border-radius: 20px; cursor: pointer; margin-left: 10px; font-size: 14px;">
                 <i class="bi bi-arrow-left-right"></i>
                 Faire un échange
             </button>
         {% else %}
             <a href="{{ path('app_login') }}" 
-               style="display: inline-block; background: linear-gradient(135deg, #ffc107, #ff9800); color: #000; padding: 8px 60px; border-radius: 20px; text-decoration: none; margin-left: 10px; font-size: 14px;">
+               style="display: inline-block; background: linear-gradient(135deg, #ffc107, #ff9800); color: #000; padding: 8px 68px; border-radius: 20px; text-decoration: none; margin-left: 10px; font-size: 14px;">
                 <i class="bi bi-box-arrow-in-right"></i>
                 Faire un échange
                                     </a>
