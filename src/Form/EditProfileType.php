@@ -62,7 +62,7 @@ class EditProfileType extends AbstractType
             ])
             ->add('imageFile', FileType::class, [
                 'label'    => 'Photo de profil',
-                'mapped'   => false,   // imageFile n'existe pas dans User, on le gère manuellement
+                'mapped'   => false,   
                 'required' => false,
                 'constraints' => [
                     new File([

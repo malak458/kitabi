@@ -158,7 +158,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeBook(Book $book): static
     {
         if ($this->books->removeElement($book)) {
-            // set the owning side to null (unless already changed)
+            
             if ($book->getUser() === $this) {
                 $book->setUser(null);
             }
@@ -190,7 +190,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
     public function eraseCredentials(): void
     {
-        // clear temporary sensitive data if needed
+        
     }
     public function setRoles(array $roles): static
     {

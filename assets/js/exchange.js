@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    // ===== 1. GESTION DES ONGLETS / FILTRES =====
     const activeBtn    = document.getElementById('activeBtn');
     const completedBtn = document.getElementById('completedBtn');
     const allBtn       = document.getElementById('allBtn');
@@ -77,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(data => {
             if (data.success) {
                 alert(status === 'accepted' ? 'Exchange accepted!' : 'Exchange declined.');
-                location.reload(); // Recharge la page pour voir les changements
+                location.reload(); 
             } else {
                 alert(data.error || 'Operation failed.');
                 buttonClicked.classList.remove('loading-state');

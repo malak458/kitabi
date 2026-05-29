@@ -54,7 +54,7 @@ class RoomController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // --- Image ---
+            
             $imageFile = $form->get('imageFile')->getData();
             if ($imageFile) {
                 $safeFilename = $slugger->slug(
@@ -76,7 +76,7 @@ class RoomController extends AbstractController
                 $room->setImage('default-book.jpg');
             }
 
-            // --- Tags (custom UI — champs cachés nommés room_tags[]) ---
+           
             $tagsArray = $request->request->all('room_tags') ?? [];
             if (!empty($tagsArray)) {
                 $room->setTags(implode(',', array_filter($tagsArray)));
