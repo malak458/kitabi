@@ -1,4 +1,4 @@
-// ===== SLIDER =====
+// SLIDER
 let current = 0;
 const total = 3;
 let timer;
@@ -46,14 +46,14 @@ document.addEventListener("keydown", (e) => {
     if (e.key === "ArrowLeft") prev();
 });
 
-// ===== NAVBAR SCROLL =====
+// NAVBAR SCROLL
 window.addEventListener("scroll", () => {
     document
         .getElementById("mainNav")
         ?.classList.toggle("scrolled", window.scrollY > 50);
 });
 
-// ===== HEART TOGGLE =====
+//HEART TOGGLE
 
 const heartButtons = document.querySelectorAll(".heart-btn");
 
@@ -68,7 +68,7 @@ heartButtons.forEach((btn) => {
         }
     });
 });
-// ===== PROMO BAND PAUSE =====
+// PROMO BAND PAUSE
 const band = document.querySelector(".promo-items");
 
 if (band) {
@@ -81,12 +81,12 @@ if (band) {
     });
 }
 
-/// ===== LIVE SEARCH =====
+/// LIVE SEARCH
 
 const searchInput = document.getElementById("searchInput");
 const allBooks = document.querySelectorAll(".book-card");
 
-// ===== IMAGE NO RESULT DYNAMIQUE =====
+//IMAGE NO RESULT DYNAMIQUE
 
 let dynamicNoResult = document.getElementById("dynamic-no-result");
 
@@ -117,7 +117,7 @@ if (!dynamicNoResult) {
     document.querySelector(".cards-container")?.appendChild(dynamicNoResult);
 }
 
-// ===== LIVE SEARCH FUNCTION =====
+// LIVE SEARCH FUNCTION
 
 function liveSearchBooks() {
     const query = searchInput.value.trim().toLowerCase();
@@ -148,13 +148,16 @@ function liveSearchBooks() {
         }
     });
 
-    // ===== IMAGE AUCUN RESULTAT =====
-
     dynamicNoResult.style.display = visible === 0 ? "flex" : "none";
-}
 
-// ===== EVENT INPUT =====
+    const countNum = document.getElementById("countNum");
+    if (countNum) countNum.textContent = visible;
+}
 
 if (searchInput) {
     searchInput.addEventListener("input", liveSearchBooks);
+
+    searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") e.preventDefault();
+    });
 }
