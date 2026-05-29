@@ -84,7 +84,7 @@ class BookFixtures extends Fixture
             $book->setPrix($data['prix']);
             $book->setForExchange($data['exchange']);
 
-            // IMAGE
+          
             $book->setImage($data['image']);
 
             $manager->persist($book);
