@@ -422,13 +422,12 @@ stars.forEach(s => s.textContent = + s.dataset.value <= val ? '★' : '☆');
 					<div
 						class="modal-body">
 
-						<!-- Menu déroulant pour choisir le mode -->
+						
 						<select id="bookModeSelect" name="book_mode" class="form-select mb-3" style="display: none;">
 							<option value="existing">existing</option>
 							<option value="new">new</option>
 						</select>
 
-						<!-- Bloc Livre existant -->
 						<div id="existingBookBlock">
 							<p style="color: var(--muted);">Lequel de vos livres souhaitez-vous donner en contrepartie ?</p>
 							<div class="mb-3">
@@ -448,7 +447,6 @@ stars.forEach(s => s.textContent = + s.dataset.value <= val ? '★' : '☆');
 							</div>
 						</div>
 
-						<!-- Bloc Nouveau livre (caché par défaut) -->
 						<div id="newBookBlock" style="display: none;">
 							<p style="color: var(--muted);">Enregistrez le livre que vous offrez :</p>
 
@@ -481,8 +479,8 @@ stars.forEach(s => s.textContent = + s.dataset.value <= val ? '★' : '☆');
 		</div>
 	</div>
 	<script>
-		// Attendre que le DOM soit complètement chargé
-document.addEventListener('DOMContentLoaded', function () { // Éléments du modal
+		
+document.addEventListener('DOMContentLoaded', function () { 
 const existingBookBlock = document.getElementById('existingBookBlock');
 const newBookBlock = document.getElementById('newBookBlock');
 const btnShowNewBook = document.getElementById('btnShowNewBook');
@@ -493,7 +491,7 @@ const newBookAuthor = document.getElementById('newBookAuthor');
 const bookModeSelect = document.getElementById('bookModeSelect');
 const exchangeForm = document.getElementById('exchangeForm');
 
-// Fonction pour réinitialiser le formulaire
+
 function resetForm() {
 if (existingBookBlock) 
 existingBookBlock.style.display = 'block';
@@ -525,7 +523,7 @@ newBookAuthor.value = '';
 
 }
 
-// Bouton "Le livre n'est pas dans ma liste"
+
 if (btnShowNewBook) {
 btnShowNewBook.addEventListener('click', function (e) {
 e.preventDefault();
@@ -557,7 +555,6 @@ newBookTitle.required = true;
 });
 }
 
-// Bouton "Retourner à ma liste"
 if (btnShowExistingBook) {
 btnShowExistingBook.addEventListener('click', function (e) {
 e.preventDefault();
@@ -589,7 +586,7 @@ newBookTitle.required = false;
 });
 }
 
-// Quand le modal s'ouvre
+
 const exchangeModal = document.getElementById('exchangeModal');
 if (exchangeModal) {
 exchangeModal.addEventListener('show.bs.modal', function (event) {
@@ -602,7 +599,7 @@ resetForm();
 });
 }
 
-// Validation avant soumission
+
 if (exchangeForm) {
 exchangeForm.addEventListener('submit', function (e) {
 const mode = bookModeSelect ? bookModeSelect.value : 'existing';

@@ -90,4 +90,54 @@ document.addEventListener('DOMContentLoaded', function () {
             buttonClicked.textContent = originalText;
         });
     }
+
+const searchInput = document.getElementById('searchInput');
+
+if (searchInput) {
+    searchInput.addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase().trim();
+        
+        const exchangeCards = document.querySelectorAll('.empl.position-relative, .empl.mb-4');
+        
+        let hasVisibleCards = false;
+        
+        exchangeCards.forEach(card => {
+            const cardText = card.innerText.toLowerCase();
+            
+            if (searchTerm === '') {
+                card.style.display = '';
+                card.classList.remove('search-highlight');
+            } else if (cardText.includes(searchTerm)) {
+                card.style.display = '';
+                card.classList.add('search-highlight');
+                hasVisibleCards = true;
+                setTimeout(() => card.classList.remove('search-highlight'), 2000);
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        const sections = ['exchange-Accepted', 'pending-Exchanges', 'completed-Exchanges', 'refused-Exchanges', 'in-progress-Exchanges'];
+        sections.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                const visibleCards = section.querySelectorAll('.empl.position-relative:not([style*="display: none"]), .empl.mb-4:not([style*="display: none"])');
+                let emptyMsg = section.querySelector('.search-empty-msg');
+                
+                if (visibleCards.length === 0 && searchTerm !== '') {
+                    if (!emptyMsg) {
+                        emptyMsg = document.createElement('div');
+                        emptyMsg.className = 'search-empty-msg';
+                        emptyMsg.innerHTML = '<i class="bi bi-search fs-1"></i><p class="mt-2">Aucun résultat trouvé pour "<strong>' + searchTerm + '</strong>"</p>';
+                        section.appendChild(emptyMsg);
+                    }
+                    emptyMsg.style.display = 'block';
+                } else if (emptyMsg) {
+                    emptyMsg.style.display = 'none';
+                }
+            }
+        });
+    });
+}
+
 });

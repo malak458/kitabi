@@ -244,9 +244,7 @@ class MarketplaceController extends AbstractController
             $offeredBook->setPrix(0);
             $offeredBook->setCondition('Bon');
             $offeredBook->setGenre('Divers');
-            $offeredBook->setCreatedAt(
-                new \DateTimeImmutable()
-            );
+            
 
             $em->persist($offeredBook);
 
@@ -323,6 +321,6 @@ class MarketplaceController extends AbstractController
             'Votre demande d\'échange a bien été envoyée !'
         );
 
-        return $this->redirectToRoute('app_exchange');
+        return $this->redirectToRoute('app_marketplace');
     }
 }
