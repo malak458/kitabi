@@ -45,7 +45,7 @@ return $this->render('auth/profile.html.twig', [
 
         if ($form->isSubmitted() && $form->isValid()) {
 
-            // ── Upload photo ──────────────────────────────────
+           
             /** @var \Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile */
             $imageFile = $form->get('imageFile')->getData();
 
@@ -60,7 +60,7 @@ return $this->render('auth/profile.html.twig', [
                 $uploadDir = $this->getParameter('kernel.project_dir')
                     . '/public/uploads/profiles';
 
-                // Supprimer l'ancienne photo si elle existe
+             
                 if ($user->getImage()) {
                     $oldPath = $uploadDir . '/' . $user->getImage();
                     if (file_exists($oldPath)) {
@@ -69,11 +69,11 @@ return $this->render('auth/profile.html.twig', [
                 }
 
                 $imageFile->move($uploadDir, $newFilename);
-                $user->setImage($newFilename);  // setImage() existe bien dans User
+                $user->setImage($newFilename);  
             }
-            // ─────────────────────────────────────────────────
+           
 
-            $em->flush();  // Doctrine détecte les changements sur $user et les persiste
+            $em->flush(); 
 
             $this->addFlash('success', 'Profil mis à jour avec succès !');
             return $this->redirectToRoute('app_profile');
@@ -81,6 +81,6 @@ return $this->render('auth/profile.html.twig', [
 
         return $this->render('auth/edit_profile.html.twig', [
             'form' => $form->createView(),
-            'user' => $user,   // nécessaire pour afficher l'avatar actuel dans le twig
+            'user' => $user,   
         ]);
     }}

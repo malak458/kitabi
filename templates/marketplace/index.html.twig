@@ -1,11 +1,17 @@
 {% extends 'base.html.twig' %}
 
+
 {% block title %}KITAB — Marketplace
 {% endblock %}
 
 {% block stylesheets %}
 	{{ parent() }}
 	<link rel="stylesheet" href="{{ asset('assets/css/marketPlace.css') }}">
+{% endblock %}
+{% block javascripts %}
+	{{ parent() }}
+	<script src="{{ asset('assets/js/marketPlace.js') }}"></script>
+	<script src="{{ asset('assets/js/favorites-toggle.js') }}"></script>
 {% endblock %}
 
 {% block body %}
@@ -90,19 +96,13 @@
 						<div style="position:relative; display:inline-block;">
 							<input class="nav-search" type="text" id="searchInput" name="search" placeholder="Rechercher un livre…" value="{{ filters.search }}" autocomplete="off"/>
 							<ul id="searchSuggestions" style="
-																																																																																																																																																																        display:none;
-																																																																																																																																																																        position:absolute;
-																																																																																																																																																																        top:100%;
-																																																																																																																																																																        left:0;
-																																																																																																																																																																        background:#fff;
-																																																																																																																																																																        border-radius:12px;
-																																																																																																																																																																        box-shadow:0 8px 24px rgba(0,0,0,0.15);
-																																																																																																																																																																        list-style:none;
-																																																																																																																																																																        z-index:999;
-																																																																																																																																																																        margin-top:6px;
-																																																																																																																																																																        padding:6px 0;
-																																																																																																																																																																        min-width:350px;
-																																																																																																																																																																    "></ul>
+																																																																																																																																																																																																																																																																        display:none;
+																																																																																																																																																																																																																																																																        position:absolute;
+																																																																																																																																																																																																																																																																        top:100%;
+																																																																																																																																																																																																																																																																        left:0;
+																																																																																																																																																																																																																																																	                                                                    padding:6px 0;
+																																																																																																																																																																																																																																																																        min-width:350px;
+																																																																																																																																																																																																																																																																    "></ul>
 						</div>
 						<a href="{{ path('app_book_new') }}" class="nav-btn" style="text-decoration:none; display:inline-flex; align-items:center; justify-content:center;">
 							Publier un livre
@@ -166,8 +166,17 @@
 									{{ book.condition }}
 								</div>
 
-								<button class="heart-btn" data-id="{{ book.id }}">
-									♡
+								{% set isFavorite = false %}
+								{% if app.user %}
+									{% for fav in app.user.favorites ?? [] %}
+										{% if fav.book.id == book.id %}
+											{% set isFavorite = true %}
+										{% endif %}
+									{% endfor %}
+								{% endif %}
+
+								<button class="heart-btn" {% if app.user %} data-url="{{ path('app_book_favorite', {id: book.id}) }}" {% else %} data-login="{{ path('app_login') }}" {% endif %} style="color: {{ isFavorite ? 'red' : 'gray' }};">
+									{{ isFavorite ? '♥' : '♡' }}
 								</button>
 
 							</div>
@@ -187,7 +196,7 @@
 							</span>
 							<br/>
 							{% if book.user %}
-								<img src="{{ book.user.photo ? asset('uploads/avatars/' ~ book.user.photo) : 'https://ui-avatars.com/api/?name=' ~ book.user.prenom }}" alt="{{ book.user.prenom }}" class="ownerpic"/>
+								<img src="{{ book.user.image ? asset('uploads/avatars/' ~ book.user.image) : 'https://ui-avatars.com/api/?name=' ~ book.user.prenom ~ '&background=0D8ABC&color=fff' }}" alt="{{ book.user.prenom }}" class="ownerpic"/>
 								<span class="person">{{ book.user.prenom }}
 									{{ book.user.nom }}</span>
 							{% endif %}
@@ -196,9 +205,25 @@
 								<i class="bi bi-book"></i>
 								Details
 							</a>
-							<a href="#" class="chat">
-								<i class="bi bi-chat-left"></i>
-								Chat</a>
+							{% if book.forExchange %}
+								{% if app.user %}
+									<button type="button" onclick="var modal = new bootstrap.Modal(document.getElementById('exchangeModal')); document.getElementById('exchangeForm').action = '/exchange/create/{{ book.id }}'; modal.show();" style="border: none; background: linear-gradient(135deg, #ffc107, #ff9800); color: white; padding: 8px 68px; border-radius: 20px; cursor: pointer; margin-left: 10px; font-size: 14px;">
+										<i class="bi bi-arrow-left-right"></i>
+										Faire un échange
+									</button>
+								{% else %}
+									<a href="{{ path('app_login') }}" style="display: inline-block; background: linear-gradient(135deg, #ffc107, #ff9800); color: #000; padding: 8px 68px; border-radius: 20px; text-decoration: none; margin-left: 10px; font-size: 14px;">
+										<i class="bi bi-box-arrow-in-right"></i>
+										Faire un échange
+									</a>
+								{% endif %}
+							{% else %}
+								<a href="#" class="chat">
+									<i class="bi bi-chat-dots"></i>
+									Chat
+								</a>
+							{% endif %}
+
 						</div>
 					</div>
 				{% endfor %}
@@ -208,7 +233,135 @@
 
 
 	</div>
+	{% include 'marketplace/banner.html.twig' %}
+	<div class="space-before-footer"></div>
+	<div class="space-before-footer"></div>
+	{# ===== BLOC AVIS LECTEURS ===== #}
+	<section
+		class="kb-reviews-section">
+
+		{# En-tête #}
+		<div class="kb-reviews-header">
+			<div>
+				<p class="kb-label">✦ Ce que disent nos lecteurs</p>
+				<h2 class="kb-reviews-title">
+					Ils ont essayé
+					<span>KITAB</span>
+					— voici leur avis
+				</h2>
+			</div>
+			<div class="kb-avg-block">
+				<div class="kb-avg-num">{{ averageRating ?: '—' }}</div>
+				<div class="kb-avg-stars">
+					{% if averageRating %}
+						{% for i in 1..5 %}
+							{{ i <= averageRating|round ? '★' : '☆' }}
+						{% endfor %}
+					{% endif %}
+				</div>
+				<div class="kb-avg-count">{{ reviewCount }}
+					avis vérifiés</div>
+			</div>
+		</div>
+
+		{# Flash messages #}
+		{% for msg in app.flashes('success') %}
+			<div class="kb-flash kb-flash--success">{{ msg }}</div>
+		{% endfor %}
+		{% for msg in app.flashes('error') %}
+			<div class="kb-flash kb-flash--error">{{ msg }}</div>
+		{% endfor %}
+
+		{# Grille des avis #}
+		{% if reviews is not empty %}
+			<div class="kb-reviews-grid">
+				{% for review in reviews %}
+					<div class="kb-review-card">
+						<div class="kb-review-stars">
+							{% for i in 1..5 %}
+								{{ i <= review.rating ? '★' : '☆' }}
+							{% endfor %}
+						</div>
+						<p class="kb-review-text">{{ review.content }}</p>
+						<div class="kb-review-user">
+							<div class="kb-avatar">
+								{{ review.user.prenom|first|upper }}{{ review.user.nom|first|upper }}
+							</div>
+							<div>
+								<p class="kb-review-name">{{ review.user.prenom }}
+									{{ review.user.nom|first }}.</p>
+								<p class="kb-review-date">{{ review.createdAt|date('d/m/Y') }}</p>
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+			</div>
+		{% else %}
+			<p class="kb-no-review">Soyez le premier à laisser un avis !</p>
+		{% endif %}
+
+		{# === FORMULAIRE : seulement si connecté === #}
+		<div class="kb-form-wrapper">
+			{% if app.user %}
+				<h3 class="kb-form-title">Laisser un avis</h3>
+				<form
+					action="{{ path('app_marketplace_review') }}" method="POST" class="kb-form">
+
+					{# Étoiles interactives #}
+					<div class="kb-star-picker" id="starPicker">
+						{% for i in 1..5 %}
+							<span class="kb-star" data-value="{{ i }}">☆</span>
+						{% endfor %}
+						<input type="hidden" name="rating" id="ratingInput" value="0" required>
+					</div>
+
+					<textarea name="content" class="kb-textarea" placeholder="Partagez votre expérience avec la communauté..." rows="3" maxlength="500" required></textarea>
+
+					<button type="submit" class="kb-submit-btn">
+						Publier mon avis
+					</button>
+				</form>
+
+			{% else %}
+				{# Utilisateur non connecté #}
+				<div class="kb-login-prompt">
+					<span class="kb-lock-icon">🔒</span>
+					<p>Connecte-toi pour partager ton avis avec la communauté KITAB</p>
+					<a href="{{ path('app_login') }}" class="kb-login-link">Se connecter</a>
+					<a href="{{ path('app_register') }}" class="kb-register-link">Créer un compte</a>
+				</div>
+			{% endif %}
+		</div>
+
+	</section>
+
+	{# Script étoiles interactif #}
+	<script>
+		(function () {
+const stars = document.querySelectorAll('#starPicker .kb-star');
+const input = document.getElementById('ratingInput');
+let selected = 0;
+
+stars.forEach(star => {
+star.addEventListener('mouseenter', () => highlight(+ star.dataset.value));
+star.addEventListener('mouseleave', () => highlight(selected));
+star.addEventListener('click', () => {
+selected = + star.dataset.value;
+input.value = selected;
+highlight(selected);
+});
+});
+
+function highlight(val) {
+stars.forEach(s => s.textContent = + s.dataset.value <= val ? '★' : '☆');
+}
+})();
+	</script>
+	<div class="space-before-footer"></div>
+	<div class="space-before-footer"></div>
+
 {% endblock %}
+
 {% block footer %}
 	<footer class="footer">
 		<div class="descrp">
@@ -247,9 +400,197 @@
 			<span>Fait avec ♥ en Tunisie 🇹🇳</span>
 		</div>
 	</footer>
-{% endblock %}
 
-{% block javascripts %}
-	{{ parent() }}
-	<script src="{{ asset('assets/js/marketPlace.js') }}"></script>
+
+	//script pour fenetre s ouvrant en demandant l echange
+
+	<div class="modal fade" id="exchangeModal" tabindex="-1" aria-labelledby="exchangeModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content" style="background-color: var(--white); border: 1px solid var(--border);">
+
+				<div class="modal-header">
+					<h5 class="modal-title fw-bold" id="exchangeModalLabel" style="color: var(--ink);">Proposer un échange</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+
+				<form id="exchangeForm" action="" method="POST">
+					<div
+						class="modal-body">
+
+						<!-- Menu déroulant pour choisir le mode -->
+						<select id="bookModeSelect" name="book_mode" class="form-select mb-3" style="display: none;">
+							<option value="existing">existing</option>
+							<option value="new">new</option>
+						</select>
+
+						<!-- Bloc Livre existant -->
+						<div id="existingBookBlock">
+							<p style="color: var(--muted);">Lequel de vos livres souhaitez-vous donner en contrepartie ?</p>
+							<div class="mb-3">
+								<select name="offered_book_id" id="offeredBookSelect" class="form-select" required style="border-color: var(--border);">
+									<option value="">-- Choisir un livre dans votre bibliothèque --</option>
+									{% for myBook in myBooks %}
+										<option value="{{ myBook.id }}">{{ myBook.titre }}
+											-
+											{{ myBook.auteur }}</option>
+									{% endfor %}
+								</select>
+							</div>
+							<div class="text-end">
+								<button type="button" id="btnShowNewBook" class="btn btn-link btn-sm p-0" style="text-decoration: none; color: #008080;">
+									+ Le livre n'est pas dans ma liste
+								</button>
+							</div>
+						</div>
+
+						<!-- Bloc Nouveau livre (caché par défaut) -->
+						<div id="newBookBlock" style="display: none;">
+							<p style="color: var(--muted);">Enregistrez le livre que vous offrez :</p>
+
+							<div class="mb-3">
+								<label class="form-label small fw-bold" style="color: var(--ink);">Titre du livre *</label>
+								<input type="text" name="new_book_title" id="newBookTitle" class="form-control" placeholder="Ex: Le Petit Prince" style="border-color: var(--border);">
+							</div>
+
+							<div class="mb-3">
+								<label class="form-label small fw-bold" style="color: var(--ink);">Auteur</label>
+								<input type="text" name="new_book_author" id="newBookAuthor" class="form-control" placeholder="Ex: Antoine de Saint-Exupéry" style="border-color: var(--border);">
+							</div>
+
+							<div class="text-end">
+								<button type="button" id="btnShowExistingBook" class="btn btn-link btn-sm p-0" style="text-decoration: none; color: #6c757d;">
+									← Retourner à ma liste
+								</button>
+							</div>
+						</div>
+
+					</div>
+
+					<div class="modal-footer">
+						<button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Annuler</button>
+						<button type="submit" class="btn" style="background-color: #008080; color: white;">Valider le troc</button>
+					</div>
+				</form>
+
+			</div>
+		</div>
+	</div>
+	<script>
+		// Attendre que le DOM soit complètement chargé
+document.addEventListener('DOMContentLoaded', function () { // Éléments du modal
+const existingBookBlock = document.getElementById('existingBookBlock');
+const newBookBlock = document.getElementById('newBookBlock');
+const btnShowNewBook = document.getElementById('btnShowNewBook');
+const btnShowExistingBook = document.getElementById('btnShowExistingBook');
+const offeredBookSelect = document.getElementById('offeredBookSelect');
+const newBookTitle = document.getElementById('newBookTitle');
+const newBookAuthor = document.getElementById('newBookAuthor');
+const bookModeSelect = document.getElementById('bookModeSelect');
+const exchangeForm = document.getElementById('exchangeForm');
+
+// Fonction pour réinitialiser le formulaire
+function resetForm() {
+if (existingBookBlock) 
+existingBookBlock.style.display = 'block';
+
+if (newBookBlock) 
+newBookBlock.style.display = 'none';
+
+if (bookModeSelect) 
+bookModeSelect.value = 'existing';
+
+if (offeredBookSelect) {
+offeredBookSelect.value = '';
+offeredBookSelect.required = true;
+}
+if (newBookTitle) {
+newBookTitle.value = '';
+newBookTitle.required = false;
+}
+if (newBookAuthor) 
+newBookAuthor.value = '';
+
+}
+
+// Bouton "Le livre n'est pas dans ma liste"
+if (btnShowNewBook) {
+btnShowNewBook.addEventListener('click', function (e) {
+e.preventDefault();
+if (existingBookBlock) 
+existingBookBlock.style.display = 'none';
+
+if (newBookBlock) 
+newBookBlock.style.display = 'block';
+
+if (bookModeSelect) 
+bookModeSelect.value = 'new';
+
+if (offeredBookSelect) 
+offeredBookSelect.required = false;
+
+if (newBookTitle) 
+newBookTitle.required = true;
+
+});
+}
+
+// Bouton "Retourner à ma liste"
+if (btnShowExistingBook) {
+btnShowExistingBook.addEventListener('click', function (e) {
+e.preventDefault();
+if (existingBookBlock) 
+existingBookBlock.style.display = 'block';
+
+if (newBookBlock) 
+newBookBlock.style.display = 'none';
+
+if (bookModeSelect) 
+bookModeSelect.value = 'existing';
+
+if (offeredBookSelect) 
+offeredBookSelect.required = true;
+
+if (newBookTitle) 
+newBookTitle.required = false;
+
+});
+}
+
+// Quand le modal s'ouvre
+const exchangeModal = document.getElementById('exchangeModal');
+if (exchangeModal) {
+exchangeModal.addEventListener('show.bs.modal', function (event) {
+const button = event.relatedTarget;
+const bookId = button.getAttribute('data-book-id');
+if (exchangeForm) {
+exchangeForm.action = '/exchange/create/' + bookId;
+}
+resetForm();
+});
+}
+
+// Validation avant soumission
+if (exchangeForm) {
+exchangeForm.addEventListener('submit', function (e) {
+const mode = bookModeSelect ? bookModeSelect.value : 'existing';
+
+if (mode === 'existing') {
+if (! offeredBookSelect.value) {
+e.preventDefault();
+alert('Veuillez sélectionner un livre à échanger');
+return false;
+}
+} else {
+if (! newBookTitle.value.trim()) {
+e.preventDefault();
+alert('Veuillez saisir le titre du livre que vous offrez');
+return false;
+}
+}
+return true;
+});
+}
+
+});
+	</script>
 {% endblock %}

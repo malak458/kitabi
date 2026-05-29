@@ -81,102 +81,80 @@ if (band) {
     });
 }
 
-// ===== LIVE SEARCH =====
-const searchInput = document.getElementById("searchInput");
-const searchSuggestions = document.getElementById("searchSuggestions");
-const filterForm = document.getElementById("filterForm");
+/// ===== LIVE SEARCH =====
 
-let searchTimeout;
+const searchInput = document.getElementById("searchInput");
+const allBooks = document.querySelectorAll(".book-card");
+
+// ===== IMAGE NO RESULT DYNAMIQUE =====
+
+let dynamicNoResult = document.getElementById("dynamic-no-result");
+
+if (!dynamicNoResult) {
+    dynamicNoResult = document.createElement("div");
+
+    dynamicNoResult.id = "dynamic-no-result";
+
+    dynamicNoResult.style.cssText = `
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    width:100%;
+    min-height:500px;
+    grid-column:1/-1;
+    text-align:center;
+`;
+
+    dynamicNoResult.innerHTML = `
+        <img
+            src="/images/notfound.png"
+            alt="Aucun résultat"
+            style="max-width:380px; width:90%; opacity:0.9;"
+        />
+    `;
+
+    document.querySelector(".cards-container")?.appendChild(dynamicNoResult);
+}
+
+// ===== LIVE SEARCH FUNCTION =====
+
+function liveSearchBooks() {
+    const query = searchInput.value.trim().toLowerCase();
+
+    let visible = 0;
+
+    allBooks.forEach((book) => {
+        const titre =
+            book.querySelector(".nombook")?.textContent.toLowerCase() || "";
+
+        const auteur =
+            book.querySelector(".card-body p")?.textContent.toLowerCase() || "";
+
+        const genre =
+            book.querySelector(".booktype")?.textContent.toLowerCase() || "";
+
+        const match =
+            query === "" ||
+            titre.includes(query) ||
+            auteur.includes(query) ||
+            genre.includes(query);
+
+        if (match) {
+            book.style.display = "";
+            visible++;
+        } else {
+            book.style.display = "none";
+        }
+    });
+
+    // ===== IMAGE AUCUN RESULTAT =====
+
+    dynamicNoResult.style.display = visible === 0 ? "flex" : "none";
+}
+
+// ===== EVENT INPUT =====
 
 if (searchInput) {
-    searchInput.addEventListener("input", () => {
-        clearTimeout(searchTimeout);
-
-        const q = searchInput.value.trim();
-
-        if (q.length < 2) {
-            searchSuggestions.style.display = "none";
-            return;
-        }
-
-        searchTimeout = setTimeout(async () => {
-            try {
-                const res = await fetch(
-                    `/marketplace/live-search?q=${encodeURIComponent(q)}`
-                );
-
-                const data = await res.json();
-
-                searchSuggestions.innerHTML = "";
-
-                if (data.length === 0) {
-                    searchSuggestions.style.display = "none";
-                    return;
-                }
-
-                data.forEach((book) => {
-                    const li = document.createElement("li");
-
-                    li.style.cssText = `
-                        padding:8px 16px;
-                        cursor:pointer;
-                        font-size:13px;
-                        color:#1a1208;
-                        border-bottom:1px solid #f0ece3;
-                        `;
-
-                    li.innerHTML = `
-                        <strong>${book.titre}</strong>
-                        <span style="color:#888">
-                            — ${book.auteur ?? ""}
-                        </span>
-
-                        <span style="float:right;color:green;">
-                            ${book.prix}dt
-                        </span>
-                    `;
-
-                    li.addEventListener("click", () => {
-                        searchInput.value = book.titre;
-
-                        searchSuggestions.style.display = "none";
-
-                        filterForm.submit();
-                    });
-
-                    li.addEventListener("mouseenter", () => {
-                        li.style.background = "#f9efd0";
-                    });
-
-                    li.addEventListener("mouseleave", () => {
-                        li.style.background = "";
-                    });
-
-                    searchSuggestions.appendChild(li);
-                });
-
-                searchSuggestions.style.display = "block";
-            } catch (e) {
-                console.error("Live search error:", e);
-            }
-        }, 350);
-    });
-
-    searchInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            searchSuggestions.style.display = "none";
-
-            filterForm.submit();
-        }
-
-        if (e.key === "Escape") {
-            searchSuggestions.style.display = "none";
-        }
-    });
-
-    document.addEventListener("click", (e) => {
-        if (!searchInput.contains(e.target)) {
-            searchSuggestions.style.display = "none";
-        }
-    });
+    searchInput.addEventListener("input", liveSearchBooks);
 }

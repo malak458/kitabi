@@ -1,13 +1,11 @@
-/* public/css/reading-room.css */
 
-/* Reset & Base */
 *, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
 }
 
-/* Variables CSS */
+
 :root {
     --ink: #1a1208;
     --amber: #c8860a;
@@ -24,135 +22,16 @@
     --nav-h: 68px;
 }
 
-html, body {
-    width: 100%;
-    overflow-x: hidden;
-}
 
-body {
+.page-wrapper {
     font-family: "DM Sans", sans-serif;
     background: var(--sand);
     color: var(--ink);
-    min-height: 100vh;
-}
-
-/* Navigation */
-nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 200;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 5vw;
-    height: var(--nav-h);
-    background: rgba(26, 18, 8, 0.97);
-    backdrop-filter: blur(10px);
-    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
-}
-
-.logo {
-    font-family: 'Playfair Display', serif;
-    font-size: 22px;
-    font-weight: 900;
-    color: var(--amber-mid);
-    letter-spacing: -.5px;
-    text-decoration: none;
-}
-
-.logo .text_arb {
-    font-family: 'Amiri', serif;
-    direction: rtl;
-    font-size: 20px;
-    margin-left: 4px;
-    color: var(--rust);
-}
-
-.nav-links {
-    display: flex;
-    gap: 4px;
-    list-style: none;
-    align-items: center;
-}
-
-.nav-links a {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    text-decoration: none;
-    font-size: 13px;
-    color: rgba(255, 253, 248, 0.65);
-    padding: 6px 12px;
-    border-radius: 8px;
-    transition: all 0.2s;
-    white-space: nowrap;
-}
-
-.nav-links a:hover {
-    color: var(--amber-mid);
-    background: rgba(255, 255, 255, 0.06);
-}
-
-.nav-links a.active {
-    color: var(--amber-mid);
-    background: rgba(200, 134, 10, 0.15);
-}
-
-.nav-right {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-
-.nav-right a {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    text-decoration: none;
-    font-size: 13px;
-    color: rgba(255, 253, 248, 0.65);
-    padding: 6px 12px;
-    border-radius: 8px;
-    transition: all 0.2s;
-}
-
-.nav-right a:hover {
-    color: var(--amber-mid);
-    background: rgba(255, 255, 255, 0.06);
-}
-
-.lang-switcher-nav {
-    display: flex;
-    gap: 4px;
-    margin-left: 16px;
-}
-
-.lang-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    color: rgba(255, 253, 248, 0.65);
-    font-size: 11px;
-    font-weight: 700;
-    padding: 4px 9px;
-    cursor: pointer;
-    transition: all 0.25s;
-}
-
-.lang-btn:hover {
-    background: rgba(255, 255, 255, 0.18);
-    color: #fff;
-}
-
-/* Page Wrapper */
-.page-wrapper {
     margin-top: var(--nav-h);
     min-height: calc(100vh - var(--nav-h));
 }
 
-/* Page Header */
+
 .page-header {
     background: linear-gradient(105deg, rgba(26, 18, 8, 0.97) 0%, rgba(14, 107, 94, 0.9) 60%, rgba(200, 134, 10, 0.4) 100%);
     padding: 36px 5vw 30px;
@@ -177,31 +56,33 @@ nav {
     margin: 6px 0 0;
 }
 
-.create-room-btn {
+
+.page-header .create-room-btn {
     background: var(--amber);
     border: none;
     border-radius: 50px;
     padding: 12px 28px;
     font-size: 14px;
     font-weight: 600;
-    color: #fff;
+    color: #fff !important;
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
 }
 
-.create-room-btn:hover {
+.page-header .create-room-btn:hover {
     background: var(--rust);
     transform: translateY(-2px);
+    color: #fff !important;
 }
 
-/* Page Body */
+
 .page-body {
     padding: 28px 5vw;
     background: var(--sand);
 }
 
-/* Stats Container */
+
 .stats-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -274,7 +155,7 @@ nav {
     border-color: var(--amber-mid);
 }
 
-/* Nav Tabs */
+
 .nav-tabs {
     display: flex;
     gap: 8px;
@@ -294,10 +175,11 @@ nav {
     transition: all 0.3s;
 }
 
-.nav-tab.active {
-    background: var(--teal);
-    border-color: var(--teal);
-    color: #fff;
+
+.nav-tabs .nav-tab.active {
+    background: var(--teal) !important;
+    border-color: var(--teal) !important;
+    color: #fff !important;
 }
 
 hr.separator {
@@ -306,7 +188,7 @@ hr.separator {
     margin: 8px 0 20px;
 }
 
-/* Section Label */
+
 .section-label {
     font-size: 11px;
     font-weight: 700;
@@ -316,14 +198,14 @@ hr.separator {
     margin: 24px 0 16px;
 }
 
-/* Rooms Container */
+
 .rooms-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 22px;
 }
 
-/* Room Card */
+
 .room-card {
     background: var(--white);
     border-radius: 16px;
@@ -442,7 +324,7 @@ hr.separator {
     color: white;
 }
 
-/* Popup */
+
 #joinPopup {
     display: none;
     position: fixed;
@@ -490,7 +372,6 @@ hr.separator {
     background: var(--amber-light);
 }
 
-/* Success Message */
 #successMessage {
     display: none;
     position: fixed;
@@ -504,13 +385,9 @@ hr.separator {
     z-index: 9999;
 }
 
-/* Responsive */
+
 @media (max-width: 1200px) {
     .stats-container { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 900px) {
-    .nav-links { display: none; }
 }
 
 @media (max-width: 600px) {

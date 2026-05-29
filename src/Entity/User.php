@@ -36,6 +36,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $bio = null;
 
+    
+    #[ORM\Column(type: Types::FLOAT, nullable: true)]
+    private ?float $rating = 0.0;
+
     /**
      * @var Collection<int, Book>
      */
@@ -154,7 +158,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function removeBook(Book $book): static
     {
         if ($this->books->removeElement($book)) {
-            // set the owning side to null (unless already changed)
+            
             if ($book->getUser() === $this) {
                 $book->setUser(null);
             }
@@ -173,9 +177,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return array_unique($roles);
     }
+    public function getRating(): ?float
+    {
+        return $this->rating;
+    }
+
+    public function setRating(?float $rating): static
+    {
+        $this->rating = $rating;
+
+        return $this;
+    }
     public function eraseCredentials(): void
     {
-        // clear temporary sensitive data if needed
+        
     }
     public function setRoles(array $roles): static
     {
@@ -183,5 +198,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
 
 }

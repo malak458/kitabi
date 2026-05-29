@@ -4,123 +4,207 @@
 
 {% block stylesheets %}
 <style>
-    /*  LAYOUT */
-    .page-wrapper { margin-top: var(--nav-h); min-height: calc(100vh - var(--nav-h)); display: flex; flex-direction: column; }
-
+    .page-wrapper { 
+        min-height: calc(100vh - var(--nav-h)); 
+        background: var(--sand);
+    }
+    
     .page-header {
         background: linear-gradient(105deg, rgba(26,18,8,.97) 0%, rgba(14,107,94,.9) 60%, rgba(200,134,10,.4) 100%);
-        padding: 36px 5vw 30px; position: relative; overflow: hidden;
-    }
-    .page-header::before {
-        content: ''; position: absolute; inset: 0;
-        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23e8a82a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-        opacity: .5;
+        padding: 36px 5vw 30px;
     }
     .page-header h1 {
-        position: relative; font-family: "Playfair Display", serif;
-        font-size: 32px; font-weight: 900; color: #fff; margin: 0; letter-spacing: -.5px;
+        font-family: "Playfair Display", serif;
+        font-size: 32px;
+        font-weight: 900;
+        color: #fff;
+        margin: 0;
     }
-    .page-header p { position: relative; color: rgba(255,253,248,.6); font-size: 14px; margin: 6px 0 0; }
-
-    /* form WRAPPER*/
-    .form-wrapper { padding: 36px 5vw; background: var(--sand); flex: 1; }
-
+    .page-header p {
+        color: rgba(255,253,248,.6);
+        font-size: 14px;
+        margin: 6px 0 0;
+    }
+    
+    .form-wrapper {
+        padding: 36px 5vw;
+        background: var(--sand);
+    }
+    
     .card {
-        background: var(--white); border-radius: 20px; padding: 36px;
-        box-shadow: 0 4px 24px rgba(26,18,8,.08); border: 1px solid var(--border);
-        max-width: 780px; margin: 0 auto;
+        background: var(--white);
+        border-radius: 20px;
+        padding: 36px;
+        box-shadow: 0 4px 24px rgba(26,18,8,.08);
+        border: 1px solid var(--border);
+        max-width: 780px;
+        margin: 0 auto;
     }
-    .card-title { font-family: "Playfair Display", serif; font-size: 22px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
-    .card-subtitle { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
-
-    /* ALERT */
-    .alert-errors {
-        background: #fff5f5; border: 1px solid #fed7d7; border-radius: 12px;
-        padding: 14px 18px; margin-bottom: 20px;
+    .card-title {
+        font-family: "Playfair Display", serif;
+        font-size: 22px;
+        font-weight: 700;
+        color: var(--ink);
+        margin-bottom: 4px;
     }
-    .alert-errors p { color: #c53030; font-size: 13px; margin: 4px 0; }
-
-    /*  FIELDS  */
-    .field { margin-bottom: 20px; }
+    .card-subtitle {
+        font-size: 14px;
+        color: var(--muted);
+        margin-bottom: 28px;
+    }
+    
+    .field {
+        margin-bottom: 20px;
+    }
     .field label {
-        display: block; font-size: 13px; font-weight: 600;
-        color: var(--ink); margin-bottom: 7px; letter-spacing: .2px;
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 7px;
     }
-    .field input[type="text"],
-    .field input[type="number"],
-    .field select,
-    .field textarea {
-        width: 100%; padding: 11px 16px;
-        border: 1.5px solid var(--border); border-radius: 10px;
-        font-size: 14px; font-family: "DM Sans", sans-serif;
-        background: var(--sand); color: var(--ink); outline: none;
-        transition: border-color .25s, box-shadow .25s;
+    .field input, .field select, .field textarea {
+        width: 100%;
+        padding: 11px 16px;
+        border: 1.5px solid var(--border);
+        border-radius: 10px;
+        font-size: 14px;
+        font-family: "DM Sans", sans-serif;
+        background: var(--sand);
+        outline: none;
     }
     .field input:focus, .field select:focus, .field textarea:focus {
-        border-color: var(--teal); box-shadow: 0 0 0 3px rgba(14,107,94,.1); background: #fff;
+        border-color: var(--teal);
+        box-shadow: 0 0 0 3px rgba(14,107,94,.1);
+        background: #fff;
     }
-    .field textarea { resize: vertical; min-height: 100px; }
-    .field select { appearance: none; cursor: pointer; }
-
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-    @media (max-width: 560px) { .field-row { grid-template-columns: 1fr; } }
-
-    /*  UPLOAD BUTTON */
+    
+    .field-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    
     .upload-btn {
-        display: inline-flex; align-items: center; gap: 8px;
-        padding: 11px 20px; border: 1.5px dashed var(--border);
-        border-radius: 10px; cursor: pointer; font-size: 14px;
-        color: var(--muted); background: #fffdf9;
-        transition: border-color .2s, color .2s; width: 100%;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 20px;
+        border: 1.5px dashed var(--border);
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        color: var(--muted);
+        background: #fffdf9;
+        width: 100%;
     }
-    .upload-btn:hover { border-color: var(--amber); color: var(--amber); }
-
-    /*  TYPE TOGGLE */
-    .type-toggle { display: flex; gap: 10px; }
+    .upload-btn:hover {
+        border-color: var(--amber);
+        color: var(--amber);
+    }
+    
+    .type-toggle {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
     .type-opt {
-        flex: 1; padding: 10px 20px; border: 1.5px solid var(--border);
-        border-radius: 50px; background: var(--white);
-        font-size: 13px; font-weight: 600; font-family: "DM Sans", sans-serif;
-        color: var(--muted); cursor: pointer; transition: all .25s;
+        flex: 1;
+        padding: 10px 20px;
+        border: 1.5px solid var(--border);
+        border-radius: 50px;
+        background: var(--white);
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .25s;
     }
-    .type-opt:hover { border-color: var(--teal); color: var(--teal); }
-    .type-opt.selected { background: var(--teal); border-color: var(--teal); color: #fff; box-shadow: 0 4px 14px rgba(14,107,94,.25); }
-
-    /*  TAGS SELECTOR  */
-    .tags-selector { display: flex; gap: 8px; flex-wrap: wrap; }
+    .type-opt:hover {
+        border-color: var(--teal);
+        color: var(--teal);
+    }
+    .type-opt.selected {
+        background: var(--teal);
+        border-color: var(--teal);
+        color: #fff;
+    }
+    
+    .tags-selector {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
     .tag-opt {
-        padding: 6px 16px; border: 1.5px solid var(--border);
-        border-radius: 50px; background: var(--white);
-        font-size: 12px; font-weight: 600; font-family: "DM Sans", sans-serif;
-        color: var(--muted); cursor: pointer; transition: all .2s;
+        padding: 6px 16px;
+        border: 1.5px solid var(--border);
+        border-radius: 50px;
+        background: var(--white);
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .2s;
     }
-    .tag-opt:hover { border-color: var(--amber); color: var(--amber); }
-    .tag-opt.selected { background: var(--amber-light); border-color: var(--amber); color: var(--rust); }
-
-    /* FOOTER  */
+    .tag-opt:hover {
+        border-color: var(--amber);
+        color: var(--amber);
+    }
+    .tag-opt.selected {
+        background: var(--amber-light);
+        border-color: var(--amber);
+        color: var(--rust);
+    }
+    
     .card-footer {
-        display: flex; gap: 12px; justify-content: flex-end;
-        margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border);
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
     }
     .btn-cancel {
-        padding: 12px 28px; border: 1.5px solid var(--border); border-radius: 50px;
-        background: var(--white); color: var(--muted); font-size: 14px; font-weight: 600;
-        font-family: "DM Sans", sans-serif; text-decoration: none; transition: all .25s;
+        padding: 12px 28px;
+        border: 1.5px solid var(--border);
+        border-radius: 50px;
+        background: var(--white);
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
     }
-    .btn-cancel:hover { border-color: var(--muted); color: var(--ink); }
+    .btn-cancel:hover {
+        border-color: var(--muted);
+        color: var(--ink);
+    }
     .btn-create {
-        padding: 12px 32px; border: none; border-radius: 50px;
-        background: var(--teal); color: #fff; font-size: 14px; font-weight: 600;
-        font-family: "DM Sans", sans-serif; cursor: pointer; transition: all .3s;
-        box-shadow: 0 4px 14px rgba(14,107,94,.3);
+        padding: 12px 32px;
+        border: none;
+        border-radius: 50px;
+        background: var(--teal);
+        color: #fff;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all .3s;
     }
-    .btn-create:hover { background: var(--teal-dark); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(14,107,94,.4); }
+    .btn-create:hover {
+        background: var(--teal-dark);
+        transform: translateY(-2px);
+    }
+    
+    @media (max-width: 560px) {
+        .field-row {
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+    }
 </style>
 {% endblock %}
 
 {% block body %}
 <div class="page-wrapper">
-
     <div class="page-header">
         <h1>Create a Reading Room</h1>
         <p>Set up a new space to read and discuss with the community</p>
@@ -131,39 +215,22 @@
             <h2 class="card-title">Room Details</h2>
             <p class="card-subtitle">Fill in the information below to create your reading room.</p>
 
-            {# Erreurs Symfony #}
-            {% if not form.vars.valid and form.vars.submitted %}
-            <div class="alert-errors">
-                {% for field in form %}
-                    {% for error in field.vars.errors %}
-                        <p>⚠️ {{ error.message }}</p>
-                    {% endfor %}
-                {% endfor %}
-                {% for error in form.vars.errors %}
-                    <p>⚠️ {{ error.message }}</p>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data', 'novalidate': 'novalidate'}}) }}
-
-                {#  BOOK COVER  #}
+            {{ form_start(form, {'attr': {'enctype': 'multipart/form-data'}}) }}
+                
                 <div class="field">
                     <label>Book cover</label>
-                    <label class="upload-btn" for="{{ form.imageFile.vars.id }}">
-                        <span class="material-icons" style="font-size:18px">upload_file</span>
+                    <label class="upload-btn" for="room_imageFile">
+                        <span class="material-icons">upload_file</span>
                         <span id="upload-label">Choose a cover image</span>
                     </label>
-                    {{ form_widget(form.imageFile, {'attr': {'style': 'display:none', 'onchange': "document.getElementById('upload-label').textContent = this.files[0]?.name || 'Choose a cover image'"}}) }}
+                    {{ form_widget(form.imageFile, {'attr': {'style': 'display:none', 'onchange': 'document.getElementById("upload-label").innerText = this.files[0]?.name || "Choose a cover image"'}})}}
                 </div>
 
-                {#  TITLE #}
                 <div class="field">
                     {{ form_label(form.titre) }}
                     {{ form_widget(form.titre) }}
                 </div>
 
-                {#  AUTHOR + PAGES #}
                 <div class="field-row">
                     <div class="field">
                         {{ form_label(form.auteur) }}
@@ -175,18 +242,15 @@
                     </div>
                 </div>
 
-                {#  TYPE #}
                 <div class="field">
                     <label>Room type</label>
                     <div class="type-toggle">
-                        <button class="type-opt selected" type="button" onclick="setType('live', this)">Live Session</button>
-                        <button class="type-opt" type="button" onclick="setType('scheduled', this)">Scheduled</button>
+                        <button type="button" class="type-opt selected" data-type="live">Live Session</button>
+                        <button type="button" class="type-opt" data-type="scheduled">Scheduled</button>
                     </div>
-                    {# On cache le widget Symfony et on sync via JS #}
-                    <div style="display:none">{{ form_widget(form.type) }}</div>
+                    {{ form_widget(form.type, {'attr': {'style': 'display:none'}})}}
                 </div>
 
-                {# ===== MAX PARTICIPANTS + GENRE ===== #}
                 <div class="field-row">
                     <div class="field">
                         {{ form_label(form.maxParticipants) }}
@@ -198,26 +262,22 @@
                     </div>
                 </div>
 
-                {# ===== TAGS (custom UI, not mapped) ===== #}
                 <div class="field">
                     <label>Tags</label>
-                    <div class="tags-selector">
-                        {% set tagChoices = ['Classic','Sci-Fi','Fantasy','Romance','Dystopian','Philosophy','Adventure','Drama','Fiction'] %}
-                        {% for tag in tagChoices %}
-                            <button class="tag-opt" type="button" onclick="toggleTag(this)">{{ tag }}</button>
+                    <div class="tags-selector" id="tagsSelector">
+                        {% set tags = ['Classic', 'Sci-Fi', 'Fantasy', 'Romance', 'Dystopian', 'Philosophy', 'Adventure', 'Drama', 'Fiction'] %}
+                        {% for tag in tags %}
+                            <button type="button" class="tag-opt" data-tag="{{ tag }}">{{ tag }}</button>
                         {% endfor %}
                     </div>
-                    {# Hidden inputs rebuilt by JS #}
                     <div id="tagsInputs"></div>
                 </div>
 
-                {# ===== DESCRIPTION ===== #}
                 <div class="field">
                     {{ form_label(form.description) }}
                     {{ form_widget(form.description) }}
                 </div>
 
-                {# ===== FOOTER ===== #}
                 <div class="card-footer">
                     <a href="{{ path('app_rooms') }}" class="btn-cancel">Cancel</a>
                     <button type="submit" class="btn-create">Create Room</button>
@@ -226,65 +286,55 @@
             {{ form_end(form) }}
         </div>
     </div>
-
 </div>
 {% endblock %}
 
 {% block javascripts %}
-<script src="{{ asset('js/ui-controls.js') }}"></script>
 <script>
-// ===== TYPE TOGGLE =====
-function setType(val, btn) {
-    // Sync with Symfony's hidden radio/select
-    const typeWidget = document.querySelector('[name="room[type]"]');
-    if (typeWidget) {
-        if (typeWidget.tagName === 'SELECT') {
-            typeWidget.value = val;
-        } else {
-            // radio buttons
-            document.querySelectorAll('[name="room[type]"]').forEach(r => {
-                r.checked = (r.value === val);
-            });
-        }
-    }
-    document.querySelectorAll('.type-opt').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-}
 
-// ===== TAGS =====
-function toggleTag(btn) {
-    btn.classList.toggle('selected');
-    rebuildTagInputs();
-}
+document.querySelectorAll('.type-opt').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var typeValue = this.dataset.type;
+        var typeInput = document.querySelector('[name="room[type]"]');
+        if (typeInput) typeInput.value = typeValue;
+        
+        document.querySelectorAll('.type-opt').forEach(function(b) {
+            b.classList.remove('selected');
+        });
+        this.classList.add('selected');
+    });
+});
 
-function rebuildTagInputs() {
-    const container = document.getElementById('tagsInputs');
+function rebuildTags() {
+    var container = document.getElementById('tagsInputs');
+    if (!container) return;
     container.innerHTML = '';
-    document.querySelectorAll('.tag-opt.selected').forEach(b => {
-        const input = document.createElement('input');
-        input.type  = 'hidden';
-        input.name  = 'room_tags[]';   // handled manually in controller
-        input.value = b.textContent.trim();
+    document.querySelectorAll('.tag-opt.selected').forEach(function(tag) {
+        var input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'room_tags[]';
+        input.value = tag.dataset.tag;
         container.appendChild(input);
     });
 }
 
-// Init type on page load (restore after validation error)
-document.addEventListener('DOMContentLoaded', () => {
-    const typeWidget = document.querySelector('[name="room[type]"]');
-    if (typeWidget) {
-        let currentVal = 'live';
-        if (typeWidget.tagName === 'SELECT') {
-            currentVal = typeWidget.value || 'live';
-        } else {
-            const checked = document.querySelector('[name="room[type]"]:checked');
-            if (checked) currentVal = checked.value;
-        }
-        document.querySelectorAll('.type-opt').forEach(b => b.classList.remove('selected'));
-        document.querySelectorAll('.type-opt').forEach(b => {
-            if ((currentVal === 'live' && b.textContent.includes('Live')) ||
-                (currentVal === 'scheduled' && b.textContent.includes('Scheduled'))) {
-                b.classList.add('selected');
+document.querySelectorAll('.tag-opt').forEach(function(tag) {
+    tag.addEventListener('click', function() {
+        this.classList.toggle('selected');
+        rebuildTags();
+    });
+});
+
+
+document.addEventListener('DOMContentLoaded', function() {
+    var typeInput = document.querySelector('[name="room[type]"]');
+    if (typeInput && typeInput.value) {
+        var currentType = typeInput.value;
+        document.querySelectorAll('.type-opt').forEach(function(btn) {
+            if (btn.dataset.type === currentType) {
+                btn.classList.add('selected');
+            } else {
+                btn.classList.remove('selected');
             }
         });
     }

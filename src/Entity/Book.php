@@ -35,15 +35,18 @@ class Book
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
-#[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'books')]
-#[ORM\JoinColumn(nullable: true)] // <-- IMPORTANT: 'true' permet de créer le livre sans utilisateur
-private ?User $user = null;
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'books')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?User $user = null;
 
 /**
  * @var Collection<int, User>
  */
 #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'favoriteBooks')]
 private Collection $users;
+
+#[ORM\Column(length: 255, nullable: true)]
+private ?string $description = null;
 
 public function __construct()
 {
@@ -165,6 +168,18 @@ public function __construct()
         if ($this->users->removeElement($user)) {
             $user->removeFavoriteBook($this);
         }
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

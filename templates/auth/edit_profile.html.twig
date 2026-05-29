@@ -1,6 +1,4 @@
-{# =============================================================
-   templates/auth/edit_profile.html.twig
-   ============================================================= #}
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Modifier mon profil{% endblock %}
@@ -10,7 +8,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap');
 
-        /* ── Palette ── */
+       
         :root {
             --ink:    #1a1a2e;
             --paper:  #f7f4ef;
@@ -30,11 +28,7 @@
             min-height: 100vh;
         }
 
-        /* =============================================================
-           LAYOUT PLEINE PAGE  —  2 colonnes
-           gauche : sidebar info utilisateur
-           droite : formulaire
-           ============================================================= */
+        
         .ep-page {
             display: grid;
             grid-template-columns: 300px 1fr;
@@ -42,7 +36,7 @@
             min-height: calc(100vh - 60px); /* 60px = hauteur navbar approx */
         }
 
-        /* ── Barre retour (ligne du haut, pleine largeur) ── */
+       
         .ep-topbar {
             grid-column: 1 / -1;
             display: flex;
@@ -65,7 +59,6 @@
         }
         .back-link:hover { color: var(--accent); }
 
-        /* ── Colonne gauche : sidebar ── */
         .ep-sidebar {
             background: var(--ink);
             padding: 48px 36px;
@@ -84,7 +77,6 @@
             background: var(--accent);
         }
 
-        /* Avatar grande taille dans la sidebar */
         .sidebar-avatar {
             width: 130px;
             height: 130px;
@@ -125,7 +117,7 @@
             word-break: break-all;
         }
 
-        /* Séparateur */
+       
         .sidebar-divider {
             width: 40px;
             height: 2px;
@@ -133,7 +125,7 @@
             margin-bottom: 32px;
         }
 
-        /* Upload dans la sidebar */
+      
         .sidebar-upload-title {
             font-size: 0.7rem;
             font-weight: 500;
@@ -180,7 +172,7 @@
             align-self: flex-start;
         }
 
-        /* ── Colonne droite : formulaire ── */
+      
         .ep-form-col {
             background: var(--paper);
             padding: 48px 56px 60px;
@@ -200,7 +192,6 @@
             margin-bottom: 44px;
         }
 
-        /* Séparateur de section */
         .section-sep {
             font-size: 0.68rem;
             font-weight: 500;
@@ -212,7 +203,6 @@
             border-bottom: 1px solid var(--border);
         }
 
-        /* Ligne 2 colonnes */
         .field-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -220,7 +210,7 @@
             margin-bottom: 24px;
         }
 
-        /* Champ */
+       
         .field {
             display: flex;
             flex-direction: column;
@@ -229,7 +219,7 @@
         }
         .field:last-of-type { margin-bottom: 0; }
 
-        /* Label — reprend .panel-label du profil */
+        
         .field label {
             font-size: 0.7rem;
             font-weight: 500;
@@ -238,7 +228,7 @@
             color: var(--muted);
         }
 
-        /* Input / Textarea */
+      
         .field input,
         .field textarea {
             background: var(--white);
@@ -264,7 +254,7 @@
         }
         .field textarea { resize: vertical; min-height: 140px; }
 
-        /* Ligne label + compteur bio */
+        
         .char-row {
             display: flex;
             justify-content: space-between;
@@ -277,13 +267,13 @@
         }
         .char-count.warn { color: var(--accent); }
 
-        /* Erreur inline */
+    
         .field-error {
             font-size: 0.78rem;
             color: var(--accent);
         }
 
-        /* Boutons */
+       
         .actions {
             display: flex;
             align-items: center;
@@ -325,9 +315,7 @@
         }
         .btn-cancel:hover { color: var(--accent); }
 
-        /* =============================================================
-           RESPONSIVE — sous 900px : une colonne
-           ============================================================= */
+       
         @media (max-width: 900px) {
             .ep-page { grid-template-columns: 1fr; }
 
@@ -358,9 +346,7 @@
 {% block body %}
     <div class="ep-page">
 
-        {# ════════════════════════════════════════
-     BARRE RETOUR
-  ════════════════════════════════════════ #}
+      
         <div class="ep-topbar">
             <a href="{{ path('app_profile') }}" class="back-link">
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -370,12 +356,10 @@
             </a>
         </div>
 
-        {# ════════════════════════════════════════
-     SIDEBAR GAUCHE
-  ════════════════════════════════════════ #}
+       
         <aside class="ep-sidebar">
 
-            {# Avatar actuel ou initiales #}
+          
             {% if user.image %}
                 <img id="avatar-preview"
                      class="sidebar-avatar"
@@ -392,7 +376,7 @@
 
             <div class="sidebar-divider"></div>
 
-            {# Zone upload dans la sidebar (desktop) #}
+           
             <div class="sidebar-upload-title">Photo de profil</div>
             <label class="file-btn" for="sidebar-file-input">
                 <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -412,9 +396,7 @@
 
         </aside>
 
-        {# ════════════════════════════════════════
-     COLONNE FORMULAIRE
-  ════════════════════════════════════════ #}
+       
         <div class="ep-form-col">
 
             <h1>Modifier le profil</h1>
@@ -428,12 +410,12 @@
                 }
             }) }}
 
-            {# Champ fichier caché — lié au label sidebar ET au label mobile #}
+           
             <div style="display:none">
                 {{ form_widget(form.imageFile, { 'attr': { 'id': 'sidebar-file-input' } }) }}
             </div>
 
-            {# ── Informations personnelles ── #}
+         
             <div class="section-sep">Informations personnelles</div>
 
             <div class="field-row">
@@ -468,7 +450,7 @@
                 {% endif %}
             </div>
 
-            {# ── Biographie ── #}
+           
             <div class="section-sep" style="margin-top: 12px;">Biographie</div>
 
             <div class="field">
@@ -487,7 +469,7 @@
                 {% endif %}
             </div>
 
-            {# ── Actions ── #}
+            
             <div class="actions">
                 <button type="submit" class="btn-save">
                     <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
@@ -502,11 +484,11 @@
 
             {{ form_end(form) }}
 
-        </div>{# /.ep-form-col #}
-    </div>{# /.ep-page #}
+        </div>
+    </div>
 
     <script>
-        /* ── Prévisualisation photo ─────────────────────────────── */
+       
         (function () {
             var fileInput     = document.getElementById('sidebar-file-input');
             var chosenSidebar = document.getElementById('file-chosen-sidebar');
@@ -538,7 +520,7 @@
             });
         }());
 
-        /* ── Compteur bio ───────────────────────────────────────── */
+       
         (function () {
             var bio   = document.getElementById('bio-textarea');
             var count = document.getElementById('bio-count');
