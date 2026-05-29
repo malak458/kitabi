@@ -29,7 +29,7 @@ class ChatbotController extends AbstractController
         $genres    = $this->extractGenres($message);
         $condition = $this->extractCondition($message);
 
-        /
+        
         if (preg_match('/\b(bonjour|salut|hello|salam|hi|bonsoir)\b/iu', $lower)) {
             return $this->json([
                 'type'    => 'text',
