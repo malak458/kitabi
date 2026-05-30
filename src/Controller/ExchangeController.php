@@ -124,10 +124,7 @@ public function cancelProgress(Exchange $exchange, EntityManagerInterface $em): 
         return $this->redirectToRoute('exchange_page');
     }
     
-    if ($exchange->getStatus() !== 'in_progress') {
-        $this->addFlash('error', 'Only an exchange in progress can be cancelled.');
-        return $this->redirectToRoute('exchange_page');
-    }
+    
     
     $exchange->setStatus('cancelled');
     $em->flush();
